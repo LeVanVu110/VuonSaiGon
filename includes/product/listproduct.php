@@ -289,7 +289,7 @@
 
     <div class="main-content">
 
-        <div class="container-fluid breadcrumb-bg py-2 mb-4">
+        <div class="container-fluid breadcrumb-bg py-4 mb-4">
             <div class="container">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">

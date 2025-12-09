@@ -1,4 +1,6 @@
-<footer class="footer-area bg-white border-top mt-5 pt-5 pb-3">
+<footer class="footer-area bg-white border-top mt-5 pt-5 pb-3" style="
+    padding: 5%;
+">
     <div class="container">
         <div class="row">
 
