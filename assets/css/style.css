@@ -845,7 +845,7 @@ a {
 
 /* Container chung (nếu chưa có thì thêm vào) */
 .container {
-    max-width: 1200px;
+    max-width: 100% !important;
     margin: 0 auto;
     padding: 0 15px;
 }

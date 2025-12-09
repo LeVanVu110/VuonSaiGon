@@ -159,7 +159,7 @@
             <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
             <a href="#" class="fw-bold text-success text-decoration-none">VIDEO</a>
             <a href="blog.php" class="fw-bold text-success text-decoration-none" >BLOG</a>
-            <a href="#" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
+            <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
         </div>
     </div>
     
