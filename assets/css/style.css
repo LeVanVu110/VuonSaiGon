@@ -87,7 +87,8 @@
     font-weight: 500;
     color: #333;
     border-bottom: 1px dashed #eee;
-    position: relative; /* Quan trọng để định vị menu con */
+    position: relative;
+    /* Quan trọng để định vị menu con */
     padding-top: 10px;
     padding-bottom: 10px;
 }
@@ -108,26 +109,28 @@
 
 /* --- LOGIC HOVER (CHỈ ÁP DỤNG TRÊN MÁY TÍNH) --- */
 @media (min-width: 992px) {
-    
+
     /* 1. Khi hover vào nút DANH MỤC -> Chỉ hiện menu cấp 1 */
-    .category-dropdown:hover > .dropdown-menu {
+    .category-dropdown:hover>.dropdown-menu {
         display: block;
         margin-top: 0;
     }
 
     /* 2. Khi hover vào 1 mục trong menu (ví dụ Chậu cây) -> Chỉ hiện menu cấp 2 của mục đó */
-    .dropend:hover > .dropdown-menu {
+    .dropend:hover>.dropdown-menu {
         display: block;
         position: absolute;
         top: 0;
-        left: 100%;       /* Đẩy sang phải 100% */
-        margin-top: -5px; /* Chỉnh lại khớp vị trí */
-        margin-left: 0px; 
+        left: 100%;
+        /* Đẩy sang phải 100% */
+        margin-top: -5px;
+        /* Chỉnh lại khớp vị trí */
+        margin-left: 0px;
     }
 }
 
 /* Ẩn mặc định các menu con để tránh lỗi hiển thị chồng chéo */
-.dropend > .dropdown-menu {
+.dropend>.dropdown-menu {
     display: none;
 }
 
@@ -176,6 +179,7 @@
         text-align: center;
     }
 }
+
 /* ===== FOOTER ===== */
 
 .footer-area {
@@ -184,27 +188,32 @@
 }
 
 .footer-title {
-    color: #5da503; 
+    color: #5da503;
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 16px;       /* Tăng cỡ chữ lên chút cho rõ */
-    letter-spacing: 0.5px; /* Giãn khoảng cách giữa các chữ cái ra 1 xíu */
-    
+    font-size: 16px;
+    /* Tăng cỡ chữ lên chút cho rõ */
+    letter-spacing: 0.5px;
+    /* Giãn khoảng cách giữa các chữ cái ra 1 xíu */
+
     /* QUAN TRỌNG: Tạo khoảng cách với bên dưới */
-    margin-bottom: 20px;   
-    padding-bottom: 5px;   
+    margin-bottom: 20px;
+    padding-bottom: 5px;
     display: inline-block;
-    border-bottom: 1px solid transparent; /* Giữ chỗ để không bị giật layout */
+    border-bottom: 1px solid transparent;
+    /* Giữ chỗ để không bị giật layout */
 }
 
 /* Chỉnh thêm phần nội dung bên dưới cho thoáng */
 .footer-content {
-    margin-top: 10px; /* Đẩy nội dung xuống thêm 1 chút */
+    margin-top: 10px;
+    /* Đẩy nội dung xuống thêm 1 chút */
 }
 
 /* Nếu muốn dòng 'Thời gian mở cửa' cũng cách ra */
 .footer-title.small-title {
-    margin-top: 25px; /* Cách xa số điện thoại ở trên */
+    margin-top: 25px;
+    /* Cách xa số điện thoại ở trên */
     margin-bottom: 10px;
     font-size: 15px;
 }
@@ -227,7 +236,8 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #0a7a2f; /* Màu xanh nút chat */
+    background-color: #0a7a2f;
+    /* Màu xanh nút chat */
     color: white;
     width: 60px;
     height: 60px;
@@ -236,7 +246,7 @@
     justify-content: center;
     align-items: center;
     font-size: 30px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     z-index: 9999;
     transition: transform 0.3s;
@@ -245,6 +255,423 @@
 .floating-btn:hover {
     transform: scale(1.1);
 }
-.mb-2{
+
+.mb-2 {
     font-size: 17px;
+}
+
+/* --------------------------Banner ----------------------------- */
+.banner-img {
+    width: 100% !important;
+    /* Chiều rộng luôn full màn hình */
+    height: 450px;
+    /* Chiều cao cố định là 500px */
+    object-fit: cover;
+    /* Giữ tỷ lệ ảnh, cắt phần thừa, KHÔNG bị méo */
+    object-position: center;
+    /* Luôn lấy trung tâm bức ảnh */
+}
+
+/* Tùy chỉnh cho điện thoại (Màn hình nhỏ thì giảm chiều cao xuống cho đỡ choán chỗ) */
+@media (max-width: 768px) {
+    .banner-img {
+        height: 250px;
+        /* Điện thoại chỉ cần cao 250px là đẹp */
+    }
+}
+
+/* Tăng độ mượt cho carousel */
+.carousel-item {
+    /* 1.5s là thời gian chuyển, ease-in-out giúp chuyển động nhanh ở giữa và chậm dần ở 2 đầu */
+    transition: transform 1.5s ease-in-out;
+}
+
+/* (Tùy chọn) Đảm bảo hiệu ứng mượt cả khi dùng nút next/prev */
+.carousel-fade .active.carousel-item-start,
+.carousel-fade .active.carousel-item-end {
+    transition: opacity 0s 1.5s;
+}
+
+/* 2. CSS BIẾN THANH GẠCH THÀNH CHẤM TRÒN (Mới thêm) */
+.carousel-indicators [data-bs-target] {
+    width: 12px !important;
+    /* Chiều rộng chấm */
+    height: 12px !important;
+    /* Chiều cao chấm */
+    border-radius: 50%;
+    /* Bo tròn 100% */
+    background-color: #fff;
+    /* Màu trắng */
+    border: 2px solid transparent;
+    /* Viền trong suốt để click dễ hơn */
+    margin: 0 6px;
+    /* Khoảng cách giữa các chấm */
+    opacity: 0.5;
+    /* Độ mờ khi chưa chọn */
+}
+
+/* Khi chấm được chọn (Active) */
+.carousel-indicators .active {
+    opacity: 1;
+    /* Sáng rõ */
+    background-color: #fff;
+    transform: scale(1.2);
+    /* Phóng to nhẹ lên một chút cho đẹp */
+}
+
+/* -----------------------------------Flash Sale------------------------------------  */
+/* --- CSS TÙY CHỈNH --- */
+
+/* 1. Phần Header Flash Sale */
+.flash-header {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.title-text {
+    color: #198754;
+    /* Màu xanh lá chủ đạo */
+    font-weight: 700;
+    margin: 0;
+    font-size: 24px;
+}
+
+.countdown-box {
+    background-color: #e64a19;
+    /* Màu cam đỏ */
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 4px;
+    display: inline-block;
+    font-size: 16px;
+}
+
+/* 2. Phần Card Sản Phẩm */
+.product-card {
+    border: 2px solid #198754;
+    /* Viền xanh lá đậm */
+    border-radius: 0;
+    /* Vuông góc */
+    height: 100%;
+    transition: box-shadow 0.3s;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.product-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-wrapper {
+    height: 240px;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-img-top {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+    /* Giữ ảnh không méo */
+}
+
+.card-body-custom {
+    padding: 10px;
+    text-align: center;
+}
+
+.price-new {
+    color: #d32f2f;
+    /* Đỏ */
+    font-weight: bold;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.price-old {
+    color: #999;
+    /* Xám */
+    text-decoration: line-through;
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+.product-title {
+    font-size: 14px;
+    color: #198754;
+    font-weight: 600;
+    margin-top: 5px;
+    /* Giới hạn tên 2 dòng */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 40px;
+    text-decoration: none;
+}
+
+.product-title:hover {
+    color: #0f5132;
+}
+
+/* 3. Nút bấm ở dưới cùng (Full width) */
+.card-footer-custom {
+    display: flex;
+    border-top: 1px solid #198754;
+}
+
+.btn-action {
+    width: 100%;
+    /* Full chiều rộng 100% */
+    background-color: #198754;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-weight: bold;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background 0.3s;
+    display: block;
+}
+
+.btn-action:hover {
+    background-color: #146c43;
+    color: white;
+}
+
+/* 4. Mũi tên điều hướng Slider (Mới thêm) */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 40px;
+    height: 40px;
+    background-color: #198754;
+    /* Nền xanh */
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    /* Căn giữa chiều dọc */
+    opacity: 0.8;
+    z-index: 10;
+    /* Đè lên trên để dễ bấm */
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    opacity: 1;
+    background-color: #146c43;
+}
+
+/* Đẩy mũi tên ra ngoài khung một chút */
+.carousel-control-prev {
+    left: -50px;
+}
+
+.carousel-control-next {
+    right: -50px;
+}
+
+/* Responsive: Trên điện thoại thì thu mũi tên vào trong */
+@media (max-width: 768px) {
+    .carousel-control-prev {
+        left: -15px;
+    }
+
+    .carousel-control-next {
+        right: -15px;
+    }
+}
+
+/* -------------------------------------------------------------------- */
+
+/* -------------------------- Content ----------------------------- */
+/* --- CSS CHUNG --- */
+body {
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+/* --- CSS CHO LƯỚI 5 CỘT --- */
+@media (min-width: 992px) {
+    .col-lg-custom-5 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
+
+/* --- CỘT TRÁI (SIDEBAR) --- */
+.sidebar-full-height {
+    height: 100%;
+    /* Vẫn giữ chiều cao bằng cột phải */
+    border: 1px solid #eee;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    background-color: #155d27;
+    color: white;
+    padding: 12px 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 16px;
+    text-align: center;
+}
+
+/* [ĐÃ SỬA] Bỏ position: sticky để menu đứng yên */
+.sidebar-menu-static {
+    /* Không còn sticky nữa */
+    width: 100%;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.sidebar-menu li a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    font-size: 15px;
+    transition: all 0.3s;
+}
+
+.sidebar-menu li a:hover {
+    color: #155d27;
+    background-color: #f9f9f9;
+    padding-left: 20px;
+}
+
+/* --- PRODUCT CARD --- */
+.product-box {
+    border: 1px solid #1a5d2e; /* Viền xanh lá cây đậm */
+    background-color: #fff;
+    
+    /* QUAN TRỌNG: Padding này tạo khoảng trắng xung quanh nội dung bên trong.
+       Nó khiến nút và tên sản phẩm không bị dính sát vào viền xanh */
+    padding: 10px; 
+    
+    /* Các thuộc tính để canh chỉnh chiều cao đẹp hơn */
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Đẩy nội dung ra xa nhau, nút nằm đáy */
+}
+
+/* 2. Ảnh sản phẩm */
+.product-img-wrapper {
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.product-img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 10px;
+    text-align: left;
+}
+
+/* 3. Tên sản phẩm (Có khung viền riêng như hình mẫu) */
+.product-name {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    line-height: 1.4;
+    text-align: center;
+    
+    /* Tạo viền khung cho tên sản phẩm */
+    /* border: 1px solid #1a5d2e; */
+    padding: 5px;
+    margin-bottom: 5px;
+    
+    /* Cắt bớt nếu tên quá dài (tùy chọn) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* 4. Giá tiền */
+.product-price {
+    color: #d0021b; /* Màu đỏ */
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* 5. Nút Thêm vào giỏ */
+.btn-add-cart {
+    background-color: #1a5d2e; /* Nền xanh */
+    color: #fff;
+    
+    /* Vì thẻ <a> là inline nên phải đổi thành block để chỉnh width/padding */
+    display: block; 
+    width: 100%;
+    
+    padding: 8px 0;
+    text-align: center;
+    text-decoration: none; /* Bỏ gạch chân */
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 13px;
+    transition: all 0.3s;
+}
+
+.btn-add-cart:hover {
+    background-color: #144a24; /* Đậm hơn khi di chuột */
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .sidebar-area {
+        margin-bottom: 30px;
+    }
+}
+
+/* CSS cho nút Xem tất cả ở đáy sidebar */
+.sidebar-view-all {
+    margin-top: auto;
+    /* Lệnh quan trọng: Đẩy nút xuống đáy cùng */
+    display: block;
+    /* Để thẻ a chiếm hết chiều rộng */
+    padding: 12px;
+    text-align: center;
+    background-color: #f8f9fa;
+    /* Màu nền xám nhạt cho khác biệt với menu */
+    color: #155d27;
+    /* Chữ xanh */
+    font-weight: bold;
+    border-top: 1px solid #eee;
+    /* Kẻ 1 đường ngăn cách với menu */
+    transition: all 0.3s;
+}
+
+.sidebar-view-all:hover {
+    background-color: #155d27;
+    /* Hover vào thì nền xanh */
+    color: #fff;
+    /* Chữ trắng */
+    text-decoration: none;
 }
