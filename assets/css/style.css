@@ -30,6 +30,163 @@
     border: none;
 }
 
+.form-control {
+    width: 30% !important;
+}
+
+.category-btn {
+
+    background: #166534;
+
+    color: #fff;
+
+    font-weight: bold;
+
+    border: none;
+
+}
+
+
+
+.offcanvas-header {
+
+    background: #166534;
+
+    color: #fff;
+
+}
+
+
+
+.list-group-item {
+
+    font-weight: 500;
+
+    text-transform: uppercase;
+
+}
+
+
+
+/* ===== DESKTOP DROPDOWN MENU ===== */
+
+.cat-wrapper {
+
+    position: relative;
+
+}
+
+
+
+.cat-btn-desktop {
+
+    background: transparent;
+
+    border: none;
+
+    font-weight: 600;
+
+    color: #1f7a2f;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+}
+
+
+
+.cat-dropdown-desktop {
+
+    display: none;
+
+    position: absolute;
+
+    top: 100%;
+
+    left: 0;
+
+    width: 300px;
+
+    background: #fff;
+
+    border: 1px solid #e5e5e5;
+
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+    z-index: 9999;
+
+}
+
+
+
+.cat-wrapper:hover .cat-dropdown-desktop {
+
+    display: block;
+
+}
+
+
+
+.cat-title {
+
+    padding: 10px 15px;
+
+    font-weight: bold;
+
+    color: #1f7a2f;
+
+    border-bottom: 1px solid #eee;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+.cat-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f1f1;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+
+
+.cat-item:hover {
+
+    background: #f8f9fa;
+
+}
+
+/* --------------- */
+/* CSS Bổ sung để chỉnh kích thước trên mobile cho đẹp */
+        @media (max-width: 768px) {
+            .logo img {
+                max-height: 35px; /* Thu nhỏ logo chút xíu trên mobile */
+                width: auto;
+            }
+            .search-mobile input {
+                font-size: 13px; /* Chữ nhập bé lại chút cho vừa */
+                padding-left: 10px;
+                padding-right: 5px;
+            }
+            .search-mobile .btn {
+                padding: 0 10px; /* Nút bấm gọn lại */
+            }
+            .icon-group i {
+                font-size: 1.1rem; /* Icon bé lại chút */
+            }
+        }
+
 /* ===== MENU ===== */
 
 .navbar {
@@ -561,18 +718,20 @@ a {
 
 /* --- PRODUCT CARD --- */
 .product-box {
-    border: 1px solid #1a5d2e; /* Viền xanh lá cây đậm */
+    border: 1px solid #1a5d2e;
+    /* Viền xanh lá cây đậm */
     background-color: #fff;
-    
+
     /* QUAN TRỌNG: Padding này tạo khoảng trắng xung quanh nội dung bên trong.
        Nó khiến nút và tên sản phẩm không bị dính sát vào viền xanh */
-    padding: 10px; 
-    
+    padding: 10px;
+
     /* Các thuộc tính để canh chỉnh chiều cao đẹp hơn */
-    height: 100%; 
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Đẩy nội dung ra xa nhau, nút nằm đáy */
+    justify-content: space-between;
+    /* Đẩy nội dung ra xa nhau, nút nằm đáy */
 }
 
 /* 2. Ảnh sản phẩm */
@@ -600,12 +759,12 @@ a {
     color: #333;
     line-height: 1.4;
     text-align: center;
-    
+
     /* Tạo viền khung cho tên sản phẩm */
     /* border: 1px solid #1a5d2e; */
     padding: 5px;
     margin-bottom: 5px;
-    
+
     /* Cắt bớt nếu tên quá dài (tùy chọn) */
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -615,7 +774,8 @@ a {
 
 /* 4. Giá tiền */
 .product-price {
-    color: #d0021b; /* Màu đỏ */
+    color: #d0021b;
+    /* Màu đỏ */
     font-weight: bold;
     font-size: 16px;
     margin-bottom: 10px;
@@ -623,16 +783,18 @@ a {
 
 /* 5. Nút Thêm vào giỏ */
 .btn-add-cart {
-    background-color: #1a5d2e; /* Nền xanh */
+    background-color: #1a5d2e;
+    /* Nền xanh */
     color: #fff;
-    
+
     /* Vì thẻ <a> là inline nên phải đổi thành block để chỉnh width/padding */
-    display: block; 
+    display: block;
     width: 100%;
-    
+
     padding: 8px 0;
     text-align: center;
-    text-decoration: none; /* Bỏ gạch chân */
+    text-decoration: none;
+    /* Bỏ gạch chân */
     text-transform: uppercase;
     font-weight: bold;
     font-size: 13px;
@@ -640,7 +802,8 @@ a {
 }
 
 .btn-add-cart:hover {
-    background-color: #144a24; /* Đậm hơn khi di chuột */
+    background-color: #144a24;
+    /* Đậm hơn khi di chuột */
     color: #fff;
 }
 
@@ -674,4 +837,245 @@ a {
     color: #fff;
     /* Chữ trắng */
     text-decoration: none;
+}
+
+/* ------------------------------------------------------------- */
+
+/* ---------------------------introduce------------------------------ */
+
+/* Container chung (nếu chưa có thì thêm vào) */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Tiêu đề trang */
+.page-header h1 {
+    color: #1a5d2e;
+    /* Màu xanh thương hiệu */
+    text-transform: uppercase;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+/* Khung nội dung bài viết */
+.content-detail {
+    font-family: Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+    margin-bottom: 50px;
+    /* Khoảng cách với footer */
+}
+
+/* Phần Video */
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    /* Tỉ lệ khung hình 16:9 */
+    height: 0;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Phần văn bản */
+.intro-text p {
+    margin-bottom: 15px;
+    text-align: justify;
+    /* Căn đều 2 bên cho đẹp */
+    font-size: 16px;
+}
+
+/* Phần danh sách ảnh */
+.intro-gallery figure {
+    margin: 0 0 30px 0;
+    /* Khoảng cách giữa các ảnh */
+    text-align: center;
+    /* Căn giữa ảnh */
+}
+
+.intro-gallery img {
+    max-width: 100%;
+    /* Ảnh không bao giờ tràn ra khỏi khung */
+    height: auto;
+    /* Giữ tỉ lệ ảnh */
+    display: inline-block;
+    border-radius: 4px;
+    /* Bo góc nhẹ nếu thích */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /* Đổ bóng nhẹ cho ảnh nổi bật */
+}
+
+.intro-gallery figcaption {
+    margin-top: 10px;
+    font-style: italic;
+    color: #666;
+    font-size: 14px;
+}
+
+/* --- STYLE CHO BANNER GIỚI THIỆU --- */
+
+/* 1. Thanh Breadcrumb (Nền xám) */
+.breadcrumb-bar {
+    background-color: #f5f5f5;
+    /* Màu xám nhạt nền */
+    padding: 10px 0;
+    /* Khoảng cách trên dưới */
+    font-size: 14px;
+    /* Cỡ chữ vừa phải */
+    margin-bottom: 0;
+    /* Dính liền với ảnh bên dưới */
+}
+
+/* Danh sách các link */
+.breadcrumb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    /* Xếp hàng ngang */
+    align-items: center;
+}
+
+.breadcrumb-list li {
+    display: inline-block;
+}
+
+/* Link Trang chủ */
+.breadcrumb-list li a {
+    text-decoration: none;
+    color: #007bff;
+    /* Màu xanh dương nhạt giống link mặc định */
+    transition: color 0.2s;
+}
+
+.breadcrumb-list li a:hover {
+    color: #1a5d2e;
+    /* Hover vào đổi sang màu xanh thương hiệu */
+}
+
+/* Dấu gạch chéo ngăn cách */
+.breadcrumb-list li.separator {
+    margin: 0 8px;
+    color: #999;
+}
+
+/* Chữ Giới thiệu (Trang hiện tại) */
+.breadcrumb-list li.current {
+    color: #333;
+    /* Màu đen xám */
+    font-weight: normal;
+}
+
+/* 2. Ảnh Banner */
+.banner-image-box {
+    width: 100%;
+    overflow: hidden;
+    /* Nếu muốn banner có chiều cao cố định và cắt ảnh dư, hãy bỏ comment dòng dưới */
+    /* max-height: 500px; */
+}
+
+.img-fluid-banner {
+    width: 100%;
+    /* Chiếm hết chiều ngang màn hình */
+    height: auto;
+    /* Chiều cao tự động theo tỉ lệ */
+    display: block;
+    /* Xóa khoảng trắng thừa dưới chân ảnh */
+    object-fit: cover;
+    /* Đảm bảo ảnh đẹp nếu set chiều cao cố định */
+}
+
+/* Ghi đè màu xanh của Bootstrap cho giống web gốc */
+.breadcrumb-item a.text-success {
+    color: #1a5d2e !important;
+    /* Màu xanh đậm thương hiệu */
+}
+
+.breadcrumb-item a.text-success:hover {
+    text-decoration: underline !important;
+    /* Di chuột vào thì hiện gạch chân */
+}
+
+/* ----------------------------------------------------------------- */
+
+/* -----------------------------------content introdule--------------------------  */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #fff;
+}
+
+.intro-section {
+    padding: 40px 0;
+    text-align: center;
+    /* Căn giữa toàn bộ nội dung */
+}
+
+/* Tiêu đề chính màu xanh */
+.intro-title {
+    color: #4da53c;
+    /* Màu xanh lá tươi giống trong ảnh */
+    font-weight: 400;
+    /* Font mảnh vừa phải */
+    text-transform: uppercase;
+    font-size: 30px;
+    margin-bottom: 20px;
+}
+
+/* Đoạn văn mô tả */
+.intro-text {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    max-width: 90%;
+    /* Giới hạn chiều rộng để dễ đọc */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tô đậm các từ khóa quan trọng */
+.highlight-bold {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Khung Video Youtube responsive */
+.video-container {
+    max-width: 90%;
+    margin: 0 auto 50px auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    /* Đổ bóng nhẹ cho đẹp */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ratio-16x9 {
+    --bs-aspect-ratio: 56.25%;
+    /* Tỷ lệ khung hình 16:9 */
+}
+
+/* Bản đồ */
+.map-section {
+    margin-top: 50px;
+}
+
+.team-section {
+    margin: 8%;
 }
