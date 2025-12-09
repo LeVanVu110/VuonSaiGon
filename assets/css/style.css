@@ -1,0 +1,250 @@
+/* ===== HEADER ===== */
+
+.logo img {
+    height: 65px;
+    max-width: 100%;
+}
+
+.search-bar .input-group {
+    /* border-radius: 25px; */
+    overflow: hidden;
+    border: 1px solid #ddd;
+    background: #fff;
+}
+
+.search-bar select {
+    border: none;
+    padding-left: 20px;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+}
+
+.search-bar button {
+    background-color: #0a7a2f;
+    color: #fff;
+    font-weight: 600;
+    padding: 8px 25px;
+    border: none;
+}
+
+/* ===== MENU ===== */
+
+.navbar {
+    border-top: 1px solid #e5e5e5;
+}
+
+.menu-link {
+    color: #1b7d2f !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.menu-link:hover {
+    text-decoration: none;
+    color: #145c23 !important;
+}
+
+/* Chỉnh lại menu link một chút để căn giữa theo chiều dọc */
+.navbar-nav .nav-link {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* ===== HOTLINE ===== */
+
+.phone-number {
+    color: red;
+    font-weight: bold;
+}
+
+/* ===== ICON ===== */
+
+.icon-badge {
+    background: #1b7d2f;
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    position: absolute;
+    top: -6px;
+    right: -8px;
+}
+
+/* ===== CATEGORY DROPDOWN (HOVER - LOGIC CHUẨN) ===== */
+
+/* Xóa mũi tên tam giác mặc định của Bootstrap */
+.no-caret::after {
+    display: none !important;
+}
+
+/* Style cho các item trong menu */
+.dropdown-item {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    border-bottom: 1px dashed #eee;
+    position: relative; /* Quan trọng để định vị menu con */
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #1b7d2f;
+}
+
+/* Mũi tên nhỏ chỉ sang phải */
+.bi-chevron-right {
+    font-size: 10px;
+}
+
+/* --- LOGIC HOVER (CHỈ ÁP DỤNG TRÊN MÁY TÍNH) --- */
+@media (min-width: 992px) {
+    
+    /* 1. Khi hover vào nút DANH MỤC -> Chỉ hiện menu cấp 1 */
+    .category-dropdown:hover > .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+
+    /* 2. Khi hover vào 1 mục trong menu (ví dụ Chậu cây) -> Chỉ hiện menu cấp 2 của mục đó */
+    .dropend:hover > .dropdown-menu {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 100%;       /* Đẩy sang phải 100% */
+        margin-top: -5px; /* Chỉnh lại khớp vị trí */
+        margin-left: 0px; 
+    }
+}
+
+/* Ẩn mặc định các menu con để tránh lỗi hiển thị chồng chéo */
+.dropend > .dropdown-menu {
+    display: none;
+}
+
+
+/* ===== RESPONSIVE ===== */
+
+/* Tablet */
+@media (max-width: 992px) {
+    .logo img {
+        height: 55px;
+    }
+
+    .search-bar {
+        margin-top: 10px;
+    }
+
+    .text-end {
+        text-align: center !important;
+        margin-top: 10px;
+    }
+}
+
+/* Phone */
+@media (max-width: 576px) {
+    .logo {
+        text-align: center;
+    }
+
+    .search-bar .input-group {
+        flex-direction: column;
+    }
+
+    .search-bar select,
+    .search-bar input,
+    .search-bar button {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .phone-number {
+        display: block;
+        margin: 5px 0;
+    }
+
+    .navbar-nav {
+        text-align: center;
+    }
+}
+/* ===== FOOTER ===== */
+
+.footer-area {
+    font-size: 14px;
+    color: #333;
+}
+
+.footer-title {
+    color: #5da503; 
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 16px;       /* Tăng cỡ chữ lên chút cho rõ */
+    letter-spacing: 0.5px; /* Giãn khoảng cách giữa các chữ cái ra 1 xíu */
+    
+    /* QUAN TRỌNG: Tạo khoảng cách với bên dưới */
+    margin-bottom: 20px;   
+    padding-bottom: 5px;   
+    display: inline-block;
+    border-bottom: 1px solid transparent; /* Giữ chỗ để không bị giật layout */
+}
+
+/* Chỉnh thêm phần nội dung bên dưới cho thoáng */
+.footer-content {
+    margin-top: 10px; /* Đẩy nội dung xuống thêm 1 chút */
+}
+
+/* Nếu muốn dòng 'Thời gian mở cửa' cũng cách ra */
+.footer-title.small-title {
+    margin-top: 25px; /* Cách xa số điện thoại ở trên */
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+/* Số điện thoại to màu đỏ */
+.hotline {
+    color: red;
+    font-size: 20px;
+    /* font-weight: bold; */
+    line-height: 1.2;
+}
+
+/* Các link mạng xã hội */
+.social-links a:hover {
+    opacity: 0.8;
+}
+
+/* Nút chat nổi góc phải màn hình */
+.floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #0a7a2f; /* Màu xanh nút chat */
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 9999;
+    transition: transform 0.3s;
+}
+
+.floating-btn:hover {
+    transform: scale(1.1);
+}
+.mb-2{
+    font-size: 17px;
+}
