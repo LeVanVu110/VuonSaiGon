@@ -106,7 +106,7 @@
             </div>
             <!-- Menu links -->
             <a href="introduce.php" class="fw-bold text-success text-decoration-none">GIỚI THIỆU</a>
-            <a href="#" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
+            <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
             <a href="#" class="fw-bold text-success text-decoration-none">VIDEO</a>
             <a href="#" class="fw-bold text-success text-decoration-none">BLOG</a>
             <a href="#" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
