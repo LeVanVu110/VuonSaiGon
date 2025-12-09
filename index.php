@@ -16,10 +16,6 @@ include 'includes/home/content_3.php';
 include 'includes/home/content_4.php';
 include 'includes/home/content_5.php';
 include 'includes/home/map.php';
-
-
-
-
 ?>
 
 <?php include 'includes/footer.php'; ?>
