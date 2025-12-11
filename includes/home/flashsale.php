@@ -7,7 +7,7 @@
 $productModel = new Product(); 
 
 // 2. Lấy TẤT CẢ sản phẩm từ DB bằng hàm getAllProduct()
-$allProducts = $productModel->getAllProduct(); 
+$allProducts = $productModel->getAllProductSale(); 
 
 // 3. Gọi hàm tiện ích qua tên class để chia sản phẩm thành các slide (6 sản phẩm/slide)
 $productSlides = Product::chunkProductsForCarousel($allProducts, 6);
