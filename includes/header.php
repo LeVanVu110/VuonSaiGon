@@ -89,6 +89,8 @@
  include "Models/db.php";
  include "Models/banner.php";
 include 'models/product.php'; // Nhúng file model vừa tạo
+include 'models/categories.php'; // Nhúng file model vừa tạo
+
  
 
 ?>
