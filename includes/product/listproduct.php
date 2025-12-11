@@ -274,22 +274,25 @@
 
         /* Dù chọn List hay Grid, trên mobile đều hiển thị dạng dọc (Grid nhỏ) */
         #view-list:checked~.main-content #product-container .product-card {
-            flex-direction: row;
-            flex-wrap: wrap;
-            padding: 10px;
-        }
+        flex-direction: row; 
+        flex-wrap: wrap; /* Bỏ dòng này nếu bạn muốn mọi thứ nằm trên 1 hàng duy nhất */
+        padding: 10px;
+    }
+    /* ... */
+    #view-list:checked~.main-content #product-container .product-img-wrapper {
+        width: 100px !important;
+        height: 100px !important;
+        margin-right: 15px;
+    }
 
-        /* Reset ảnh mobile */
-        #view-list:checked~.main-content #product-container .product-img-wrapper {
-            width: 100px !important;
-            height: 100px !important;
-            margin-right: 15px;
-        }
-
-        #view-list:checked~.main-content #product-container .card-body {
-            width: calc(100% - 115px);
-            padding-right: 0;
-        }
+    #view-list:checked~.main-content #product-container .card-body {
+        width: calc(100% - 115px);
+        padding-right: 0;
+        /* THÊM: Sử dụng flex để quản lý Tên, Giá và Nút */
+        display: flex;
+        flex-direction: column; /* Xếp Tên, Giá, Nút theo cột */
+        justify-content: space-between; /* Đẩy Nút xuống đáy nếu có đủ chỗ */
+    }
 
         #view-list:checked~.main-content #product-container .product-title {
             font-size: 0.95rem;
@@ -297,22 +300,20 @@
 
         /* Giá & Nút về vị trí tự nhiên */
         #view-list:checked~.main-content #product-container .product-price {
-            position: static;
-            font-size: 1rem;
-            margin-top: 5px;
-            text-align: left;
-            width: auto;
-        }
+        position: static;
+        font-size: 1rem;
+        margin-top: 5px;
+        text-align: left;
+        width: auto;
+    }
 
         #view-list:checked~.main-content #product-container .card-footer {
-            position: static;
-            width: 100%;
-            /* Footer chiếm hết chiều ngang */
-            margin-top: 5px;
-            background: transparent;
-            border: none;
-            padding: 0;
-        }
+        /* Đã bị đẩy xuống cuối cột body do flex-direction: column */
+        position: static;
+        width: 100%;
+        margin-top: 5px;
+        /* Thay đổi quan trọng: Để nút nằm ngang với ảnh, footer phải được bao trong card-body */
+    }
 
         /* --- SỬA LỖI NÚT BẤM MOBILE --- */
         /* Ép nút luôn rộng 100% trên mobile để bằng nhau tăm tắp */
@@ -347,6 +348,18 @@
         flex-shrink: 0;
         margin-left: 10px;
     }
+    /* Trong style.css (hoặc thẻ <style> trong listproduct.php) */
+
+/* Mặc định mũi tên nằm bên phải (bi-chevron-right) */
+.category-list a .collapse-icon {
+    transition: transform 0.3s ease;
+    transform: rotate(0deg); /* Bắt đầu ở bên phải */
+}
+
+/* Khi mở (aria-expanded="true"), xoay icon 90 độ xuống */
+.category-list a[aria-expanded="true"] .collapse-icon {
+    transform: rotate(90deg); 
+}
     </style>
 </head>
 <?php
@@ -456,10 +469,10 @@ $totalProductsInDB = $productModels->getAllCountProducts();
                 <div class="col-lg-9 col-12">
 
                     <div class="product-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <button class="btn btn-outline-success d-lg-none btn-sm" type="button"
+                        <!-- <button class="btn btn-outline-success d-lg-none btn-sm" type="button"
                             data-bs-toggle="offcanvas" data-bs-target="#mobileFilter">
                             <i class="bi bi-funnel"></i> Danh mục
-                        </button>
+                        </button> -->
 
                         <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản phẩm</div>
 
@@ -507,7 +520,7 @@ $totalProductsInDB = $productModels->getAllCountProducts();
                         </div>
                     </div>
 
-                    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3" id="product-container">
+                    <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3" id="product-container">
                         <?php   
                             foreach($productsOnPage as $value){
                         ?>
