@@ -71,7 +71,7 @@
         <div class="row align-items-center py-2">
 
             <div class="col-2 col-lg-2 logo text-center text-md-start px-1 px-md-3 ps-lg-5">
-                <a href="#">
+                <a href="index.php">
                     <img src="https://vuonsaigon.vn/wp-content/uploads/2020/11/Logo-vsg-web.png" height="40" class="img-fluid">
                 </a>
             </div>
