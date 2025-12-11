@@ -1,6 +1,5 @@
 <?php
-include 'config/db.php';
-include 'models/product.php'; // Nhúng file model vừa tạo
+// include 'config/db.php';
 include 'includes/header.php'; 
 include 'includes/contact/contact.php'; 
 
