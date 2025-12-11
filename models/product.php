@@ -14,16 +14,40 @@ class Product extends Db
      * Lấy TẤT CẢ sản phẩm.
      * @return array Danh sách sản phẩm (MYSQLI_ASSOC)
      */
-    public function getAllProduct()
+    public function getAllCountProducts()
+    {
+       $sql = self::$connection->prepare("SELECT Count(*) FROM products");
+        $sql->execute(); //return an object
+        $banners = array();
+        $banners = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $banners; //return an array
+    }
+    public function getAllProduct($sortType = 'default')
     {
         $conn = self::$connection;
-        if ($conn === null) return [];
+    if ($conn === null) return [];
 
-        // Sử dụng Prepared Statement (tốt cho bảo mật, dù không có tham số bên ngoài)
-        $sql = $conn->prepare("SELECT * FROM products");
-        $sql->execute(); 
-        $products = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
-        return $products; 
+    $orderBy = "";
+    switch ($sortType) {
+        case 'price_asc':
+            $orderBy = "ORDER BY price ASC"; // Thay 'price' bằng tên cột giá thực tế của bạn
+            break;
+        case 'price_desc':
+            $orderBy = "ORDER BY price DESC";
+            break;
+        case 'popularity':
+            $orderBy = "ORDER BY quantity DESC"; // Giả sử bạn có cột để đo lường độ phổ biến
+            break;
+        case 'default':
+        default:
+            $orderBy = "ORDER BY id DESC"; // Sắp xếp mặc định theo ID mới nhất hoặc thứ tự bạn muốn
+            break;
+    }
+
+    $sql = $conn->prepare("SELECT * FROM products " . $orderBy);
+    $sql->execute();
+    $products = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+    return $products;
     }
     
     /**

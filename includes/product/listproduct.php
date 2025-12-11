@@ -324,67 +324,104 @@
             padding: 6px 0;
         }
     }
-    /* Thêm vào thẻ <style> */
-.category-list .collapse-icon {
-    transition: transform 0.3s ease;
-}
-.category-list a[aria-expanded="true"] .collapse-icon {
-    transform: rotate(90deg); /* Xoay mũi tên khi menu mở */
-}
-/* Đảm bảo mũi tên nằm ở bên phải cùng (như trong ảnh bạn gửi) */
-.category-list a {
-    justify-content: space-between;
-}
 
-/* Quan trọng: Sửa lỗi hiển thị mũi tên cho menu cha không đóng được */
-/* Mặc định mũi tên nằm bên phải */
-.category-list a .bi-chevron-down, 
-.category-list a .bi-chevron-right {
-    flex-shrink: 0;
-    margin-left: 10px;
-}
-    
+    /* Thêm vào thẻ <style> */
+    .category-list .collapse-icon {
+        transition: transform 0.3s ease;
+    }
+
+    .category-list a[aria-expanded="true"] .collapse-icon {
+        transform: rotate(90deg);
+        /* Xoay mũi tên khi menu mở */
+    }
+
+    /* Đảm bảo mũi tên nằm ở bên phải cùng (như trong ảnh bạn gửi) */
+    .category-list a {
+        justify-content: space-between;
+    }
+
+    /* Quan trọng: Sửa lỗi hiển thị mũi tên cho menu cha không đóng được */
+    /* Mặc định mũi tên nằm bên phải */
+    .category-list a .bi-chevron-down,
+    .category-list a .bi-chevron-right {
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
     </style>
 </head>
 <?php
-$productModels = new Product(); 
 
-// 2. Lấy TẤT CẢ sản phẩm từ DB bằng hàm getAllProduct()
-$allProducts = $productModels->getAllProduct(); 
+// 1. Khởi tạo Models
+$productModels = new Product();
+$categories = new Categories();
 
 
+// ===========================================
+// 2. Xử lý Sắp xếp và Lấy Sản phẩm
+// ===========================================
 
-// 2. Cấu hình phân trang
+// Lấy tùy chọn sắp xếp từ URL, mặc định là 'default'
+$sortOption = isset($_GET['sort']) ? $_GET['sort'] : 'default'; 
+$viewOption = isset($_GET['view']) ? $_GET['view'] : 'grid';
+
+// Lấy TẤT CẢ sản phẩm đã được sắp xếp từ DB
+// PHẢI SỬA HÀM getAllProduct() để chấp nhận $sortOption như đã hướng dẫn trước đó
+$allProducts = $productModels->getAllProduct($sortOption); 
+
+// ===========================================
+// 3. Xử lý Phân trang (PAGINATION)
+// ===========================================
+
+// Cấu hình phân trang
 $productsPerPage = 12; // Số sản phẩm hiển thị trên 1 trang
-$totalProducts = count($allProducts); // Tổng số sản phẩm
+$totalProducts = count($allProducts); // Tổng số sản phẩm đã sắp xếp
 $totalPages = ceil($totalProducts / $productsPerPage); // Tổng số trang cần có
 
-// 3. Xác định Trang Hiện Tại
+// Xác định Trang Hiện Tại
 // Lấy giá trị 'page' từ URL, nếu không có thì mặc định là 1.
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
 
 // Đảm bảo trang hiện tại nằm trong giới hạn (từ 1 đến $totalPages)
 $currentPage = max(1, min($currentPage, $totalPages));
 
-// 4. Tính toán offset (vị trí bắt đầu) và slice mảng
+// Tính toán offset (vị trí bắt đầu) và slice mảng
 $offset = ($currentPage - 1) * $productsPerPage;
 
-// Lấy danh sách sản phẩm cho trang hiện tại
-// Trong môi trường thực tế, BẠN NÊN dùng LIMIT/OFFSET trong SQL
+// Lấy danh sách sản phẩm cho trang hiện tại (từ mảng đã được sắp xếp)
 $productsOnPage = array_slice($allProducts, $offset, $productsPerPage);
 
-$categories = new Categories(); 
+// ===========================================
+// 4. Lấy Dữ liệu khác  
+// ===========================================
 
-// 2. Lấy TẤT CẢ sản phẩm từ DB bằng hàm getAllProduct()
-$allcategories = $categories->get_categories_hierarchical(); 
+// Lấy danh mục
+$allcategories = $categories->get_categories_hierarchical();
+// ... [Phần Xác định Trang Hiện Tại và Phân trang (array_slice) vẫn giữ nguyên] ...
+$currentQuery = $_GET; 
+unset($currentQuery['sort']); // Loại bỏ tham số 'sort' hiện tại để không bị trùng
+unset($currentQuery['page']); // Thường loại bỏ tham số 'page' để trở về trang 1 khi sắp xếp mới
+unset($currentQuery['view']); // Loại bỏ 'view'
 
+$hiddenInputs = '';
+foreach ($currentQuery as $key => $value) {
+    // Chỉ thêm các tham số khác vào input ẩn
+    $hiddenInputs .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+}
+
+$currentSortParam = isset($_GET['sort']) ? '&sort=' . htmlspecialchars($_GET['sort']) : '';
+$currentViewParam = isset($_GET['view']) ? '&view=' . htmlspecialchars($_GET['view']) : '';
+$currentViewParam = '&view=' . htmlspecialchars($viewOption);
+$currentUrlParams = $currentSortParam . $currentViewParam;
+$totalProductsInDB = $productModels->getAllCountProducts();
 ?>
 
 
 <body>
 
-    <input type="radio" name="view-switch" id="view-grid" checked hidden>
-    <input type="radio" name="view-switch" id="view-list" hidden>
+    <input type="radio" name="view-switch" id="view-grid"
+        <?php echo ($viewOption === 'grid' || $viewOption === '') ? 'checked' : ''; ?> hidden>
+    <input type="radio" name="view-switch" id="view-list" <?php echo ($viewOption === 'list') ? 'checked' : ''; ?>
+        hidden>
 
     <div class="main-content">
 
@@ -407,12 +444,12 @@ $allcategories = $categories->get_categories_hierarchical();
                     <div class="sidebar-title">DANH MỤC SẢN PHẨM</div>
                     <ul class="category-list">
                         <!-- <li><a href="#">THỦY SINH VÀ CÁ CẢNH</a></li> -->
-                        
+
                         <?php Categories::display_categories_html($allcategories); ?>
-                        
-                        
+
+
                         <?php
-                        ?> 
+                        ?>
                     </ul>
                 </div>
 
@@ -424,16 +461,38 @@ $allcategories = $categories->get_categories_hierarchical();
                             <i class="bi bi-funnel"></i> Danh mục
                         </button>
 
-                        <div class="fw-bold text-secondary d-none d-md-block">652 sản phẩm</div>
+                        <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản phẩm</div>
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
-                            <select class="form-select form-select-sm" style="width: auto;">
-                                <option> Thứ Tự Mặc định</option>
-                                <option> Thứ Tự Theo Mực Đọ Phổ Biến</option>
-                                <option>Giá thấp đến cao</option>
-                                <option>Giá cao đến thấp</option>
-                            </select>
+                            <form method="GET" action="" id="sort-form">
+                                <?php echo $hiddenInputs; ?>
+                                <input type="hidden" name="view" id="current-view-mode"
+                                    value="<?php echo htmlspecialchars($viewOption); ?>">
 
+                                <select name="sort" class="form-select form-select-sm" style="width: auto;"
+                                    onchange="document.getElementById('sort-form').submit()">
+
+                                    <option value="default"
+                                        <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>
+                                        Thứ Tự Mặc định
+                                    </option>
+
+                                    <option value="popularity"
+                                        <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>
+                                        Thứ Tự Theo Mức Độ Phổ Biến
+                                    </option>
+
+                                    <option value="price_asc"
+                                        <?php echo ($sortOption === 'price_asc') ? 'selected' : ''; ?>>
+                                        Giá thấp đến cao
+                                    </option>
+
+                                    <option value="price_desc"
+                                        <?php echo ($sortOption === 'price_desc') ? 'selected' : ''; ?>>
+                                        Giá cao đến thấp
+                                    </option>
+                                </select>
+                            </form>
                             <div class="user-select-none d-flex align-items-center">
                                 <span class="me-1 d-none d-md-inline small text-muted">Xem</span>
                                 <label for="view-grid" class="view-btn-grid cursor-pointer p-1"
@@ -472,28 +531,32 @@ $allcategories = $categories->get_categories_hierarchical();
 
                     </div>
 
+                    <?php if ($totalPages > 1): ?>
                     <nav class="mt-4">
                         <ul class="pagination justify-content-center">
 
                             <?php $prevPage = $currentPage - 1; ?>
                             <li class="page-item <?= ($currentPage <= 1) ? 'disabled' : '' ?>">
-                                <a class="page-link text-success" href="?page=<?= $prevPage ?>" tabindex="-1">Trước</a>
+                                <a class="page-link text-success" href="?page=<?= $prevPage ?><?= $currentUrlParams ?>"
+                                    tabindex="-1">Trước</a>
                             </li>
 
                             <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                             <li class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
                                 <?php $linkClass = ($i == $currentPage) ? 'bg-success border-success' : 'text-success'; ?>
-                                <a class="page-link <?= $linkClass ?>" href="?page=<?= $i ?>"><?= $i ?></a>
+                                <a class="page-link <?= $linkClass ?>"
+                                    href="?page=<?= $i ?><?= $currentUrlParams ?>"><?= $i ?></a>
                             </li>
                             <?php endfor; ?>
 
                             <?php $nextPage = $currentPage + 1; ?>
                             <li class="page-item <?= ($currentPage >= $totalPages) ? 'disabled' : '' ?>">
-                                <a class="page-link text-success" href="?page=<?= $nextPage ?>">Sau</a>
+                                <a class="page-link text-success"
+                                    href="?page=<?= $nextPage ?><?= $currentUrlParams ?>">Sau</a>
                             </li>
-
                         </ul>
                     </nav>
+                    <?php endif; ?>
 
                 </div>
             </div>
@@ -521,5 +584,54 @@ $allcategories = $categories->get_categories_hierarchical();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script>
+// Lấy input ẩn trong form sắp xếp
+const viewModeInput = document.getElementById('current-view-mode');
+// Lấy các nút List/Grid
+const viewGridLabel = document.querySelector('label[for="view-grid"]');
+const viewListLabel = document.querySelector('label[for="view-list"]');
+
+// Gán sự kiện khi click vào Grid
+viewGridLabel.addEventListener('click', () => {
+    viewModeInput.value = 'grid';
+    // Tùy chọn: Tự động gửi form hoặc reload trang nếu cần
+    // Nếu không gửi form, chế độ xem chỉ thay đổi qua CSS, nhưng tham số view đã được lưu.
+});
+
+// Gán sự kiện khi click vào List
+viewListLabel.addEventListener('click', () => {
+    viewModeInput.value = 'list';
+    // Tùy chọn: Tự động gửi form hoặc reload trang
+});
+
+// Nếu bạn muốn chế độ xem được duy trì cả khi không sắp xếp,
+// bạn có thể buộc reload trang sau khi cập nhật input ẩn:
+const viewGridRadio = document.getElementById('view-grid');
+const viewListRadio = document.getElementById('view-list');
+
+viewGridRadio.addEventListener('change', () => {
+    if (viewGridRadio.checked) {
+        updateViewModeAndReload('grid');
+    }
+});
+
+viewListRadio.addEventListener('change', () => {
+    if (viewListRadio.checked) {
+        updateViewModeAndReload('list');
+    }
+});
+
+function updateViewModeAndReload(mode) {
+    let currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('view', mode);
+
+    // Giữ lại tham số sắp xếp và trang hiện tại
+    // (Trong trường hợp này, vì các input radio ẩn, việc này là cần thiết nếu bạn muốn lưu trạng thái)
+
+    // Vì bạn đã có sẵn logic sắp xếp và phân trang giữ lại tham số, 
+    // chúng ta chỉ cần thêm/sửa tham số 'view' vào URL và tải lại.
+    window.location.href = currentUrl.toString();
+}
+</script>
 
 </html>
