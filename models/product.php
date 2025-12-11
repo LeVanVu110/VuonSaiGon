@@ -1,42 +1,58 @@
 <?php
-// File: models/product.php
-
-/**
- * Lấy tất cả sản phẩm
- * @param mysqli $conn Biến kết nối CSDL
- * @return array Mảng chứa danh sách sản phẩm
- */
-function get_all_products($conn) {
-    // 1. Viết câu lệnh SQL
-    $sql = "SELECT * FROM products ORDER BY created_at DESC";
-    
-    // 2. Thực thi câu lệnh
-    $result = mysqli_query($conn, $sql);
-    
-    // 3. Tạo mảng rỗng để chứa dữ liệu
-    $data = [];
-    
-    // 4. Lặp qua kết quả và đưa vào mảng
-    if (mysqli_num_rows($result) > 0) {
-        // Cách 1: Dùng fetch_all (Nhanh gọn, nhưng cần PHP driver native)
-        // $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        
-        // Cách 2: Dùng vòng lặp (An toàn nhất cho mọi phiên bản)
-        while ($row = mysqli_fetch_assoc($result)) {
-            $data[] = $row;
-        }
+class Product extends Db
+{
+    public function getAllProduct()
+    {
+        $sql = self::$connection->prepare("SELECT * FROM products");
+        $sql->execute(); //return an object
+        $banners = array();
+        $banners = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $banners; //return an array
     }
-    
-    // 5. Trả về dữ liệu
-    return $data;
-}
+    public function getAllProductSale()
+    {
+        $sql = self::$connection->prepare("SELECT * FROM `products` WHERE `is_sale`=1");
+        $sql->execute(); //return an object
+        $banners = array();
+        $banners = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+        return $banners; //return an array
+    }
+    /**
+     * Hàm định dạng tiền tệ sang VND
+     * @param int $price Giá tiền
+     * @return string
+     */
+    public static function formatCurrency($price)
+    {
+        $price = is_numeric($price) ? $price : 0;
+        return number_format($price, 0, ',', '.') . 'đ';
+    }
 
-/**
- * Lấy 1 sản phẩm theo ID (Dùng cho trang chi tiết)
- */
-function get_product_by_id($conn, $id) {
-    $sql = "SELECT * FROM products WHERE product_id = $id";
-    $result = mysqli_query($conn, $sql);
-    return mysqli_fetch_assoc($result);
+    /**
+     * Hàm chia mảng sản phẩm thành các nhóm nhỏ (chunk) cho Carousel Slide
+     * @param array $products Mảng sản phẩm (Lấy từ DB)
+     * @param int $size Kích thước mỗi nhóm (slide)
+     * @return array Mảng chứa các mảng con
+     */
+    public static function chunkProductsForCarousel($products, $size = 6)
+    {
+        if (empty($products) || !is_array($products)) {
+            return [];
+        }
+        return array_chunk($products, $size);
+    }
+    /**
+     * Lấy thời gian kết thúc của sự kiện Flash Sale đang hoạt động.
+     * @return string|null Thời gian kết thúc (format YYYY-MM-DD HH:MM:SS) hoặc null.
+     */
+    public function getActiveSaleEndTime()
+    {
+        // Lấy end_time của sự kiện active, và thời gian hiện tại chưa vượt quá end_time
+        $sql = self::$connection->prepare("SELECT end_time FROM flash_sale_events WHERE is_active = 1 AND end_time > NOW() LIMIT 1");
+        $sql->execute(); 
+        $result = $sql->get_result()->fetch_assoc();
+        
+        // Trả về timestamp ISO 8601 để dễ dùng trong JavaScript
+        return $result ? date('c', strtotime($result['end_time'])) : null; 
+    }
 }
-?>
