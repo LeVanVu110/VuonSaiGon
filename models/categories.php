@@ -42,77 +42,62 @@ class Categories extends Db
     /**
      * Hàm đệ quy tĩnh để xuất danh mục con ra HTML có thể thu gọn
      */
-    public static function display_categories_html($categories, $is_child = false) {
-        if (empty($categories)) return;
-        
-        // Cấp cha (root) sẽ có class category-list. Cấp con sẽ không cần class này.
-        // Cấp con (is_child = true) cũng không cần thẻ <ul> nếu nó được gọi từ bên ngoài 
-        // Nhưng vì nó là đệ quy, ta vẫn cần <ul>
-        $ul_classes = $is_child ? 'collapse' : 'category-list';
-        
-        // Nếu đây là lần gọi đệ quy (là danh mục con), ta cần thêm class 'collapse' và id cho nó
-        // ID được tạo từ parent_id của phần tử con đầu tiên, nhưng cách đơn giản nhất là 
-        // tạo ID duy nhất cho mỗi <ul>
-        
-        // Vì đây là hàm đệ quy, ta sẽ chỉ tạo <ul> với class 'collapse' cho cấp con (nếu không phải là cấp root)
-        
-        foreach ($categories as $cat) {
-            $slug = !empty($cat['slug']) ? htmlspecialchars($cat['slug']) : '#';
-            $link = "/category/" . $slug; 
-            $has_children = !empty($cat['children']);
-            
-            // Tạo ID duy nhất cho phần tử con để liên kết với data-bs-target
-            $target_id = 'cat-collapse-' . $cat['id']; 
-            
-            echo "<li>";
-            
-            // 1. Thay đổi thẻ <a> để có thể collapse nếu có con
-            $link_attributes = "href='$link'";
-            $icon_classes = 'bi bi-chevron-right small';
-            
-            if ($has_children) {
-                // Thay đổi hành vi: dùng data-bs-toggle và data-bs-target để mở/đóng
-                // Và giữ href="#" để không chuyển trang ngay lập tức
-                $link_attributes = "href='#' data-bs-toggle='collapse' data-bs-target='#$target_id' aria-expanded='false'";
-                $icon_classes = 'bi bi-chevron-down small collapse-icon'; // Dùng icon mũi tên xuống cho cấp cha
-            }
-            
-            echo "<a {$link_attributes} title='Danh mục " . htmlspecialchars($cat['name']) . "'>";
-            echo htmlspecialchars($cat['name']);
-            
-            if ($has_children) {
-                 // Dùng icon mũi tên xuống và thêm CSS transition
-                 echo " <i class='{$icon_classes}'></i>";
-            }
-            echo "</a>";
+    // TẠI FILE: models/categories.php (Bên trong Class Categories)
 
-            // 2. Thêm logic Collapse cho danh mục con
-            if ($has_children) {
-                // Khối danh mục con, mặc định ẩn (collapse)
-                echo "<ul class='category-list collapse' id='{$target_id}'>";
-                self::display_categories_html($cat['children'], true); // Gọi đệ quy cho danh mục con
-                echo "</ul>";
-            }
-
-            echo "</li>";
+/**
+ * Hàm đệ quy tĩnh để xuất danh mục con ra HTML có thể thu gọn
+ *
+ * @param array $categories Mảng danh mục
+ */
+public static function display_categories_html($categories) {
+    if (empty($categories)) return;
+    
+    foreach ($categories as $cat) {
+        $slug = !empty($cat['slug']) ? htmlspecialchars($cat['slug']) : '#';
+        $link = "/category/" . $slug; 
+        $has_children = !empty($cat['children']);
+        
+        // Tạo ID duy nhất cho phần tử con để liên kết với data-bs-target
+        $target_id = 'cat-collapse-' . $cat['id']; 
+        
+        echo "<li>"; // Mở thẻ <li> cho mục hiện tại
+        
+        // --- 1. Thẻ <a> (Nút kích hoạt/Liên kết) ---
+        $link_attributes = "href='$link'";
+        $icon_html = '';
+        
+        if ($has_children) {
+            // Nếu có con, thay đổi thành nút kích hoạt collapse (href='#')
+            // data-bs-toggle='collapse' sẽ làm Bootstrap tự động thêm/bỏ aria-expanded
+            $link_attributes = "href='#' 
+                                data-bs-toggle='collapse' 
+                                data-bs-target='#$target_id' 
+                                aria-expanded='false'"; // Mặc định là false
+            
+            // Icon mũi tên xuống (sẽ xoay bằng CSS khi mở)
+            $icon_html = " <i class='bi bi-chevron-right small collapse-icon'></i>"; 
         }
         
-        // KHÔNG CẦN DÙNG echo "<ul>" và echo "</ul>" ở đây nữa, 
-        // vì chúng ta đã di chuyển việc tạo <ul>/</ul> vào trong vòng lặp đệ quy nếu cần thiết 
-        // hoặc giả định rằng <ul> ngoài cùng sẽ được tạo ở file HTML chính.
-        
-        // Tuy nhiên, theo cấu trúc cũ của bạn (trong categories.php):
-        /*
-        public static function display_categories_html($categories) {
-            if (empty($categories)) return;
-            echo "<ul class='category-list'>"; // <--- DÒNG NÀY SẼ GÂY VẤN ĐỀ
-            // ...
-            echo "</ul>"; // <--- DÒNG NÀY SẼ GÂY VẤN ĐỀ
+        // In thẻ <a>
+        echo "<a {$link_attributes} title='Danh mục " . htmlspecialchars($cat['name']) . "'>";
+        echo htmlspecialchars($cat['name']);
+        echo $icon_html;
+        echo "</a>";
+
+        // --- 2. Khối <ul> con (Collapse Content) ---
+        if ($has_children) {
+            // Tạo <ul> con với class 'collapse' và id (KHÔNG DÙNG class 'category-list' ở đây)
+            // Lần đầu tải trang, nó phải là 'collapse' để ẩn đi.
+            echo "<ul class='collapse' id='{$target_id}'>"; 
+            
+            // Gọi đệ quy cho các danh mục con
+            self::display_categories_html($cat['children']); 
+            
+            echo "</ul>";
         }
-        */
-        
-        // Để giữ tính năng đệ quy, chúng ta phải giữ <ul>/</ul>
-        // -> Sửa lại cấu trúc của hàm như sau (phiên bản đầy đủ, dựa trên code gốc của bạn):
+
+        echo "</li>"; // Đóng thẻ <li> cho mục hiện tại
     }
+}
 }
 ?>
