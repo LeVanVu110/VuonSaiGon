@@ -160,7 +160,15 @@
 include 'models/product.php'; // Nhúng file model vừa tạo
 include 'models/categories.php'; // Nhúng file model vừa tạo
 include 'models/video.php'; // Nhúng file model vừa tạo
+include 'models/blog.php'; // Nhúng file model vừa tạo
 
+// Lấy dữ liệu danh mục Blog
+$blogModels = new Blog();
+$blogHeaderCategories = $blogModels->getAllCategories();
+// Lọc chỉ giữ các danh mục chính cho menu dropdown (ví dụ: Phong thủy, Kỹ thuật nông nghiệp, Hoạt động công ty)
+// Giả sử các danh mục có sort_order nhỏ hơn (10, 20, 30) là các danh mục chính.
+// Trong trường hợp này, chúng ta sẽ lọc 3 danh mục đầu tiên: Kỹ thuật nông nghiệp (1), Hoạt động công ty (2), Phong thủy (3)
+$mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
 
  
 
@@ -263,15 +271,27 @@ include 'models/video.php'; // Nhúng file model vừa tạo
 
             <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
             <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
+            
             <div class="blog-wrapper">
                 <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
                     BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
                 </a>
                 
                 <div class="blog-dropdown-desktop">
-                    <a href="blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>
-                    <a href="blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>
-                    <a href="blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>
+                    <?php 
+                    if (!empty($mainBlogCategories)) {
+                        foreach ($mainBlogCategories as $cat) {
+                            // Tạo link dựa trên slug và name từ CSDL
+                            $link = 'blog.php?cat=' . urlencode($cat['slug']);
+                            echo '<a href="' . $link . '" class="blog-item">' . htmlspecialchars($cat['name']) . '</a>';
+                        }
+                    } else {
+                        // Hiển thị các mục tĩnh nếu không có dữ liệu
+                        echo '<a href="blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>';
+                        echo '<a href="blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>';
+                        echo '<a href="blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>';
+                    }
+                    ?>
                 </div>
             </div>
             <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
