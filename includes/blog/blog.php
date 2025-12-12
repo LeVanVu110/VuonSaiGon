@@ -1,10 +1,57 @@
+<?php
+// BƯỚC 1: INCLUDE CÁC FILE CẦN THIẾT
+// Đảm bảo các file này tồn tại và được đặt đúng đường dẫn
+
+// --- KHỞI TẠO VÀ XỬ LÝ ĐẦU VÀO ---
+$blogModel = new Blog();
+$perPage = 9; // 3 cột * 3 hàng = 9 bài viết mỗi trang
+$currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+$currentSlug = isset($_GET['cat']) ? $_GET['cat'] : null; // Lấy slug từ URL
+
+
+// Lấy tất cả danh mục
+$allCategories = $blogModel->getAllCategories();
+$currentCatId = null;
+$currentCategoryName = 'Tất cả bài viết';
+
+// Tìm cat_id và tên danh mục đang được chọn
+if ($currentSlug) {
+    foreach ($allCategories as $cat) {
+        if ($cat['slug'] === $currentSlug) {
+            $currentCatId = $cat['cat_id'];
+            $currentCategoryName = $cat['name'];
+            break;
+        }
+    }
+}
+
+
+// --- LẤY DỮ LIỆU VÀ PHÂN TRANG ---
+$totalPosts = $blogModel->getTotalPosts($currentCatId);
+$totalPages = ceil($totalPosts / $perPage);
+
+// Lấy danh sách bài viết cho trang và danh mục hiện tại
+$posts = $blogModel->getPostsByPage($currentPage, $perPage, $currentCatId);
+
+// Logic cho nút Next/Prev (Phần phân trang)
+$nextPage = $currentPage < $totalPages ? $currentPage + 1 : $totalPages;
+
+// Hàm tạo URL phân trang
+function buildPaginationUrl($page, $currentSlug) {
+    $url = basename($_SERVER['PHP_SELF']) . '?page=' . $page;
+    if ($currentSlug) {
+        $url .= '&cat=' . htmlspecialchars($currentSlug);
+    }
+    return $url;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="vi">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog - Vườn Sài Gòn</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -15,7 +62,6 @@
             background-color: #fff;
             color: #333;
         }
-
         /* --- BLOG NAVIGATION --- */
         .blog-nav {
             padding: 20px 0;
@@ -25,19 +71,18 @@
         .blog-nav .nav-link {
             color: #777;
             font-weight: 600;
-            text-transform: none; /* Giữ nguyên chữ hoa thường như ảnh */
+            text-transform: none;
             padding: 0.5rem 1rem;
             transition: color 0.3s;
         }
 
         .blog-nav .nav-link:hover,
         .blog-nav .nav-link.active {
-            color: #000; /* Màu đen đậm khi active */
+            color: #000;
         }
-
         /* --- BLOG CARD --- */
         .blog-card {
-            border: none; /* Bỏ viền card */
+            border: none;
             background: transparent;
             margin-bottom: 30px;
         }
@@ -47,7 +92,7 @@
             overflow: hidden;
             border-radius: 4px;
             margin-bottom: 15px;
-            aspect-ratio: 4/3; /* Tỉ lệ ảnh chữ nhật nằm ngang */
+            aspect-ratio: 4/3;
         }
 
         .blog-img-wrapper img {
@@ -57,7 +102,6 @@
             transition: transform 0.5s ease;
         }
 
-        /* Hiệu ứng zoom nhẹ khi di chuột vào ảnh */
         .blog-card:hover .blog-img-wrapper img {
             transform: scale(1.05);
         }
@@ -82,7 +126,7 @@
         }
 
         .blog-title a:hover {
-            color: #166534; /* Màu xanh thương hiệu khi hover */
+            color: #166534;
         }
 
         .blog-meta {
@@ -91,170 +135,101 @@
         }
         
         .blog-meta span {
-            color: #555; /* Tên tác giả đậm hơn chút */
+            color: #555;
         }
-
-        /* --- FOOTER / HEADER PLACEHOLDER --- */
-        /* CSS cho phần Header giả lập để giống ngữ cảnh */
+        
         header { border-bottom: 1px solid #eee; }
     </style>
 </head>
 
 <body>
-
-   
+    
+    
 
     <div class="container">
         
         <div class="blog-nav">
             <ul class="nav justify-content-center flex-wrap gap-2 gap-md-4">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#">Tất cả bài viết</a>
+                    <a class="nav-link <?php echo $currentSlug == null ? 'active' : ''; ?>" 
+                       href="blog.php">Tất cả bài viết</a>
                 </li>
+                
+                <?php foreach ($allCategories as $cat): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Blog</a>
+                    <a class="nav-link <?php echo $currentSlug === $cat['slug'] ? 'active' : ''; ?>" 
+                       href="blog.php?cat=<?php echo htmlspecialchars($cat['slug']); ?>">
+                        <?php echo htmlspecialchars($cat['name']); ?>
+                    </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Kỹ thuật nông nghiệp</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Phong thủy</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Hoạt động công ty</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sức khỏe</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Thủy sinh</a>
-                </li>
+                <?php endforeach; ?>
             </ul>
         </div>
+        
+       
 
         <div class="row g-4">
             
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2025/11/Ky-thuat-trong-hoa-trieu-chuong-khoe-sac-dung-dip-Tet-nguyen-dan-4-510x321.png" alt="Hoa triệu chuông">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">Kỹ thuật nông nghiệp</div>
-                        <h3 class="blog-title">
-                            <a href="#">Kỹ thuật trồng hoa triệu chuông khoe sắc đúng dịp Tết Nguyên Đán</a>
-                        </h3>
-                        <div class="blog-meta">
-                            08/12/2025 bởi <span>Thuy Hoa</span>
+            <?php 
+            // HIỂN THỊ CÁC BÀI VIẾT TỪ CSDL
+            if (empty($posts)) {
+                echo '<div class="col-12"><p class="text-center text-muted">Không tìm thấy bài viết nào trong danh mục này.</p></div>';
+            } else {
+                foreach ($posts as $post) {
+                    $postLink = 'single_post.php?slug=' . urlencode($post['slug']);
+                    
+                    // Gộp tên danh mục thành chuỗi (ví dụ: Thủy sinh, cá cảnh)
+                    $categoryNames = array_map(function($c) { return $c['name']; }, $post['categories']);
+                    $categoryList = implode(', ', $categoryNames);
+            ?>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <article class="blog-card">
+                        <div class="blog-img-wrapper">
+                            <a href="<?php echo $postLink; ?>">
+                                <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
+                            </a>
                         </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2025/11/y-nghia-hoa-trieu-chuong-510x321.png" alt="Hoa triệu chuông phong thủy">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">Kỹ thuật nông nghiệp</div>
-                        <h3 class="blog-title">
-                            <a href="#">HOA TRIỆU CHUÔNG LÀ HOA GÌ? Ý NGHĨA PHONG THỦY HOA TRIỆU CHUÔNG</a>
-                        </h3>
-                        <div class="blog-meta">
-                            06/12/2025 bởi <span>Thuy Hoa</span>
+                        <div class="card-content">
+                            <div class="blog-category"><?php echo htmlspecialchars($categoryList); ?></div>
+                            
+                            <h3 class="blog-title">
+                                <a href="<?php echo $postLink; ?>">
+                                    <?php echo htmlspecialchars($post['title']); ?>
+                                </a>
+                            </h3>
+                            <div class="blog-meta">
+                                <?php echo date('d/m/Y', strtotime($post['created_at'])); ?> bởi <span><?php echo htmlspecialchars($post['author']); ?></span>
+                            </div>
                         </div>
-                    </div>
-                </article>
-            </div>
+                    </article>
+                </div>
+            <?php
+                }
+            }
+            ?>
+        </div> 
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2025/11/La-oi-co-tac-dung-gi-15-tac-dung-cua-la-oi-doi-voi-suc-khoe-510x321.png" alt="Lá ổi">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">Kỹ thuật nông nghiệp</div>
-                        <h3 class="blog-title">
-                            <a href="#">Lá ổi có tác dụng gì? 15 tác dụng của lá ổi đối với sức khỏe</a>
-                        </h3>
-                        <div class="blog-meta">
-                            04/12/2025 bởi <span>Thuy Hoa</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2023/09/su-dung-soi-trang-tri-ho-ca-va-ho-thuy-sinh-2-510x321.png" alt="Sỏi thủy sinh">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">Thủy sinh, cá cảnh</div>
-                        <h3 class="blog-title">
-                            <a href="#">Sử dụng sỏi trong trang trí hồ cá và hồ thủy sinh</a>
-                        </h3>
-                        <div class="blog-meta">
-                            21/09/2023 bởi <span>Thuy Hoa</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2023/07/Hoai-1-1-510x321.png" alt="Trang trí bể cá">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">Blog, Thủy sinh, cá cảnh</div>
-                        <h3 class="blog-title">
-                            <a href="#">Thiết kế và trang trí bể cá cảnh</a>
-                        </h3>
-                        <div class="blog-meta">
-                            07/08/2023 bởi <span>maietar</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-            <div class="col-12 col-md-6 col-lg-4">
-                <article class="blog-card">
-                    <div class="blog-img-wrapper">
-                        <a href="#">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2023/07/Han-1-510x321.png" alt="Cá cảnh nhỏ">
-                        </a>
-                    </div>
-                    <div class="card-content">
-                        <div class="blog-category">cá cảnh, Blog, Thủy sinh</div>
-                        <h3 class="blog-title">
-                            <a href="#">Loại cá phổ biến và phù hợp cho bể cá cảnh nhỏ</a>
-                        </h3>
-                        <div class="blog-meta">
-                            05/08/2023 bởi <span>maietar</span>
-                        </div>
-                    </div>
-                </article>
-            </div>
-
-        </div> <nav class="my-5">
+        <nav class="my-5">
+            <?php if ($totalPages > 1): ?>
             <ul class="pagination justify-content-center">
-                <li class="page-item active"><a class="page-link bg-success border-success" href="#">1</a></li>
-                <li class="page-item"><a class="page-link text-success" href="#">2</a></li>
-                <li class="page-item"><a class="page-link text-success" href="#">3</a></li>
-                <li class="page-item"><a class="page-link text-success" href="#">Next</a></li>
+                <li class="page-item <?php echo $currentPage == 1 ? 'disabled' : ''; ?>">
+                    <a class="page-link text-success" href="<?php echo buildPaginationUrl($currentPage - 1, $currentSlug); ?>">Prev</a>
+                </li>
+
+                <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
+                    <a class="page-link <?php echo $i == $currentPage ? 'bg-success border-success' : 'text-success'; ?>" 
+                       href="<?php echo buildPaginationUrl($i, $currentSlug); ?>">
+                        <?php echo $i; ?>
+                    </a>
+                </li>
+                <?php endfor; ?>
+
+                <li class="page-item <?php echo $currentPage == $totalPages ? 'disabled' : ''; ?>">
+                    <a class="page-link text-success" href="<?php echo buildPaginationUrl($currentPage + 1, $currentSlug); ?>">Next</a>
+                </li>
             </ul>
+            <?php endif; ?>
         </nav>
 
     </div>
