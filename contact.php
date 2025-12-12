@@ -1,6 +1,7 @@
 <?php
+// include 'config/db.php';
 include 'includes/header.php'; 
-include 'includes/blog/blog.php'; 
+include 'includes/contact/contact.php'; 
 
 
 

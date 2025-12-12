@@ -1,6 +1,6 @@
 <?php
 include 'includes/header.php'; 
-include 'includes/product/listproduct.php'; 
+include 'includes/video/video.php'; 
 
 
 

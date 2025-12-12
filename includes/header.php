@@ -13,66 +13,167 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <link rel="stylesheet" href="/VuonSaiGons/assets/css/style.css">
-    
+
     <style>
-        .cat-wrapper {
-            position: relative;
-        }
+    /* 2. Ảnh Banner */
+    .banner-image-box {
+        width: 90%;
+        overflow: hidden;
+        /* Nếu muốn banner có chiều cao cố định và cắt ảnh dư, hãy bỏ comment dòng dưới */
+        /* max-height: 500px; */
+    }
 
-        .cat-btn-desktop {
-            background: transparent;
-            border: none;
-            font-weight: 600;
-            color: #1f7a2f;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            padding: 10px 0;
-            cursor: pointer;
-        }
+    .img-fluid-banner {
+        width: 90%;
+        /* Chiếm hết chiều ngang màn hình */
+        height: auto;
+        /* Chiều cao tự động theo tỉ lệ */
+        display: block;
+        /* Xóa khoảng trắng thừa dưới chân ảnh */
+        object-fit: cover;
+        /* Đảm bảo ảnh đẹp nếu set chiều cao cố định */
+    }
 
-        .cat-dropdown-desktop {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 300px;
-            background: #fff;
-            border: 1px solid #e5e5e5;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            z-index: 9999;
-        }
+    .cat-wrapper {
+        position: relative;
+    }
 
-        /* Hiển thị dropdown khi hover vào wrapper */
-        .cat-wrapper:hover .cat-dropdown-desktop {
-            display: block;
-        }
+    .cat-btn-desktop {
+        background: transparent;
+        border: none;
+        font-weight: 600;
+        color: #1f7a2f;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 10px 0;
+        cursor: pointer;
+    }
 
-        .cat-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #f1f1f1;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
+    .cat-dropdown-desktop {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 300px;
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        z-index: 9999;
+    }
 
-        .cat-item:hover {
-            background: #f8f9fa;
-            color: #1f7a2f;
-        }
+    /* Hiển thị dropdown khi hover vào wrapper */
+    .cat-wrapper:hover .cat-dropdown-desktop {
+        display: block;
+    }
+
+    .cat-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 14px;
+        font-weight: 500;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .cat-item:hover {
+        background: #f8f9fa;
+        color: #1f7a2f;
+    }
+    /* hover blog  */
+    /* Style cho Menu Blog */
+.blog-wrapper {
+    position: relative;
+    /* Đảm bảo menu con xuất hiện so với BLOG */
+}
+
+.blog-dropdown-desktop {
+    display: none;
+    position: absolute;
+    /* Đặt menu con ngay dưới BLOG */
+    top: 100%;
+    left: 0;
+    min-width: 250px; /* Độ rộng tối thiểu cho menu con */
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9998; /* Dưới danh mục chính 9999 */
+    padding: 5px 0; /* Khoảng cách đệm bên trong */
+}
+
+/* Hiển thị dropdown khi hover vào wrapper */
+.blog-wrapper:hover .blog-dropdown-desktop {
+    display: block;
+}
+
+.blog-item {
+    padding: 8px 15px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333; /* Màu chữ bình thường */
+    text-decoration: none; /* Xóa gạch chân */
+    display: block; /* Đảm bảo cả khu vực là clickable */
+}
+
+.blog-item:hover {
+    background: #f8f9fa;
+    color: #155d27; /* Màu xanh lá cây khi hover */
+}
+/* Thêm Mũi Tên Nhọn (Caret) */
+.blog-wrapper:hover .blog-dropdown-desktop::before {
+    content: "";
+    position: absolute;
+    top: -8px; /* Di chuyển lên trên dropdown 10px */
+    left: 20px; /* Căn chỉnh vị trí mũi tên (điều chỉnh theo ý bạn) */
+    
+    /* Kỹ thuật tạo hình tam giác */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent ;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #fff; /* Màu nền của mũi tên (trắng) */
+    z-index: 9999;
+}
+
+.blog-wrapper:hover .blog-dropdown-desktop::after {
+    content: "";
+    position: absolute;
+    top: -8px; /* Lên cao hơn một chút so với ::before */
+    left: 20px; /* Cùng vị trí với ::before */
+    
+    /* Kỹ thuật tạo hình tam giác (Border ngoài) */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent ;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #e5e5e5; /* Màu border của dropdown */
+    z-index: 9998;
+}
     </style>
 </head>
+<?php  
+ include "config.php";
+ include "Models/db.php";
+ include "Models/banner.php";
+include 'models/product.php'; // Nhúng file model vừa tạo
+include 'models/categories.php'; // Nhúng file model vừa tạo
+include 'models/video.php'; // Nhúng file model vừa tạo
+
+
+ 
+
+?>
 
 <body>
     <header class="container-fluid border-bottom bg-white sticky-top">
         <div class="row align-items-center py-2">
 
             <div class="col-2 col-lg-2 logo text-center text-md-start px-1 px-md-3 ps-lg-5">
-                <a href="#">
-                    <img src="https://vuonsaigon.vn/wp-content/uploads/2020/11/Logo-vsg-web.png" height="40" class="img-fluid">
+                <a href="index.php">
+                    <img src="https://vuonsaigon.vn/wp-content/uploads/2020/11/Logo-vsg-web.png" height="40"
+                        class="img-fluid">
                 </a>
             </div>
 
@@ -95,17 +196,21 @@
             <div class="col-4 col-lg-5 text-end icon-group px-1 px-md-3">
                 <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3 pe-lg-5">
 
-                    <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block" style="font-size: 15px; font-size: 15px; padding-right: 10%;">
+                    <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block"
+                        style="font-size: 15px; font-size: 15px; padding-right: 10%;">
                         <i class="bi bi-telephone me-1"></i> 0909 1234 09 - 082 799 7777
                     </a>
                     <a href="#" class="text-dark position-relative text-decoration-none">
                         <i class="bi bi-heart fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill d-none d-md-block" style="font-size:0.6rem">0</span>
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill d-none d-md-block"
+                            style="font-size:0.6rem">0</span>
                     </a>
 
                     <a href="#" class="text-dark position-relative text-decoration-none me-1">
                         <i class="bi bi-cart fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill" style="font-size:0.6rem">2</span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
+                            style="font-size:0.6rem">2</span>
                     </a>
 
                     <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">
@@ -116,7 +221,7 @@
 
         </div>
     </header>
-    
+
     <div class="container-fluid border-bottom d-none d-md-block" style="padding: 1%;">
 
         <div class="container py-2 d-flex align-items-center gap-4">
@@ -152,17 +257,27 @@
                     <div class="cat-item">PHÂN BÓN</div>
                 </div>
             </div>
-            
+
             <a href="introduce.php" class="fw-bold text-success text-decoration-none ms-5" style="
-    padding-left: 5%;">GIỚI THIỆU</a>
-            
+                padding-left: 5%;">GIỚI THIỆU</a>
+
             <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
-            <a href="#" class="fw-bold text-success text-decoration-none">VIDEO</a>
-            <a href="blog.php" class="fw-bold text-success text-decoration-none" >BLOG</a>
-            <a href="#" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
+            <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
+            <div class="blog-wrapper">
+                <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
+                    BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
+                </a>
+                
+                <div class="blog-dropdown-desktop">
+                    <a href="blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>
+                    <a href="blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>
+                    <a href="blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>
+                </div>
+            </div>
+            <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
         </div>
     </div>
-    
+
     <div class="offcanvas offcanvas-start" id="menuCanvas">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title">DANH MỤC</h5>
@@ -196,7 +311,6 @@
             </ul>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
