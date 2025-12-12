@@ -1,21 +1,19 @@
-<section id="mainBannerCarousel" class="carousel slide" data-bs-ride="carousel">
-    
-    <div class="container p-0"> <div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
-        
-        <?php
-        $banners = [
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/Banner-1-1375x440-1.png",
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/Banner-2-1375x440-1.png",
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/baner-web-ke-trong-rau.png",
-            "https://vuonsaigon.vn/wp-content/uploads/2022/06/hang-rao-nha-khach.jpg",
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/cac-loai-dat-orgamix.png",
-            "https://vuonsaigon.vn/wp-content/uploads/2020/05/ke-trong-rau-lap-ghep-thong-minh-6.jpg",
-            "https://vuonsaigon.vn/wp-content/uploads/2022/06/bichchaughep-2.jpg",
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/Banner-vien-nen-xo-dua-1590-x-520.png",
-            "https://vuonsaigon.vn/wp-content/uploads/2023/08/Banner-rau-giong-1590-x-520.png"
-        ];
-        ?>
+<?php 
+$banner = new Banner;
+$banners = $banner->getAllBanner();
 
+/*
+// Nếu bạn muốn kiểm tra lỗi ảnh, hãy bật đoạn debug này
+echo '<pre>';
+print_r($banners);
+echo '</pre>';
+*/
+?>
+
+<section id="bannerCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+    
+    <div class="container p-0"> 
+        
         <div class="carousel-indicators">
             <?php foreach ($banners as $index => $url): ?>
                 <button type="button" 
@@ -30,7 +28,7 @@
         <div class="carousel-inner">
             <?php foreach ($banners as $index => $url): ?>
                 <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
-                    <img src="<?= $url ?>" class="d-block w-100 banner-img" alt="Banner">
+                    <img src="<?= $url['image'] ?>" class="d-block w-100 banner-img" alt="Banner">
                 </div>
             <?php endforeach; ?>
         </div>
@@ -39,12 +37,12 @@
             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Previous</span>
         </button>
+        
         <button class="carousel-control-next" type="button" data-bs-target="#bannerCarousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span>
             <span class="visually-hidden">Next</span>
         </button>
     </div>
-</div>
 </section>
 
 <section class="policy-area py-4 bg-white border-bottom">
