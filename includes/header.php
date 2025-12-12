@@ -82,6 +82,75 @@
         background: #f8f9fa;
         color: #1f7a2f;
     }
+    /* hover blog  */
+    /* Style cho Menu Blog */
+.blog-wrapper {
+    position: relative;
+    /* Đảm bảo menu con xuất hiện so với BLOG */
+}
+
+.blog-dropdown-desktop {
+    display: none;
+    position: absolute;
+    /* Đặt menu con ngay dưới BLOG */
+    top: 100%;
+    left: 0;
+    min-width: 250px; /* Độ rộng tối thiểu cho menu con */
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 9998; /* Dưới danh mục chính 9999 */
+    padding: 5px 0; /* Khoảng cách đệm bên trong */
+}
+
+/* Hiển thị dropdown khi hover vào wrapper */
+.blog-wrapper:hover .blog-dropdown-desktop {
+    display: block;
+}
+
+.blog-item {
+    padding: 8px 15px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333; /* Màu chữ bình thường */
+    text-decoration: none; /* Xóa gạch chân */
+    display: block; /* Đảm bảo cả khu vực là clickable */
+}
+
+.blog-item:hover {
+    background: #f8f9fa;
+    color: #155d27; /* Màu xanh lá cây khi hover */
+}
+/* Thêm Mũi Tên Nhọn (Caret) */
+.blog-wrapper:hover .blog-dropdown-desktop::before {
+    content: "";
+    position: absolute;
+    top: -8px; /* Di chuyển lên trên dropdown 10px */
+    left: 20px; /* Căn chỉnh vị trí mũi tên (điều chỉnh theo ý bạn) */
+    
+    /* Kỹ thuật tạo hình tam giác */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent ;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #fff; /* Màu nền của mũi tên (trắng) */
+    z-index: 9999;
+}
+
+.blog-wrapper:hover .blog-dropdown-desktop::after {
+    content: "";
+    position: absolute;
+    top: -8px; /* Lên cao hơn một chút so với ::before */
+    left: 20px; /* Cùng vị trí với ::before */
+    
+    /* Kỹ thuật tạo hình tam giác (Border ngoài) */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent ;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #e5e5e5; /* Màu border của dropdown */
+    z-index: 9998;
+}
     </style>
 </head>
 <?php  
@@ -190,11 +259,21 @@ include 'models/video.php'; // Nhúng file model vừa tạo
             </div>
 
             <a href="introduce.php" class="fw-bold text-success text-decoration-none ms-5" style="
-    padding-left: 5%;">GIỚI THIỆU</a>
+                padding-left: 5%;">GIỚI THIỆU</a>
 
             <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
             <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
-            <a href="blog.php" class="fw-bold text-success text-decoration-none">BLOG</a>
+            <div class="blog-wrapper">
+                <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
+                    BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
+                </a>
+                
+                <div class="blog-dropdown-desktop">
+                    <a href="blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>
+                    <a href="blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>
+                    <a href="blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>
+                </div>
+            </div>
             <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
         </div>
     </div>
