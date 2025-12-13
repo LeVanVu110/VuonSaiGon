@@ -556,7 +556,7 @@ if (!empty($keyword)) {
                             <?php endif; ?>
 
                         <?php 
-                        // 2. Nếu đang ở Danh mục CON (Chỉ hiển thị 2 nút QUAY LẠI)
+                        // 2. Nếu đang ở Danh mục CON (Hiển thị 2 nút QUAY LẠI)
                         elseif ($categorySlug && $currentCategory && $parentCategory && !$isParentCategory): 
                             
                             // Link quay lại cấp cha (DANH MỤC CHA)
@@ -659,16 +659,49 @@ if (!empty($keyword)) {
                         <div class="col">
                             <div class="product-card">
                                 <div class="product-img-wrapper">
+                                    <?php 
+                                    $finalPrice = ($value['discount_price'] !== null && $value['discount_price'] < $value['price']) ? $value['discount_price'] : $value['price'];
+                                    $showSaleBadge = ($value['is_sale'] == 1 && $value['discount_price'] !== null && $value['price'] > $value['discount_price']);
+                                    
+                                    if ($showSaleBadge): 
+                                        $discount_amount = $value['price'] - $value['discount_price'];
+                                        $discount_percent = round(($discount_amount / $value['price']) * 100);
+                                    ?>
+                                        <span class="badge bg-danger position-absolute top-0 end-0 m-1">-<?= $discount_percent ?>%</span>
+                                    <?php endif; ?>
+
                                     <img src="<?php echo htmlspecialchars($value['image_url']) ?>"
                                         alt="<?php echo htmlspecialchars($value['name']) ?>">
                                 </div>
                                 <div class="card-body">
                                     <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
-                                    <div class="product-price"><?php echo Product::formatCurrency($value['price']) ?>
+                                    
+                                    <div class="product-price">
+                                        <?php if ($showSaleBadge): ?>
+                                            <span class="text-danger fw-bold me-2"><?php echo Product::formatCurrency($value['discount_price']) ?></span>
+                                            <del class="text-muted small"><?php echo Product::formatCurrency($value['price']) ?></del>
+                                        <?php else: ?>
+                                            <span class="text-danger fw-bold"><?php echo Product::formatCurrency($value['price']) ?></span>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
+                                
                                 <div class="card-footer">
+                                    <?php 
+                                    $showAddToCart = ($value['is_sale'] == 1 || ($value['discount_price'] !== null && $value['discount_price'] < $value['price']));
+                                    ?>
+
+                                    <?php if ($showAddToCart): ?>
+                                    <button class="btn btn-add-cart js-add-to-cart"
+                                        data-product-id="<?= htmlspecialchars($value['id']) ?>"
+                                        data-name="<?= htmlspecialchars($value['name']) ?>"
+                                        data-price="<?= htmlspecialchars($finalPrice) ?>"
+                                        data-image-url="<?= htmlspecialchars($value['image_url']) ?>">
+                                        Thêm vào giỏ hàng
+                                    </button>
+                                    <?php else: ?>
                                     <button class="btn btn-add-cart">Đọc tiếp</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -736,7 +769,7 @@ if (!empty($keyword)) {
                     <?php endif; ?>
 
                 <?php 
-                // 2. Nếu đang ở Danh mục CON (Chỉ hiển thị 2 nút QUAY LẠI)
+                // 2. Nếu đang ở Danh mục CON (Hiển thị 2 nút QUAY LẠI)
                 elseif ($categorySlug && $currentCategory && $parentCategory && !$isParentCategory): 
                     
                     $backToParentLink = '?category_slug=' . htmlspecialchars($parentCategory['slug']);
@@ -787,29 +820,71 @@ if (viewListRadio) {
 // LOGIC SỬA LỖI: Ngăn click icon kích hoạt link, và dùng Bootstrap API để đảm bảo mở/đóng
 // ========================================================
 document.addEventListener('DOMContentLoaded', function() {
+    // Logic Collapse/Expand Sidebar
     const collapseToggles = document.querySelectorAll('.collapse-toggle');
 
     collapseToggles.forEach(toggle => {
-        // 1. Ngăn chặn sự kiện nổi bọt lên thẻ <a>
         toggle.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
 
-            // Lấy ID mục tiêu collapse (ví dụ: #cat-collapse-5)
             const targetId = this.getAttribute('data-bs-target');
             const collapseElement = document.querySelector(targetId);
 
             if (collapseElement) {
-                // Kích hoạt thủ công Bootstrap Collapse API để đảm bảo hành vi
                 const collapseInstance = new bootstrap.Collapse(collapseElement, {
                     toggle: true
                 });
 
-                // Cập nhật thủ công aria-expanded
                 const isExpanded = collapseElement.classList.contains('show');
                 this.setAttribute('aria-expanded', !isExpanded);
             }
         });
+    });
+    
+    // ========================================================
+    // LOGIC THÊM VÀO GIỎ HÀNG (SỬ DỤNG data-* attributes)
+    // ========================================================
+    function handleAddToCart(event) {
+        event.preventDefault();
+        const button = event.currentTarget;
+        
+        // 1. Lấy dữ liệu sản phẩm từ data attributes
+        const productData = {
+            id: button.dataset.productId,
+            name: button.dataset.name,
+            price: parseFloat(button.dataset.price),
+            imageUrl: button.dataset.imageUrl,
+            quantity: 1
+        };
+
+        // 2. Lưu trữ Giỏ hàng (Sử dụng LocalStorage)
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.id === productData.id);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push(productData);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // 3. (Tùy chọn) Highlight nút để người dùng thấy có phản hồi
+        button.textContent = 'ĐÃ THÊM';
+        button.disabled = true;
+        setTimeout(() => {
+            button.textContent = 'Thêm vào giỏ hàng';
+            button.disabled = false;
+        }, 1500); 
+
+        // KHÔNG CÓ alert() hay confirm()
+    }
+
+    // Gắn sự kiện cho các nút "Thêm vào giỏ hàng"
+    const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', handleAddToCart);
     });
 });
 </script>

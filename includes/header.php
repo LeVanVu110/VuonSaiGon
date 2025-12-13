@@ -232,7 +232,7 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
                             style="font-size:0.6rem">0</span>
                     </a>
 
-                    <a href="#" class="text-dark position-relative text-decoration-none me-1">
+                    <a href="shopping-cart.php" class="text-dark position-relative text-decoration-none me-1">
                         <i class="bi bi-cart fs-5"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
                             style="font-size:0.6rem">2</span>
