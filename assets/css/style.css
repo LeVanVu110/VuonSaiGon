@@ -602,15 +602,18 @@
     background-color: #146c43;
     color: white;
 }
-
+.container.position-relative {
+    /* Đây là class đã có trong HTML của bạn */
+    position: relative; 
+}
 /* 4. Mũi tên điều hướng Slider (Mới thêm) */
 .carousel-control-prev,
 .carousel-control-next {
-    width: 40px;
-    height: 40px;
-    background-color: #198754;
+    width: 55px;
+    height: 55px;
+    background-color: rgba(204, 204, 204, .3);;
     /* Nền xanh */
-    border-radius: 50%;
+    border-radius: 0;
     top: 50%;
     transform: translateY(-50%);
     /* Căn giữa chiều dọc */
@@ -622,27 +625,69 @@
 .carousel-control-prev:hover,
 .carousel-control-next:hover {
     opacity: 1;
-    background-color: #146c43;
+    background-color: #dedad3;
 }
 
 /* Đẩy mũi tên ra ngoài khung một chút */
 .carousel-control-prev {
-    left: -50px;
+    left: 10%;
 }
 
 .carousel-control-next {
-    right: -50px;
+    right: 10%;
 }
 
 /* Responsive: Trên điện thoại thì thu mũi tên vào trong */
 @media (max-width: 768px) {
     .carousel-control-prev {
-        left: -15px;
+        left: 0px;
     }
 
     .carousel-control-next {
-        right: -15px;
+        right: 0px;
     }
+}
+/* Đảm bảo mũi tên có vị trí tuyệt đối và nằm ngang giữa */
+#flashSaleCarousel .carousel-control-prev,
+#flashSaleCarousel .carousel-control-next {
+    /* Giữ nguyên các thuộc tính hình vuông, trong suốt */
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    z-index: 10; /* Đảm bảo nó luôn nằm trên các nội dung khác */
+    opacity: 1; 
+    background-color: transparent; 
+    border-radius: 0; 
+}
+
+/* Đẩy mũi tên SANG TRÁI ra ngoài khối sản phẩm */
+#flashSaleCarousel .carousel-control-prev {
+    left: -45px; 
+}
+
+/* Đẩy mũi tên SANG PHẢI ra ngoài khối sản phẩm */
+#flashSaleCarousel .carousel-control-next {
+    right: -45px; 
+}
+
+/* Xử lý Responsive: Trên màn hình nhỏ (Tablet/Mobile), đưa mũi tên sát mép */
+@media (max-width: 992px) {
+    #flashSaleCarousel .carousel-control-prev {
+        left: 0; /* Đặt sát mép trái */
+    }
+
+    #flashSaleCarousel .carousel-control-next {
+        right: 0; /* Đặt sát mép phải */
+    }
+}
+
+/* Tùy chọn: Chỉnh màu icon mũi tên của Bootstrap (nếu bị mờ/trắng) */
+#flashSaleCarousel .carousel-control-prev-icon,
+#flashSaleCarousel .carousel-control-next-icon {
+    filter: invert(30%) sepia(85%) saturate(300%) hue-rotate(75deg) brightness(85%) contrast(100%);
+    /* Chỉnh màu icon sang màu xanh lá cây đậm */
 }
 
 /* -------------------------------------------------------------------- */
@@ -845,7 +890,7 @@ a {
 
 /* Container chung (nếu chưa có thì thêm vào) */
 .container {
-    max-width: 1200px;
+    max-width: 90% !important;
     margin: 0 auto;
     padding: 0 15px;
 }
@@ -1078,4 +1123,7 @@ body {
 
 .team-section {
     margin: 8%;
+}
+.justify-content-between{
+    justify-content: normal!important;
 }
