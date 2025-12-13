@@ -128,7 +128,21 @@ class Product extends Db
  * @param int $products_per_page Số sản phẩm trên mỗi trang (mặc định 12)
  * @return array Danh sách sản phẩm cho trang hiện tại
  */
-public function get_products($category_slug = null, $page = 1, $products_per_page = 12)
+// FILE: product.php (Chỉ phần hàm get_products)
+
+/**
+ * Lấy danh sách sản phẩm từ CSDL với chức năng phân trang, lọc và sắp xếp.
+ *
+ * @param string $category_slug Slug của danh mục (cha hoặc con).
+ * @param array $category_ids Mảng ID danh mục để lọc (dùng cho danh mục cha và con).
+ */
+// FILE: product.php (Chỉ phần hàm get_products)
+
+/**
+ * Lấy danh sách sản phẩm từ CSDL với chức năng phân trang, lọc và sắp xếp.
+ * * Đã sửa đổi để thêm tham số $keyword.
+ */
+public function get_products($category_slug = null, $category_ids = [], $page = 1, $products_per_page = 12, $sortType = 'default', $keyword = null) // <-- THÊM $keyword
     {
         $conn = self::$connection;
         if ($conn === null) return [];
@@ -138,20 +152,44 @@ public function get_products($category_slug = null, $page = 1, $products_per_pag
         
         $products = [];
         $sql = "SELECT p.* FROM products p ";
-        $where = "";
+        $where = "WHERE 1=1 "; // Bắt đầu WHERE clause
 
-        if ($category_slug) {
-            $sql .= "JOIN category_product cp ON p.id = cp.product_id
-                     JOIN categories c ON cp.category_id = c.id ";
-            
-            $escaped_slug = $conn->real_escape_string($category_slug);
-            $where .= "WHERE c.slug = '{$escaped_slug}'"; 
+        if (!empty($category_ids)) {
+            // Lọc theo danh mục (Giữ nguyên)
+            $id_string = implode(',', array_map('intval', $category_ids)); 
+            $sql .= "JOIN category_product cp ON p.id = cp.product_id ";
+            $where .= "AND cp.category_id IN ({$id_string}) "; 
+        }
+
+        if (!empty($keyword)) {
+            // Lọc theo từ khóa tìm kiếm
+            $escaped_keyword = $conn->real_escape_string($keyword);
+            $where .= "AND (p.name LIKE '%{$escaped_keyword}%' OR p.description LIKE '%{$escaped_keyword}%') ";
         }
         
-        $sql .= $where . " ORDER BY p.id DESC LIMIT " . (int)$products_per_page . " OFFSET " . $offset;
-
+        // LOGIC SẮP XẾP SẢN PHẨM (Giữ nguyên)
+        $orderBy = "ORDER BY p.id DESC";
+        switch ($sortType) {
+            // ... (Logic switch case giữ nguyên) ...
+            case 'price_asc':
+                $orderBy = "ORDER BY p.price ASC";
+                break;
+            case 'price_desc':
+                $orderBy = "ORDER BY p.price DESC";
+                break;
+            case 'popularity':
+                $orderBy = "ORDER BY p.quantity DESC"; 
+                break;
+            case 'default':
+            default:
+                $orderBy = "ORDER BY p.id DESC"; 
+                break;
+        }
+        
+        $sql .= $where . " " . $orderBy . " LIMIT " . (int)$products_per_page . " OFFSET " . $offset;
+        
+        // ... (phần thực thi và trả về kết quả giữ nguyên) ...
         $result = $conn->query($sql);
-
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $products[] = $row;
@@ -161,34 +199,37 @@ public function get_products($category_slug = null, $page = 1, $products_per_pag
     }
     
     /**
-     * Lấy tổng số sản phẩm khớp với điều kiện lọc.
+     * Lấy tổng số sản phẩm khớp với điều kiện lọc (category_ids và keyword).
      */
-    public function get_total_products($category_slug = null)
+    public function get_total_products($category_ids = [], $keyword = null) // <-- THÊM $keyword
     {
         $conn = self::$connection;
         if ($conn === null) return 0;
         
-        $sql = "SELECT COUNT(p.id) AS total FROM products p ";
-        $where = "";
+        $sql = "SELECT COUNT(DISTINCT p.id) AS total FROM products p ";
+        $where = "WHERE 1=1 "; // Bắt đầu WHERE clause
 
-        if ($category_slug) {
-            $sql .= "JOIN category_product cp ON p.id = cp.product_id
-                     JOIN categories c ON cp.category_id = c.id ";
-            
-            $escaped_slug = $conn->real_escape_string($category_slug);
-            $where .= "WHERE c.slug = '{$escaped_slug}'"; 
+        if (!empty($category_ids)) {
+            // Lọc theo danh mục (Giữ nguyên)
+            $id_string = implode(',', array_map('intval', $category_ids)); 
+            $sql .= "JOIN category_product cp ON p.id = cp.product_id ";
+            $where .= "AND cp.category_id IN ({$id_string}) "; 
+        }
+
+        if (!empty($keyword)) {
+            // Lọc theo từ khóa tìm kiếm
+            $escaped_keyword = $conn->real_escape_string($keyword);
+            $where .= "AND (p.name LIKE '%{$escaped_keyword}%' OR p.description LIKE '%{$escaped_keyword}%') ";
         }
         
         $sql .= $where;
         
+        // ... (phần thực thi và trả về kết quả giữ nguyên) ...
         $result = $conn->query($sql);
-        
         if ($result) {
             return (int)$result->fetch_assoc()['total'];
         }
         return 0;
     }
-
-    
 }
 ?>

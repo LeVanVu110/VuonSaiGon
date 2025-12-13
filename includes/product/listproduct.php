@@ -274,25 +274,29 @@
 
         /* Dù chọn List hay Grid, trên mobile đều hiển thị dạng dọc (Grid nhỏ) */
         #view-list:checked~.main-content #product-container .product-card {
-        flex-direction: row; 
-        flex-wrap: wrap; /* Bỏ dòng này nếu bạn muốn mọi thứ nằm trên 1 hàng duy nhất */
-        padding: 10px;
-    }
-    /* ... */
-    #view-list:checked~.main-content #product-container .product-img-wrapper {
-        width: 100px !important;
-        height: 100px !important;
-        margin-right: 15px;
-    }
+            flex-direction: row;
+            flex-wrap: wrap;
+            /* Bỏ dòng này nếu bạn muốn mọi thứ nằm trên 1 hàng duy nhất */
+            padding: 10px;
+        }
 
-    #view-list:checked~.main-content #product-container .card-body {
-        width: calc(100% - 115px);
-        padding-right: 0;
-        /* THÊM: Sử dụng flex để quản lý Tên, Giá và Nút */
-        display: flex;
-        flex-direction: column; /* Xếp Tên, Giá, Nút theo cột */
-        justify-content: space-between; /* Đẩy Nút xuống đáy nếu có đủ chỗ */
-    }
+        /* ... */
+        #view-list:checked~.main-content #product-container .product-img-wrapper {
+            width: 100px !important;
+            height: 100px !important;
+            margin-right: 15px;
+        }
+
+        #view-list:checked~.main-content #product-container .card-body {
+            width: calc(100% - 115px);
+            padding-right: 0;
+            /* THÊM: Sử dụng flex để quản lý Tên, Giá và Nút */
+            display: flex;
+            flex-direction: column;
+            /* Xếp Tên, Giá, Nút theo cột */
+            justify-content: space-between;
+            /* Đẩy Nút xuống đáy nếu có đủ chỗ */
+        }
 
         #view-list:checked~.main-content #product-container .product-title {
             font-size: 0.95rem;
@@ -300,20 +304,20 @@
 
         /* Giá & Nút về vị trí tự nhiên */
         #view-list:checked~.main-content #product-container .product-price {
-        position: static;
-        font-size: 1rem;
-        margin-top: 5px;
-        text-align: left;
-        width: auto;
-    }
+            position: static;
+            font-size: 1rem;
+            margin-top: 5px;
+            text-align: left;
+            width: auto;
+        }
 
         #view-list:checked~.main-content #product-container .card-footer {
-        /* Đã bị đẩy xuống cuối cột body do flex-direction: column */
-        position: static;
-        width: 100%;
-        margin-top: 5px;
-        /* Thay đổi quan trọng: Để nút nằm ngang với ảnh, footer phải được bao trong card-body */
-    }
+            /* Đã bị đẩy xuống cuối cột body do flex-direction: column */
+            position: static;
+            width: 100%;
+            margin-top: 5px;
+            /* Thay đổi quan trọng: Để nút nằm ngang với ảnh, footer phải được bao trong card-body */
+        }
 
         /* --- SỬA LỖI NÚT BẤM MOBILE --- */
         /* Ép nút luôn rộng 100% trên mobile để bằng nhau tăm tắp */
@@ -348,84 +352,142 @@
         flex-shrink: 0;
         margin-left: 10px;
     }
+
     /* Trong style.css (hoặc thẻ <style> trong listproduct.php) */
 
-/* Mặc định mũi tên nằm bên phải (bi-chevron-right) */
-.category-list a .collapse-icon {
-    transition: transform 0.3s ease;
-    transform: rotate(0deg); /* Bắt đầu ở bên phải */
-}
+    /* Mặc định mũi tên nằm bên phải (bi-chevron-right) */
+    .category-list a .collapse-icon {
+        transition: transform 0.3s ease;
+        transform: rotate(0deg);
+        /* Bắt đầu ở bên phải */
+    }
 
-/* Khi mở (aria-expanded="true"), xoay icon 90 độ xuống */
-.category-list a[aria-expanded="true"] .collapse-icon {
-    transform: rotate(90deg); 
-}
+    /* Khi mở (aria-expanded="true"), xoay icon 90 độ xuống */
+    .category-list a[aria-expanded="true"] .collapse-icon {
+        transform: rotate(90deg);
+    }
+
+    .category-list a .collapse-toggle {
+        flex-shrink: 0;
+        margin-left: 10px;
+    }
     </style>
 </head>
 <?php
 
-// 1. Khởi tạo Models
+// 1. Khởi tạo Models (Giả sử Product và Categories đã được định nghĩa và có sẵn)
 $productModels = new Product();
 $categories = new Categories();
 
-
 // ===========================================
-// 2. Xử lý Sắp xếp và Lấy Sản phẩm
+// 2. Xử lý Lọc Danh mục, Tìm kiếm và Thiết lập Bộ lọc
 // ===========================================
 
-// Lấy tùy chọn sắp xếp từ URL, mặc định là 'default'
+// Lấy tham số tìm kiếm
+$keyword = isset($_GET['q']) ? trim($_GET['q']) : null;
+$searchType = isset($_GET['search_type']) ? $_GET['search_type'] : 'product';
+
+// Biến trạng thái
+$categorySlug = isset($_GET['category_slug']) ? $_GET['category_slug'] : null;
+$currentCategory = null;
+$parentCategory = null;
+$categoryIdsToFilter = [];
+$isParentCategory = false; 
+
+// --- Xử lý Lọc Danh mục HOẶC Tìm kiếm ---
+if (!empty($keyword) && $searchType === 'product') {
+    // Nếu có tìm kiếm sản phẩm, BỎ QUA lọc danh mục
+    $categorySlug = null;
+    $currentCategory = null;
+    $parentCategory = null;
+    $categoryIdsToFilter = []; // Tìm kiếm trên tất cả sản phẩm
+} else {
+    // Xử lý Lọc Danh mục
+    if ($categorySlug) {
+        $currentCategory = $categories->get_category_by_slug($categorySlug);
+
+        if ($currentCategory) {
+            $categoryId = (int)$currentCategory['id'];
+            if ($currentCategory['parent_id'] === NULL) {
+                // Đây là danh mục CHA: Lấy ID của nó và tất cả con cháu
+                $isParentCategory = true;
+                $categoryIdsToFilter = $categories->get_child_ids($categoryId);
+                $parentCategory = $currentCategory; 
+            } else {
+                // Đây là danh mục CON: Chỉ lấy ID của chính nó
+                $isParentCategory = false;
+                $categoryIdsToFilter = [$categoryId];
+                $parentCategory = $categories->get_category_by_id((int)$currentCategory['parent_id']);
+            }
+        }
+    }
+}
+
+
+// 3. Lấy tùy chọn sắp xếp và chế độ xem
 $sortOption = isset($_GET['sort']) ? $_GET['sort'] : 'default'; 
 $viewOption = isset($_GET['view']) ? $_GET['view'] : 'grid';
 
-// Lấy TẤT CẢ sản phẩm đã được sắp xếp từ DB
-// PHẢI SỬA HÀM getAllProduct() để chấp nhận $sortOption như đã hướng dẫn trước đó
-$allProducts = $productModels->getAllProduct($sortOption); 
+// 4. Cấu hình phân trang
+$productsPerPage = 12; 
 
-// ===========================================
-// 3. Xử lý Phân trang (PAGINATION)
-// ===========================================
+// 5. Lấy TỔNG SỐ sản phẩm (theo categoryIdsToFilter và keyword)
+$totalProducts = $productModels->get_total_products($categoryIdsToFilter, $keyword); 
+$totalPages = $totalProducts > 0 ? ceil($totalProducts / $productsPerPage) : 1; 
 
-// Cấu hình phân trang
-$productsPerPage = 12; // Số sản phẩm hiển thị trên 1 trang
-$totalProducts = count($allProducts); // Tổng số sản phẩm đã sắp xếp
-$totalPages = ceil($totalProducts / $productsPerPage); // Tổng số trang cần có
-
-// Xác định Trang Hiện Tại
-// Lấy giá trị 'page' từ URL, nếu không có thì mặc định là 1.
+// 6. Xác định Trang Hiện Tại
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
-
-// Đảm bảo trang hiện tại nằm trong giới hạn (từ 1 đến $totalPages)
 $currentPage = max(1, min($currentPage, $totalPages));
 
-// Tính toán offset (vị trí bắt đầu) và slice mảng
-$offset = ($currentPage - 1) * $productsPerPage;
+// 7. Lấy DANH SÁCH sản phẩm cho trang hiện tại
+$productsOnPage = $productModels->get_products(
+    $categorySlug, 
+    $categoryIdsToFilter, 
+    $currentPage, 
+    $productsPerPage, 
+    $sortOption,
+    $keyword
+);
 
-// Lấy danh sách sản phẩm cho trang hiện tại (từ mảng đã được sắp xếp)
-$productsOnPage = array_slice($allProducts, $offset, $productsPerPage);
-
-// ===========================================
-// 4. Lấy Dữ liệu khác  
-// ===========================================
-
-// Lấy danh mục
+// 8. Lấy Dữ liệu Danh mục (Dùng cho sidebar)
 $allcategories = $categories->get_categories_hierarchical();
-// ... [Phần Xác định Trang Hiện Tại và Phân trang (array_slice) vẫn giữ nguyên] ...
+
+$directChildren = [];
+if ($categorySlug && $currentCategory && $isParentCategory) {
+    // Nếu đang xem Danh mục CHA, lấy danh mục con trực tiếp (cho sidebar)
+    $directChildren = $categories->get_direct_children((int)$currentCategory['id']);
+}
+
+// 9. Chuẩn bị tham số URL (Đảm bảo giữ lại tất cả params)
 $currentQuery = $_GET; 
-unset($currentQuery['sort']); // Loại bỏ tham số 'sort' hiện tại để không bị trùng
-unset($currentQuery['page']); // Thường loại bỏ tham số 'page' để trở về trang 1 khi sắp xếp mới
-unset($currentQuery['view']); // Loại bỏ 'view'
+unset($currentQuery['sort']);     
+unset($currentQuery['page']);     
+unset($currentQuery['view']);     
 
 $hiddenInputs = '';
 foreach ($currentQuery as $key => $value) {
-    // Chỉ thêm các tham số khác vào input ẩn
-    $hiddenInputs .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+    if (is_scalar($value)) {
+        $hiddenInputs .= '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($value) . '">';
+    }
 }
 
-$currentSortParam = isset($_GET['sort']) ? '&sort=' . htmlspecialchars($_GET['sort']) : '';
-$currentViewParam = isset($_GET['view']) ? '&view=' . htmlspecialchars($_GET['view']) : '';
-$currentViewParam = '&view=' . htmlspecialchars($viewOption);
-$currentUrlParams = $currentSortParam . $currentViewParam;
-$totalProductsInDB = $productModels->getAllCountProducts();
+// Tạo chuỗi tham số cho Phân trang
+$currentUrlParams = '';
+if (!empty($categorySlug)) {
+    $currentUrlParams .= '&category_slug=' . htmlspecialchars($categorySlug);
+}
+if (!empty($sortOption) && $sortOption !== 'default') {
+    $currentUrlParams .= '&sort=' . htmlspecialchars($sortOption);
+}
+if (!empty($viewOption) && $viewOption !== 'grid') { 
+    $currentUrlParams .= '&view=' . htmlspecialchars($viewOption);
+}
+if (!empty($keyword)) {
+    $currentUrlParams .= '&q=' . urlencode($keyword);
+    // Luôn giữ lại search_type nếu có q
+    $currentUrlParams .= '&search_type=' . urlencode($searchType);
+}
+
 ?>
 
 
@@ -442,39 +504,101 @@ $totalProductsInDB = $productModels->getAllCountProducts();
             <div class="container">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-info">Trang chủ</a>
+                        <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-success">Trang chủ</a>
                         </li>
+
+                        <?php if (!empty($keyword) && $searchType === 'product'): ?>
+                        <li class="breadcrumb-item active" aria-current="page">Kết quả tìm kiếm cho:
+                            "<?= htmlspecialchars($keyword) ?>"</li>
+
+                        <?php elseif ($categorySlug && $parentCategory): ?>
+                        <li class="breadcrumb-item"><a
+                                href="?category_slug=<?= htmlspecialchars($parentCategory['slug']) ?>"
+                                class="text-decoration-none text-success"><?= htmlspecialchars($parentCategory['name']) ?></a>
+                        </li>
+
+                        <?php if ($currentCategory && $currentCategory['parent_id'] !== NULL): // Đây là danh mục con ?>
+                        <li class="breadcrumb-item active" aria-current="page">
+                            <?= htmlspecialchars($currentCategory['name']) ?></li>
+                        <?php endif; ?>
+
+                        <?php else: ?>
                         <li class="breadcrumb-item active" aria-current="page">Sản phẩm</li>
+                        <?php endif; ?>
+
                     </ol>
                 </nav>
             </div>
         </div>
-
         <div class="container">
             <div class="row">
 
                 <div class="col-lg-3 d-none d-lg-block">
                     <div class="sidebar-title">DANH MỤC SẢN PHẨM</div>
                     <ul class="category-list">
-                        <!-- <li><a href="#">THỦY SINH VÀ CÁ CẢNH</a></li> -->
+                        <?php 
+                        // 1. Nếu đang ở Danh mục CHA (Hiển thị các con trực tiếp)
+                        if ($categorySlug && $currentCategory && $isParentCategory): ?>
 
-                        <?php Categories::display_categories_html($allcategories); ?>
+                            <?php 
+                            // Link quay lại: Quay về trang sản phẩm chung
+                            $backLink = '?'; 
+                            ?>
 
+                            <li><a href="<?= $backLink ?>">< QUAY LẠI</a></li>
 
-                        <?php
+                            <?php if (!empty($directChildren)): ?>
+                                <?php foreach ($directChildren as $child): 
+                                    $childLink = "?category_slug=" . htmlspecialchars($child['slug']);
+                                ?>
+                                    <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+
+                        <?php 
+                        // 2. Nếu đang ở Danh mục CON (Chỉ hiển thị 2 nút QUAY LẠI)
+                        elseif ($categorySlug && $currentCategory && $parentCategory && !$isParentCategory): 
+                            
+                            // Link quay lại cấp cha (DANH MỤC CHA)
+                            $backToParentLink = '?category_slug=' . htmlspecialchars($parentCategory['slug']);
+                            
+                            // Link quay lại cấp tổng quát (DANH MỤC SẢN PHẨM)
+                            $backToGeneralLink = '?'; 
                         ?>
+                            <li><a href="<?= $backToParentLink ?>">< QUAY LẠI</a></li>
+                            <li><a href="<?= $backToGeneralLink ?>">< QUAY LẠI</a></li>
+
+                        <?php 
+                        // 3. Nếu không có lọc hoặc đang tìm kiếm (Hiển thị cây danh mục)
+                        else: ?>
+                            <?php Categories::display_categories_html($allcategories); ?>
+
+                        <?php endif; ?>
                     </ul>
                 </div>
-
                 <div class="col-lg-9 col-12">
 
+                    <?php if ($currentCategory && !$isParentCategory): ?>
+                    <div class="category-banner">
+                        <?php if (!empty($currentCategory['image_url'])): ?>
+                        <img src="<?= htmlspecialchars($currentCategory['image_url']) ?>"
+                            alt="<?= htmlspecialchars($currentCategory['name']) ?>">
+                        <?php endif; ?>
+                        <h3><?= htmlspecialchars($currentCategory['name']) ?></h3>
+                        <?php if (!empty($currentCategory['description'])): ?>
+                        <p><?= $currentCategory['description'] ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <?php endif; ?>
                     <div class="product-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <!-- <button class="btn btn-outline-success d-lg-none btn-sm" type="button"
-                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilter">
-                            <i class="bi bi-funnel"></i> Danh mục
-                        </button> -->
 
-                        <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản phẩm</div>
+                        <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản
+                            phẩm</div>
+                        
+                        <button class="btn btn-sm btn-outline-success d-md-none" type="button"
+                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas">
+                            <i class="bi bi-funnel"></i> Lọc
+                        </button>
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
                             <form method="GET" action="" id="sort-form">
@@ -489,7 +613,6 @@ $totalProductsInDB = $productModels->getAllCountProducts();
                                         <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>
                                         Thứ Tự Mặc định
                                     </option>
-
                                     <option value="popularity"
                                         <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>
                                         Thứ Tự Theo Mức Độ Phổ Biến
@@ -521,25 +644,36 @@ $totalProductsInDB = $productModels->getAllCountProducts();
                     </div>
 
                     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3" id="product-container">
-                        <?php   
-                            foreach($productsOnPage as $value){
-                        ?>
+                        <?php if (empty($productsOnPage)): ?>
+                        <div class="col-12">
+                            <p class="alert alert-warning">
+                                <?php if (!empty($keyword)): ?>
+                                    Không tìm thấy sản phẩm nào khớp với từ khóa "<?= htmlspecialchars($keyword) ?>".
+                                <?php else: ?>
+                                    Không tìm thấy sản phẩm nào trong danh mục này.
+                                <?php endif; ?>
+                            </p>
+                        </div>
+                        <?php else: ?>
+                        <?php foreach($productsOnPage as $value): ?>
                         <div class="col">
                             <div class="product-card">
                                 <div class="product-img-wrapper">
-                                    <img src="<?php echo $value['image_url'] ?>" alt="Actara">
+                                    <img src="<?php echo htmlspecialchars($value['image_url']) ?>"
+                                        alt="<?php echo htmlspecialchars($value['name']) ?>">
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="product-title"><?php echo $value['name'] ?></h6>
-                                    <div class="product-price"><?php echo $value['price'] ?>Đ</div>
+                                    <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
+                                    <div class="product-price"><?php echo Product::formatCurrency($value['price']) ?>
+                                    </div>
                                 </div>
                                 <div class="card-footer">
                                     <button class="btn btn-add-cart">Đọc tiếp</button>
                                 </div>
                             </div>
                         </div>
-                        <?php  }
-                        ?>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
 
 
                     </div>
@@ -576,75 +710,108 @@ $totalProductsInDB = $productModels->getAllCountProducts();
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileFilter">
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileFilterOffcanvas" aria-labelledby="mobileFilterLabel">
         <div class="offcanvas-header bg-success text-white">
-            <h5 class="offcanvas-title">DANH MỤC</h5>
+            <h5 class="offcanvas-title" id="mobileFilterLabel">DANH MỤC SẢN PHẨM</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                 aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="category-list">
-                <li><a href="#">THỦY SINH VÀ CÁ CẢNH</a></li>
-                <li><a href="#">HÀNG RÀO NHỰA</a></li>
-                <li><a href="#">KHUYẾN MÃI & VOUCHER 2024</a></li>
+                <?php 
+                // 1. Nếu đang ở Danh mục CHA (Hiển thị các con trực tiếp)
+                if ($categorySlug && $currentCategory && $isParentCategory): ?>
+
+                    <?php 
+                    $backLink = '?'; 
+                    ?>
+                    <li><a href="<?= $backLink ?>">< QUAY LẠI</a></li>
+
+                    <?php if (!empty($directChildren)): ?>
+                        <?php foreach ($directChildren as $child): 
+                            $childLink = "?category_slug=" . htmlspecialchars($child['slug']);
+                        ?>
+                            <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+
+                <?php 
+                // 2. Nếu đang ở Danh mục CON (Chỉ hiển thị 2 nút QUAY LẠI)
+                elseif ($categorySlug && $currentCategory && $parentCategory && !$isParentCategory): 
+                    
+                    $backToParentLink = '?category_slug=' . htmlspecialchars($parentCategory['slug']);
+                    $backToGeneralLink = '?'; 
+                ?>
+                    <li><a href="<?= $backToParentLink ?>">< QUAY LẠI</a></li>
+                    <li><a href="<?= $backToGeneralLink ?>">< QUAY LẠI</a></li>
+
+                <?php 
+                // 3. Nếu không có lọc hoặc đang tìm kiếm (Hiển thị cây danh mục)
+                else: ?>
+                    <?php Categories::display_categories_html($allcategories); ?>
+
+                <?php endif; ?>
             </ul>
         </div>
     </div>
-
-    <a href="tel:0909123409" class="floating-phone text-decoration-none">
-        <i class="bi bi-telephone-fill"></i>
-    </a>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 <script>
-// Lấy input ẩn trong form sắp xếp
-const viewModeInput = document.getElementById('current-view-mode');
-// Lấy các nút List/Grid
-const viewGridLabel = document.querySelector('label[for="view-grid"]');
-const viewListLabel = document.querySelector('label[for="view-list"]');
-
-// Gán sự kiện khi click vào Grid
-viewGridLabel.addEventListener('click', () => {
-    viewModeInput.value = 'grid';
-    // Tùy chọn: Tự động gửi form hoặc reload trang nếu cần
-    // Nếu không gửi form, chế độ xem chỉ thay đổi qua CSS, nhưng tham số view đã được lưu.
-});
-
-// Gán sự kiện khi click vào List
-viewListLabel.addEventListener('click', () => {
-    viewModeInput.value = 'list';
-    // Tùy chọn: Tự động gửi form hoặc reload trang
-});
-
-// Nếu bạn muốn chế độ xem được duy trì cả khi không sắp xếp,
-// bạn có thể buộc reload trang sau khi cập nhật input ẩn:
-const viewGridRadio = document.getElementById('view-grid');
-const viewListRadio = document.getElementById('view-list');
-
-viewGridRadio.addEventListener('change', () => {
-    if (viewGridRadio.checked) {
-        updateViewModeAndReload('grid');
-    }
-});
-
-viewListRadio.addEventListener('change', () => {
-    if (viewListRadio.checked) {
-        updateViewModeAndReload('list');
-    }
-});
-
+// Logic để thay đổi chế độ xem và reload trang để áp dụng
 function updateViewModeAndReload(mode) {
     let currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('view', mode);
-
-    // Giữ lại tham số sắp xếp và trang hiện tại
-    // (Trong trường hợp này, vì các input radio ẩn, việc này là cần thiết nếu bạn muốn lưu trạng thái)
-
-    // Vì bạn đã có sẵn logic sắp xếp và phân trang giữ lại tham số, 
-    // chúng ta chỉ cần thêm/sửa tham số 'view' vào URL và tải lại.
     window.location.href = currentUrl.toString();
 }
+
+const viewGridRadio = document.getElementById('view-grid');
+const viewListRadio = document.getElementById('view-list');
+
+if (viewGridRadio) {
+    viewGridRadio.addEventListener('change', () => {
+        if (viewGridRadio.checked) {
+            updateViewModeAndReload('grid');
+        }
+    });
+}
+
+if (viewListRadio) {
+    viewListRadio.addEventListener('change', () => {
+        if (viewListRadio.checked) {
+            updateViewModeAndReload('list');
+        }
+    });
+}
+
+// ========================================================
+// LOGIC SỬA LỖI: Ngăn click icon kích hoạt link, và dùng Bootstrap API để đảm bảo mở/đóng
+// ========================================================
+document.addEventListener('DOMContentLoaded', function() {
+    const collapseToggles = document.querySelectorAll('.collapse-toggle');
+
+    collapseToggles.forEach(toggle => {
+        // 1. Ngăn chặn sự kiện nổi bọt lên thẻ <a>
+        toggle.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Lấy ID mục tiêu collapse (ví dụ: #cat-collapse-5)
+            const targetId = this.getAttribute('data-bs-target');
+            const collapseElement = document.querySelector(targetId);
+
+            if (collapseElement) {
+                // Kích hoạt thủ công Bootstrap Collapse API để đảm bảo hành vi
+                const collapseInstance = new bootstrap.Collapse(collapseElement, {
+                    toggle: true
+                });
+
+                // Cập nhật thủ công aria-expanded
+                const isExpanded = collapseElement.classList.contains('show');
+                this.setAttribute('aria-expanded', !isExpanded);
+            }
+        });
+    });
+});
 </script>
 
 </html>
