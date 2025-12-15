@@ -370,6 +370,60 @@ public function get_products($category_slug = null, $category_ids = [], $page = 
 
         return $result->fetch_all(MYSQLI_ASSOC);
     }
+    // FILE: models/product.php (Bổ sung vào Class Product)
+
+/**
+ * Lấy danh sách sản phẩm thuộc một mảng các ID danh mục (sử dụng bảng category_product).
+ *
+ * @param array $categoryIds Mảng chứa các ID danh mục (bao gồm cả cha và con).
+ * @return array Danh sách sản phẩm.
+ */
+public function get_products_by_category_ids(array $categoryIds) {
+    $conn = self::$connection;
+    if ($conn === null || empty($categoryIds)) return [];
+
+    // 1. Tạo chuỗi placeholders cho IN clause (ví dụ: ?, ?, ?)
+    $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+    
+    // 2. Định nghĩa câu truy vấn: JOIN products với category_product
+    $sql = "
+        SELECT DISTINCT p.* FROM products p
+        INNER JOIN category_product cp ON p.id = cp.product_id
+        WHERE cp.category_id IN ($placeholders)
+        ORDER BY p.id DESC
+    ";
+
+    $stmt = $conn->prepare($sql);
+    
+    if ($stmt === false) {
+        // Ghi log lỗi nếu cần
+        return [];
+    }
+
+    // 3. Bind tham số (chủ yếu là mảng ID danh mục)
+    // Cần tạo chuỗi types: 'i' cho mỗi ID (ví dụ: 'iiii')
+    $types = str_repeat('i', count($categoryIds));
+    
+    // Cần tạo mảng tham chiếu cho bind_param
+    $params = array_merge([$types], $categoryIds); 
+    
+    // Gọi bind_param với các tham chiếu (sử dụng call_user_func_array)
+    // Chuyển mảng tham số (types + values) thành tham chiếu
+    $refs = [];
+    foreach ($params as $key => $value) {
+        $refs[$key] = &$params[$key];
+    }
+
+    call_user_func_array([$stmt, 'bind_param'], $refs);
+
+    // 4. Thực thi và lấy kết quả
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = $result->fetch_all(MYSQLI_ASSOC);
+
+    $stmt->close();
+    return $products;
+}
 
     // (Lưu ý: Nếu bạn muốn dùng slug, bạn cần tạo thêm hàm get_product_by_slug)
 }
