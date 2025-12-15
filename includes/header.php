@@ -82,75 +82,177 @@
         background: #f8f9fa;
         color: #1f7a2f;
     }
+
     /* hover blog  */
     /* Style cho Menu Blog */
-.blog-wrapper {
-    position: relative;
-    /* Đảm bảo menu con xuất hiện so với BLOG */
-}
+    .blog-wrapper {
+        position: relative;
+        /* Đảm bảo menu con xuất hiện so với BLOG */
+    }
 
-.blog-dropdown-desktop {
-    display: none;
-    position: absolute;
-    /* Đặt menu con ngay dưới BLOG */
-    top: 100%;
-    left: 0;
-    min-width: 250px; /* Độ rộng tối thiểu cho menu con */
-    background: #fff;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 9998; /* Dưới danh mục chính 9999 */
-    padding: 5px 0; /* Khoảng cách đệm bên trong */
-}
+    .blog-dropdown-desktop {
+        display: none;
+        position: absolute;
+        /* Đặt menu con ngay dưới BLOG */
+        top: 100%;
+        left: 0;
+        min-width: 250px;
+        /* Độ rộng tối thiểu cho menu con */
+        background: #fff;
+        border: 1px solid #e5e5e5;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 9998;
+        /* Dưới danh mục chính 9999 */
+        padding: 5px 0;
+        /* Khoảng cách đệm bên trong */
+    }
 
-/* Hiển thị dropdown khi hover vào wrapper */
-.blog-wrapper:hover .blog-dropdown-desktop {
-    display: block;
-}
+    /* Hiển thị dropdown khi hover vào wrapper */
+    .blog-wrapper:hover .blog-dropdown-desktop {
+        display: block;
+    }
 
-.blog-item {
-    padding: 8px 15px;
-    font-size: 15px;
-    font-weight: 500;
-    color: #333; /* Màu chữ bình thường */
-    text-decoration: none; /* Xóa gạch chân */
-    display: block; /* Đảm bảo cả khu vực là clickable */
-}
+    .blog-item {
+        padding: 8px 15px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #333;
+        /* Màu chữ bình thường */
+        text-decoration: none;
+        /* Xóa gạch chân */
+        display: block;
+        /* Đảm bảo cả khu vực là clickable */
+    }
 
-.blog-item:hover {
-    background: #f8f9fa;
-    color: #155d27; /* Màu xanh lá cây khi hover */
-}
-/* Thêm Mũi Tên Nhọn (Caret) */
-.blog-wrapper:hover .blog-dropdown-desktop::before {
-    content: "";
-    position: absolute;
-    top: -8px; /* Di chuyển lên trên dropdown 10px */
-    left: 20px; /* Căn chỉnh vị trí mũi tên (điều chỉnh theo ý bạn) */
-    
-    /* Kỹ thuật tạo hình tam giác */
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent ;
-    border-right: 10px solid transparent;
-    border-bottom: 10px solid #fff; /* Màu nền của mũi tên (trắng) */
-    z-index: 9999;
-}
+    .blog-item:hover {
+        background: #f8f9fa;
+        color: #155d27;
+        /* Màu xanh lá cây khi hover */
+    }
 
-.blog-wrapper:hover .blog-dropdown-desktop::after {
-    content: "";
-    position: absolute;
-    top: -8px; /* Lên cao hơn một chút so với ::before */
-    left: 20px; /* Cùng vị trí với ::before */
-    
-    /* Kỹ thuật tạo hình tam giác (Border ngoài) */
-    width: 0;
-    height: 0;
-    border-left: 10px solid transparent ;
-    border-right: 10px solid transparent;
-    border-bottom: 10px solid #e5e5e5; /* Màu border của dropdown */
-    z-index: 9998;
-}
+    /* Thêm Mũi Tên Nhọn (Caret) */
+    .blog-wrapper:hover .blog-dropdown-desktop::before {
+        content: "";
+        position: absolute;
+        top: -8px;
+        /* Di chuyển lên trên dropdown 10px */
+        left: 20px;
+        /* Căn chỉnh vị trí mũi tên (điều chỉnh theo ý bạn) */
+
+        /* Kỹ thuật tạo hình tam giác */
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #fff;
+        /* Màu nền của mũi tên (trắng) */
+        z-index: 9999;
+    }
+
+    .blog-wrapper:hover .blog-dropdown-desktop::after {
+        content: "";
+        position: absolute;
+        top: -8px;
+        /* Lên cao hơn một chút so với ::before */
+        left: 20px;
+        /* Cùng vị trí với ::before */
+
+        /* Kỹ thuật tạo hình tam giác (Border ngoài) */
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #e5e5e5;
+        /* Màu border của dropdown */
+        z-index: 9998;
+    }
+
+    /* Thêm vào thẻ <style> trong header.php */
+
+    /* Wrapper cho phép Mini Cart định vị tương đối */
+    .cart-wrapper-icon {
+        display: grid;
+        /* Quan trọng: Giữ wrapper vừa với nội dung */
+    }
+
+    /* CSS cho Mini Cart */
+    .mini-cart {
+        position: absolute;
+        top: 100%;
+        right: -10px;
+        /* Di chuyển sang phải một chút để khớp icon */
+        width: 480px;
+        background: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        z-index: 9999;
+        padding: 15px;
+        transform: translateY(10px);
+        /* Ngăn Mini Cart bị ẩn bởi Overflow */
+        overflow: visible;
+    }
+
+    .mini-cart.hidden {
+        display: none;
+    }
+
+    .mini-cart-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px dotted #eee;
+        font-size: 0.95rem;
+    }
+
+    .mini-cart-item:last-child {
+        border-bottom: none;
+    }
+
+    .mini-item-img {
+        width: 100px;
+        height: 110px;
+        margin-right: 10px;
+        border: 1px solid #ddd;
+        flex-shrink: 0;
+    }
+
+    .mini-item-name {
+        flex-grow: 1;
+        line-height: 1.3;
+        font-weight: 500;
+        color: #1e8738;
+    }
+
+    .mini-item-price {
+        font-size: 0.9rem;
+        color: #d70018;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
+
+    .mini-cart-summary {
+        padding-top: 15px;
+        border-top: 1px solid #ccc;
+        margin-top: 10px;
+    }
+
+    .sub-total-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .sub-total-amount {
+        color: #d70018 !important;
+        font-size: 1.1rem;
+    }
+
+    .mini-cart-btn {
+        padding: 10px 5px !important;
+        font-size: 0.9rem !important;
+        font-weight: bold !important;
+    }
     </style>
 </head>
 <?php  
@@ -161,6 +263,7 @@ include 'models/product.php'; // Nhúng file model vừa tạo
 include 'models/categories.php'; // Nhúng file model vừa tạo
 include 'models/video.php'; // Nhúng file model vừa tạo
 include 'models/blog.php'; // Nhúng file model vừa tạo
+
 
 // Lấy dữ liệu danh mục Blog
 $blogModels = new Blog();
@@ -186,22 +289,24 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
             </div>
 
             <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
-                <div class="input-group">
-                    <select class="form-select d-none d-md-block bg-light border-end-0" style="max-width:130px;">
-                        <option>Sản phẩm</option>
-                        <option>Bài viết</option>
+                <form action="product.php" method="GET" class="input-group">
+
+                    <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
+                        style="max-width:130px;">
+                        <option value="product" selected>Sản phẩm</option>
+                        <option value="blog">Bài viết</option>
                     </select>
 
-                    <input type="text" class="form-control" placeholder="Tìm kiếm...">
+                    <input type="text" name="q" class="form-control" placeholder="Tìm kiếm...">
 
-                    <button class="btn btn-success">
+                    <button class="btn btn-success" type="submit">
                         <i class="bi bi-search d-md-none"></i>
                         <span class="d-none d-md-inline">Tìm kiếm</span>
                     </button>
-                </div>
+                </form>
             </div>
 
-            <div class="col-4 col-lg-5 text-end icon-group px-1 px-md-3">
+            <div class="col-4 col-lg-5  icon-group px-1 px-md-3">
                 <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3 pe-lg-5">
 
                     <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block"
@@ -215,11 +320,32 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
                             style="font-size:0.6rem">0</span>
                     </a>
 
-                    <a href="#" class="text-dark position-relative text-decoration-none me-1">
-                        <i class="bi bi-cart fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
-                            style="font-size:0.6rem">2</span>
-                    </a>
+                    <div class="cart-wrapper-icon position-relative">
+                        <a href="shopping-cart.php" id="cart-icon"
+                            class="text-dark position-relative text-decoration-none me-1">
+                            <i class="bi bi-cart fs-5"></i>
+                            <span id="cart-count-badge"
+                                class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
+                                style="font-size:0.6rem">0</span>
+                        </a>
+
+                        <div id="mini-cart-dropdown" class="mini-cart hidden">
+                            <div id="mini-cart-items">
+                            </div>
+                            <div class="mini-cart-summary">
+                                <div class="sub-total-row">
+                                    <span>Tổng số phụ:</span>
+                                    <span id="mini-cart-subtotal" class="sub-total-amount text-danger fw-bold">0₫</span>
+                                </div>
+                                <div class="d-flex justify-content-between gap-2 mt-3">
+                                    <a href="shopping-cart.php"
+                                        class="btn btn-success btn-sm flex-fill mini-cart-btn">Xem giỏ hàng</a>
+                                    <a href="checkout.php" class="btn btn-dark btn-sm flex-fill mini-cart-btn">Thanh
+                                        toán</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">
                         <i class="bi bi-list fs-2 text-success"></i>
@@ -271,12 +397,12 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
 
             <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
             <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
-            
+
             <div class="blog-wrapper">
                 <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
                     BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
                 </a>
-                
+
                 <div class="blog-dropdown-desktop">
                     <?php 
                     if (!empty($mainBlogCategories)) {
@@ -332,5 +458,186 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
         </div>
     </div>
 </body>
+<script>
+// ----------------------------------------------------------------------
+// HÀM TIỆN ÍCH
+// ----------------------------------------------------------------------
+
+// Định nghĩa hàm formatCurrency (cần thiết cho Mini Cart)
+function formatCurrency(price) {
+    price = isNaN(price) ? 0 : price;
+    return new Intl.NumberFormat('vi-VN', {
+        style: 'currency',
+        currency: 'VND'
+    }).format(price);
+}
+
+// ----------------------------------------------------------------------
+// HÀM CẬP NHẬT BADGE (Total Unique Products)
+// ----------------------------------------------------------------------
+function updateCartCountBadge() {
+    const cartCountBadge = document.getElementById('cart-count-badge');
+    if (!cartCountBadge) return;
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalUniqueProducts = cart.length;
+
+    cartCountBadge.textContent = totalUniqueProducts > 99 ? '99+' : totalUniqueProducts.toString();
+
+    if (totalUniqueProducts === 0) {
+        cartCountBadge.style.display = 'none';
+    } else {
+        cartCountBadge.style.display = 'block';
+    }
+}
+
+// ----------------------------------------------------------------------
+// HÀM XỬ LÝ XÓA SẢN PHẨM TRONG GIỎ (GLOBAL)
+// ----------------------------------------------------------------------
+window.removeProductFromCart = function(productIdToRemove) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Lọc ra sản phẩm muốn xóa
+    cart = cart.filter(item => item.id != productIdToRemove);
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Cập nhật cả Mini Cart và Badge
+    updateCartCountBadge();
+    renderMiniCart(); // Render lại Mini Cart ngay lập tức
+};
+
+
+// ----------------------------------------------------------------------
+// HÀM RENDER MINI CART
+// ----------------------------------------------------------------------
+function renderMiniCart() {
+    const miniCart = document.getElementById('mini-cart-dropdown');
+    const miniCartItemsContainer = document.getElementById('mini-cart-items');
+    const miniCartSubtotalDisplay = document.getElementById('mini-cart-subtotal');
+
+    if (!miniCart || !miniCartItemsContainer || !miniCartSubtotalDisplay) return;
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    miniCartItemsContainer.innerHTML = ''; // Xóa nội dung cũ
+
+    let subTotal = 0;
+    const maxItemsToShow = 3;
+    let itemsToDisplay = cart.slice(0, maxItemsToShow);
+
+    if (cart.length === 0) {
+        // Giỏ hàng trống
+        miniCartItemsContainer.innerHTML =
+            '<p style="text-align: center; margin: 10px 0; color: #666;">Giỏ hàng trống.</p>';
+        miniCartSubtotalDisplay.textContent = formatCurrency(0);
+        return;
+    }
+
+    // 1. Render các sản phẩm (tối đa 3)
+    itemsToDisplay.forEach(item => {
+        const itemSubtotal = item.price * item.quantity;
+        subTotal += itemSubtotal;
+
+        const itemElement = document.createElement('div');
+        itemElement.className = 'mini-cart-item';
+        itemElement.innerHTML = `
+            <div class="mini-item-img">
+                <img src="${item.imageUrl}" alt="${item.name}" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            <div class="mini-item-name">
+                <a href="detailproduct.php?id=${item.id}" style="color: #0066cf;text-decoration: none;">${item.name}</a>
+                <p style="margin: 0; font-size: 1rem; color: #555;text-align: justify;">${item.quantity} &times; ${formatCurrency(item.price)}</p>
+            </div>
+            <span class="remove-from-mini-cart" data-product-id="${item.id}" style="cursor: pointer; color: #ccc;">&times;</span>
+        `;
+        miniCartItemsContainer.appendChild(itemElement);
+    });
+
+    // 2. Hiển thị thông báo nếu có nhiều hơn 3 sản phẩm
+    if (cart.length > maxItemsToShow) {
+        const moreInfo = document.createElement('p');
+        moreInfo.style.textAlign = 'center';
+        moreInfo.style.fontSize = '0.9rem';
+        moreInfo.style.marginTop = '5px';
+        moreInfo.style.marginBottom = '0';
+        moreInfo.textContent = `Và ${cart.length - maxItemsToShow} sản phẩm khác...`;
+        miniCartItemsContainer.appendChild(moreInfo);
+    }
+
+    // 3. Cập nhật Tổng số phụ
+    miniCartSubtotalDisplay.textContent = formatCurrency(subTotal);
+
+    // 4. Gắn lại sự kiện xóa sản phẩm trong Mini Cart
+    document.querySelectorAll('.remove-from-mini-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            // Gọi hàm xóa sản phẩm (đã định nghĩa ở phạm vi toàn cục)
+            window.removeProductFromCart(this.dataset.productId);
+        });
+    });
+}
+
+
+// ----------------------------------------------------------------------
+// LOGIC SỰ KIỆN DOM CONTENT LOADED
+// ----------------------------------------------------------------------
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Chạy ngay khi trang tải xong
+    updateCartCountBadge();
+
+    // ----------------------------------------------------------------------
+    // 2. LOGIC HOVER MINI CART
+    // ----------------------------------------------------------------------
+    const cartWrapper = document.querySelector('.cart-wrapper-icon');
+    const miniCart = document.getElementById('mini-cart-dropdown');
+
+    let timeout;
+
+    if (cartWrapper && miniCart) {
+        // Xử lý khi di chuột VÀO (Hover In)
+        cartWrapper.addEventListener('mouseenter', () => {
+            clearTimeout(timeout);
+            renderMiniCart(); // Render nội dung Mini Cart
+            miniCart.classList.remove('hidden');
+        });
+
+        // Xử lý khi di chuột RA (Hover Out)
+        cartWrapper.addEventListener('mouseleave', () => {
+            // Đặt timeout để ẩn sau một khoảng thời gian ngắn (vd: 300ms)
+            timeout = setTimeout(() => {
+                miniCart.classList.add('hidden');
+            }, 300);
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // 3. LOGIC XỬ LÝ NÚT ADD TO CART (Giữ nguyên logic cập nhật badge)
+    // *Đây là các hàm giả lập/dùng chung cho các file listproduct.php và detailproduct.php*
+    // ----------------------------------------------------------------------
+
+    // Hàm giả lập logic AddToCart cơ bản để đảm bảo updateCartCountBadge được gọi
+    window.simulateAddToCartLogic = function(event) {
+        // [Logic AddToCart sẽ nằm ở các file khác]
+        // Sau khi logic của các file khác thực thi và lưu LocalStorage:
+        updateCartCountBadge();
+        // Mini Cart sẽ được cập nhật khi hover tiếp theo
+    }
+
+    // Ví dụ: Gắn lại sự kiện cho các nút có class .js-add-to-cart (nếu cần cho file header test)
+    const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', window.simulateAddToCartLogic);
+    });
+
+    const bigAddToCartButton = document.getElementById('btn-add-to-cart-detail');
+    if (bigAddToCartButton) {
+        bigAddToCartButton.addEventListener('click', function(event) {
+            // [Logic AddToCart sẽ nằm ở các file khác]
+            // Giả định logic processAddToCart đã được thực thi và gọi updateCartCountBadge()
+        });
+    }
+});
+</script>
 
 </html>

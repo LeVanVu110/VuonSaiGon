@@ -128,7 +128,21 @@ class Product extends Db
  * @param int $products_per_page Số sản phẩm trên mỗi trang (mặc định 12)
  * @return array Danh sách sản phẩm cho trang hiện tại
  */
-public function get_products($category_slug = null, $page = 1, $products_per_page = 12)
+// FILE: product.php (Chỉ phần hàm get_products)
+
+/**
+ * Lấy danh sách sản phẩm từ CSDL với chức năng phân trang, lọc và sắp xếp.
+ *
+ * @param string $category_slug Slug của danh mục (cha hoặc con).
+ * @param array $category_ids Mảng ID danh mục để lọc (dùng cho danh mục cha và con).
+ */
+// FILE: product.php (Chỉ phần hàm get_products)
+
+/**
+ * Lấy danh sách sản phẩm từ CSDL với chức năng phân trang, lọc và sắp xếp.
+ * * Đã sửa đổi để thêm tham số $keyword.
+ */
+public function get_products($category_slug = null, $category_ids = [], $page = 1, $products_per_page = 12, $sortType = 'default', $keyword = null) // <-- THÊM $keyword
     {
         $conn = self::$connection;
         if ($conn === null) return [];
@@ -138,20 +152,44 @@ public function get_products($category_slug = null, $page = 1, $products_per_pag
         
         $products = [];
         $sql = "SELECT p.* FROM products p ";
-        $where = "";
+        $where = "WHERE 1=1 "; // Bắt đầu WHERE clause
 
-        if ($category_slug) {
-            $sql .= "JOIN category_product cp ON p.id = cp.product_id
-                     JOIN categories c ON cp.category_id = c.id ";
-            
-            $escaped_slug = $conn->real_escape_string($category_slug);
-            $where .= "WHERE c.slug = '{$escaped_slug}'"; 
+        if (!empty($category_ids)) {
+            // Lọc theo danh mục (Giữ nguyên)
+            $id_string = implode(',', array_map('intval', $category_ids)); 
+            $sql .= "JOIN category_product cp ON p.id = cp.product_id ";
+            $where .= "AND cp.category_id IN ({$id_string}) "; 
+        }
+
+        if (!empty($keyword)) {
+            // Lọc theo từ khóa tìm kiếm
+            $escaped_keyword = $conn->real_escape_string($keyword);
+            $where .= "AND (p.name LIKE '%{$escaped_keyword}%' OR p.description LIKE '%{$escaped_keyword}%') ";
         }
         
-        $sql .= $where . " ORDER BY p.id DESC LIMIT " . (int)$products_per_page . " OFFSET " . $offset;
-
+        // LOGIC SẮP XẾP SẢN PHẨM (Giữ nguyên)
+        $orderBy = "ORDER BY p.id DESC";
+        switch ($sortType) {
+            // ... (Logic switch case giữ nguyên) ...
+            case 'price_asc':
+                $orderBy = "ORDER BY p.price ASC";
+                break;
+            case 'price_desc':
+                $orderBy = "ORDER BY p.price DESC";
+                break;
+            case 'popularity':
+                $orderBy = "ORDER BY p.quantity DESC"; 
+                break;
+            case 'default':
+            default:
+                $orderBy = "ORDER BY p.id DESC"; 
+                break;
+        }
+        
+        $sql .= $where . " " . $orderBy . " LIMIT " . (int)$products_per_page . " OFFSET " . $offset;
+        
+        // ... (phần thực thi và trả về kết quả giữ nguyên) ...
         $result = $conn->query($sql);
-
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $products[] = $row;
@@ -161,34 +199,179 @@ public function get_products($category_slug = null, $page = 1, $products_per_pag
     }
     
     /**
-     * Lấy tổng số sản phẩm khớp với điều kiện lọc.
+     * Lấy tổng số sản phẩm khớp với điều kiện lọc (category_ids và keyword).
      */
-    public function get_total_products($category_slug = null)
+    public function get_total_products($category_ids = [], $keyword = null) // <-- THÊM $keyword
     {
         $conn = self::$connection;
         if ($conn === null) return 0;
         
-        $sql = "SELECT COUNT(p.id) AS total FROM products p ";
-        $where = "";
+        $sql = "SELECT COUNT(DISTINCT p.id) AS total FROM products p ";
+        $where = "WHERE 1=1 "; // Bắt đầu WHERE clause
 
-        if ($category_slug) {
-            $sql .= "JOIN category_product cp ON p.id = cp.product_id
-                     JOIN categories c ON cp.category_id = c.id ";
-            
-            $escaped_slug = $conn->real_escape_string($category_slug);
-            $where .= "WHERE c.slug = '{$escaped_slug}'"; 
+        if (!empty($category_ids)) {
+            // Lọc theo danh mục (Giữ nguyên)
+            $id_string = implode(',', array_map('intval', $category_ids)); 
+            $sql .= "JOIN category_product cp ON p.id = cp.product_id ";
+            $where .= "AND cp.category_id IN ({$id_string}) "; 
+        }
+
+        if (!empty($keyword)) {
+            // Lọc theo từ khóa tìm kiếm
+            $escaped_keyword = $conn->real_escape_string($keyword);
+            $where .= "AND (p.name LIKE '%{$escaped_keyword}%' OR p.description LIKE '%{$escaped_keyword}%') ";
         }
         
         $sql .= $where;
         
+        // ... (phần thực thi và trả về kết quả giữ nguyên) ...
         $result = $conn->query($sql);
-        
         if ($result) {
             return (int)$result->fetch_assoc()['total'];
         }
         return 0;
     }
+    // FILE: product.php (Thêm vào class Product)
 
-    
+    // FILE: product.php (Hàm được sửa)
+
+    public static function parse_description_with_images($description) {
+        if (empty($description)) {
+            return '';
+        }
+        
+        // 1. CHUYỂN src="..." thành thẻ <img> được bọc trong div (để căn giữa)
+        $pattern = '/src="([^"]+)"/i';
+        
+        $html_content = preg_replace_callback($pattern, function($matches) {
+            $image_url = $matches[1]; 
+            
+            // Bọc ảnh trong div.text-center và img-fluid để responsive và căn giữa
+            return '<div class="image-wrapper text-center my-4">
+                        <img src="' . htmlspecialchars($image_url) . '" class="img-fluid description-image" alt="Mô tả sản phẩm">
+                    </div>';
+        }, $description);
+
+        // 2. Định dạng các tiêu đề có đánh số (ví dụ: "1. Vỏ trấu & bã mía...") thành thẻ <h4>
+        // Biểu thức chính quy: tìm kiếm [số].[khoảng trắng][Chữ cái hoa] (hoặc chữ cái thường)
+        $html_content = preg_replace('/(\d+\.\s+[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚŨÝĐ].*)/u', '<h4 class="description-title mt-4 mb-2">$1</h4>', $html_content);
+        
+        // 3. Chuyển đổi các ký tự xuống dòng thành thẻ <br>
+        $html_content = nl2br($html_content);
+        
+        // 4. Loại bỏ các thẻ <br> ngay sau các thẻ tiêu đề <h4> (do nl2br tạo ra)
+        $html_content = str_replace("</h4><br />", "</h4>", $html_content);
+
+        // 5. Bọc toàn bộ nội dung trong thẻ <p> nếu chưa có
+        // (Đây là bước phức tạp, thường nên xử lý ở database hoặc thủ công. Tạm thời bỏ qua bước này để tránh lỗi định dạng).
+        
+        return $html_content;
+    }
+        // FILE: product.php (Thêm vào class Product)
+
+    /**
+     * Lấy thông tin chi tiết của một sản phẩm dựa trên ID.
+     *
+     * @param int $id ID của sản phẩm.
+     * @return array|null Thông tin sản phẩm hoặc null.
+     */
+    public function get_product_by_id($id) {
+        $conn = self::$connection;
+        if ($conn === null) return null;
+
+        $stmt = $conn->prepare("SELECT * FROM products WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_assoc();
+    }
+    // FILE: product.php (Hàm được sửa)
+
+    /**
+     * Lấy TẤT CẢ thông số kỹ thuật (spec_key, spec_value) của một sản phẩm.
+     *
+     * @param int $productId ID của sản phẩm.
+     * @return array Mảng các hàng thông số kỹ thuật.
+     */
+    public function get_product_specs_by_id($productId) {
+        $conn = self::$connection;
+        if ($conn === null) return []; // Trả về mảng rỗng nếu lỗi kết nối
+
+        // Truy vấn tất cả các hàng thông số liên quan đến product_id
+        // Sắp xếp theo sort_order (nếu cột này tồn tại)
+        $stmt = $conn->prepare("SELECT spec_key, spec_value 
+                                FROM product_specs 
+                                WHERE product_id = ? 
+                                ORDER BY sort_order ASC"); 
+        $stmt->bind_param("i", $productId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Trả về TẤT CẢ các hàng dưới dạng mảng kết hợp
+        return $result->fetch_all(MYSQLI_ASSOC); 
+    }
+    // FILE: product.php (Thêm vào class Product)
+
+    /**
+     * Lấy danh sách sản phẩm liên quan (cùng danh mục, loại trừ ID hiện tại).
+     *
+     * @param int $categoryId ID của danh mục sản phẩm.
+     * @param int $currentProductId ID của sản phẩm đang xem (để loại trừ).
+     * @param int $limit Số lượng sản phẩm cần lấy (mặc định 5).
+     * @return array Danh sách sản phẩm liên quan.
+     */
+    // FILE: product.php (Hàm được sửa)
+
+/**
+ * Lấy danh sách sản phẩm liên quan (cùng danh mục, loại trừ ID hiện tại)
+ * qua bảng trung gian category_product.
+ *
+ * @param int $currentProductId ID của sản phẩm đang xem.
+ * @param int $limit Số lượng sản phẩm cần lấy (mặc định 5).
+ * @return array Danh sách sản phẩm liên quan.
+ */
+    public function get_related_products($currentProductId, $limit = 5) {
+        $conn = self::$connection;
+        if ($conn === null) return [];
+
+        // Lấy các category_id của sản phẩm hiện tại
+        $sql_category_ids = "SELECT category_id FROM category_product WHERE product_id = ?";
+        $stmt_cat = $conn->prepare($sql_category_ids);
+        $stmt_cat->bind_param("i", $currentProductId);
+        $stmt_cat->execute();
+        $cat_result = $stmt_cat->get_result();
+        $category_ids = $cat_result->fetch_all(MYSQLI_ASSOC);
+        
+        if (empty($category_ids)) {
+            return []; // Không có danh mục nào được liên kết, không có sản phẩm liên quan
+        }
+
+        // Chuyển mảng kết quả thành chuỗi ID để sử dụng trong mệnh đề IN
+        $category_id_list = implode(',', array_column($category_ids, 'category_id'));
+
+        // Truy vấn sản phẩm liên quan:
+        // 1. JOIN qua category_product
+        // 2. Lọc theo các Category ID vừa lấy được
+        // 3. Loại trừ sản phẩm đang xem
+        // 4. GROUP BY p.id để tránh trùng lặp nếu sản phẩm có nhiều danh mục chung
+        $sql = "SELECT p.* FROM products p 
+                JOIN category_product cp ON p.id = cp.product_id 
+                WHERE cp.category_id IN ($category_id_list) 
+                    AND p.id != ? 
+                GROUP BY p.id
+                ORDER BY RAND() 
+                LIMIT ?";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ii", $currentProductId, $limit); 
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // (Lưu ý: Nếu bạn muốn dùng slug, bạn cần tạo thêm hàm get_product_by_slug)
 }
+
 ?>
