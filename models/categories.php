@@ -186,5 +186,93 @@ public function get_direct_children($parentId) {
 
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+/**
+ * Lấy thông tin một danh mục dựa trên tên của nó.
+ *
+ * @param string $name Tên danh mục cần tìm.
+ * @return array|null Mảng thông tin danh mục hoặc null nếu không tìm thấy.
+ */
+// FILE: models/categories.php (Bổ sung vào Class Categories)
+
+/**
+ * Lấy thông tin một danh mục dựa trên tên của nó.
+ *
+ * @param string $name Tên danh mục cần tìm.
+ * @return array|null Mảng thông tin danh mục hoặc null nếu không tìm thấy.
+ */
+public function get_category_by_name($name) {
+    $conn = self::$connection;
+    if ($conn === null) return null;
+
+    // Sử dụng Prepared Statement
+    $stmt = $conn->prepare("SELECT id, name, slug, parent_id, description, image_url FROM categories WHERE name = ? LIMIT 1");
+    
+    // Kiểm tra nếu prepare thành công
+    if ($stmt === false) {
+        // Có thể thêm logging lỗi kết nối/chuẩn bị tại đây
+        return null;
+    }
+    
+    // Bind tham số
+    $stmt->bind_param("s", $name);
+    
+    // Thực thi
+    $stmt->execute();
+    
+    // Lấy kết quả
+    $result = $stmt->get_result();
+    
+    // Lấy hàng đầu tiên
+    $category = $result->fetch_assoc();
+    
+    $stmt->close();
+
+    return $category;
+}
+// FILE: models/product.php (Sử dụng Prepared Statements an toàn)
+
+/**
+ * Lấy danh sách sản phẩm thuộc một mảng các ID danh mục.
+ *
+ * @param array $categoryIds Mảng chứa các ID danh mục.
+ * @return array Danh sách sản phẩm.
+ */
+public function get_products_by_category_ids(array $categoryIds) {
+    $conn = self::$connection;
+    if ($conn === null || empty($categoryIds)) return [];
+
+    // 1. Tạo chuỗi placeholders cho IN clause (ví dụ: ?, ?, ?)
+    $placeholders = implode(',', array_fill(0, count($categoryIds), '?'));
+    
+    // 2. Định nghĩa câu truy vấn: SỬ DỤNG CÂU TRUY VẤN MẢNG ID
+    $sql = "
+        SELECT DISTINCT p.* FROM products p
+        INNER JOIN category_product cp ON p.id = cp.product_id
+        WHERE cp.category_id IN ($placeholders)
+        ORDER BY p.id DESC
+    ";
+
+    $stmt = $conn->prepare($sql);
+    
+    // ... (Phần bind_param và thực thi tương tự như phản hồi trước) ...
+    // [Đây là đoạn code phức tạp nhất cho Prepared Statements với IN clause]
+    
+    if ($stmt === false) { return []; }
+
+    // Logic Bind param cho IN clause:
+    $types = str_repeat('i', count($categoryIds));
+    $params = array_merge([$types], $categoryIds); 
+    $refs = [];
+    foreach ($params as $key => $value) { $refs[$key] = &$params[$key]; }
+    call_user_func_array([$stmt, 'bind_param'], $refs);
+
+    // Thực thi và lấy kết quả
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = $result->fetch_all(MYSQLI_ASSOC);
+
+    $stmt->close();
+    return $products;
+}
 }
 ?>
