@@ -177,6 +177,7 @@ include 'models/categories.php'; // Nhúng file model vừa tạo
 include 'models/video.php'; // Nhúng file model vừa tạo
 include 'models/blog.php'; // Nhúng file model vừa tạo
 
+
 // Lấy dữ liệu danh mục Blog
 $blogModels = new Blog();
 $blogHeaderCategories = $blogModels->getAllCategories();
@@ -234,8 +235,9 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
 
                     <a href="shopping-cart.php" class="text-dark position-relative text-decoration-none me-1">
                         <i class="bi bi-cart fs-5"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
-                            style="font-size:0.6rem">2</span>
+                        <span id="cart-count-badge"
+                            class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
+                            style="font-size:0.6rem">0</span>
                     </a>
 
                     <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">
@@ -349,5 +351,75 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
         </div>
     </div>
 </body>
+<script>
+// Hàm này nên được đặt ở phạm vi toàn cục hoặc trong khối DOMContentLoaded
+function updateCartCountBadge() {
+    const cartCountBadge = document.getElementById('cart-count-badge');
+    if (!cartCountBadge) return;
+
+    // 1. Đọc dữ liệu giỏ hàng từ Local Storage
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // --- SỬA LỖI Ở ĐÂY: Dùng cart.length để lấy tổng số loại sản phẩm ---
+    let totalUniqueProducts = cart.length;
+    // Nếu giỏ hàng trống, totalUniqueProducts sẽ là 0
+    // ---------------------------------------------------------------------
+
+    // 2. Cập nhật nội dung của badge
+    // Dùng totalUniqueProducts thay vì totalItems
+    cartCountBadge.textContent = totalUniqueProducts > 99 ? '99+' : totalUniqueProducts.toString();
+
+    // 3. Hiển thị/Ẩn badge (Ẩn nếu giỏ hàng trống)
+    if (totalUniqueProducts === 0) {
+        cartCountBadge.style.display = 'none';
+    } else {
+        cartCountBadge.style.display = 'block';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Chạy ngay khi trang tải xong
+    updateCartCountBadge();
+
+    // 2. Sửa/Cập nhật các hàm handleAddToCart (trong listproduct.php và detailproduct.php) 
+    //    để gọi hàm updateCartCountBadge() sau khi lưu vào Local Storage.
+
+    function handleAddToCart(event) {
+        // ... (Logic lấy dữ liệu productData) ...
+
+        // 2. Lưu trữ Giỏ hàng (Sử dụng LocalStorage)
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const existingItem = cart.find(item => item.id === productData.id);
+
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push(productData);
+        }
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // *** QUAN TRỌNG: GỌI HÀM CẬP NHẬT Ở ĐÂY ***
+        updateCartCountBadge();
+    }
+
+    // ĐẢM BẢO CÁC NÚT ADD TO CART GỌI HÀM NÀY:
+    const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', handleAddToCart);
+    });
+
+    // VÀ NÚT LỚN TRÊN TRANG DETAIL CŨNG PHẢI GỌI HÀM NÀY:
+    const bigAddToCartButton = document.getElementById('btn-add-to-cart-detail');
+    if (bigAddToCartButton) {
+        bigAddToCartButton.addEventListener('click', function(event) {
+            // ... (Logic thêm sản phẩm vào giỏ hàng lớn) ...
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCountBadge(); // GỌI CẬP NHẬT
+            // ...
+        });
+    }
+});
+</script>
 
 </html>

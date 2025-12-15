@@ -540,20 +540,22 @@ if (!empty($keyword)) {
                         // 1. Nếu đang ở Danh mục CHA (Hiển thị các con trực tiếp)
                         if ($categorySlug && $currentCategory && $isParentCategory): ?>
 
-                            <?php 
+                        <?php 
                             // Link quay lại: Quay về trang sản phẩm chung
                             $backLink = '?'; 
                             ?>
 
-                            <li><a href="<?= $backLink ?>">< QUAY LẠI</a></li>
+                        <li><a href="<?= $backLink ?>">
+                                < QUAY LẠI</a>
+                        </li>
 
-                            <?php if (!empty($directChildren)): ?>
-                                <?php foreach ($directChildren as $child): 
+                        <?php if (!empty($directChildren)): ?>
+                        <?php foreach ($directChildren as $child): 
                                     $childLink = "?category_slug=" . htmlspecialchars($child['slug']);
                                 ?>
-                                    <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                        <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
 
                         <?php 
                         // 2. Nếu đang ở Danh mục CON (Hiển thị 2 nút QUAY LẠI)
@@ -565,13 +567,17 @@ if (!empty($keyword)) {
                             // Link quay lại cấp tổng quát (DANH MỤC SẢN PHẨM)
                             $backToGeneralLink = '?'; 
                         ?>
-                            <li><a href="<?= $backToParentLink ?>">< QUAY LẠI</a></li>
-                            <li><a href="<?= $backToGeneralLink ?>">< QUAY LẠI</a></li>
+                        <li><a href="<?= $backToParentLink ?>">
+                                < QUAY LẠI</a>
+                        </li>
+                        <li><a href="<?= $backToGeneralLink ?>">
+                                < QUAY LẠI</a>
+                        </li>
 
                         <?php 
                         // 3. Nếu không có lọc hoặc đang tìm kiếm (Hiển thị cây danh mục)
                         else: ?>
-                            <?php Categories::display_categories_html($allcategories); ?>
+                        <?php Categories::display_categories_html($allcategories); ?>
 
                         <?php endif; ?>
                     </ul>
@@ -594,7 +600,7 @@ if (!empty($keyword)) {
 
                         <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản
                             phẩm</div>
-                        
+
                         <button class="btn btn-sm btn-outline-success d-md-none" type="button"
                             data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas">
                             <i class="bi bi-funnel"></i> Lọc
@@ -646,53 +652,56 @@ if (!empty($keyword)) {
                     <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3" id="product-container">
                         <?php if (empty($productsOnPage)): ?>
                         <div class="col-12">
-                            <p class="alert alert-warning">
-                                <?php if (!empty($keyword)): ?>
-                                    Không tìm thấy sản phẩm nào khớp với từ khóa "<?= htmlspecialchars($keyword) ?>".
-                                <?php else: ?>
-                                    Không tìm thấy sản phẩm nào trong danh mục này.
-                                <?php endif; ?>
-                            </p>
                         </div>
                         <?php else: ?>
                         <?php foreach($productsOnPage as $value): ?>
                         <div class="col">
-                            <div class="product-card">
-                                <div class="product-img-wrapper">
-                                    <?php 
-                                    $finalPrice = ($value['discount_price'] !== null && $value['discount_price'] < $value['price']) ? $value['discount_price'] : $value['price'];
-                                    $showSaleBadge = ($value['is_sale'] == 1 && $value['discount_price'] !== null && $value['price'] > $value['discount_price']);
-                                    
-                                    if ($showSaleBadge): 
-                                        $discount_amount = $value['price'] - $value['discount_price'];
-                                        $discount_percent = round(($discount_amount / $value['price']) * 100);
-                                    ?>
-                                        <span class="badge bg-danger position-absolute top-0 end-0 m-1">-<?= $discount_percent ?>%</span>
-                                    <?php endif; ?>
+                            <div class="product-card h-100 border-0 shadow-sm position-relative">
 
-                                    <img src="<?php echo htmlspecialchars($value['image_url']) ?>"
-                                        alt="<?php echo htmlspecialchars($value['name']) ?>">
-                                </div>
-                                <div class="card-body">
-                                    <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
-                                    
-                                    <div class="product-price">
-                                        <?php if ($showSaleBadge): ?>
-                                            <span class="text-danger fw-bold me-2"><?php echo Product::formatCurrency($value['discount_price']) ?></span>
-                                            <del class="text-muted small"><?php echo Product::formatCurrency($value['price']) ?></del>
-                                        <?php else: ?>
-                                            <span class="text-danger fw-bold"><?php echo Product::formatCurrency($value['price']) ?></span>
+                                <?php 
+                $productUrl = 'detailproduct.php?id=' . htmlspecialchars($value['id']);
+                $finalPrice = ($value['discount_price'] !== null && $value['discount_price'] < $value['price']) ? $value['discount_price'] : $value['price'];
+                $showSaleBadge = ($value['is_sale'] == 1 && $value['discount_price'] !== null && $value['price'] > $value['discount_price']);
+                ?>
+
+                                <a href="<?php echo $productUrl; ?>" class="text-decoration-none text-dark d-block">
+                                    <div class="product-img-wrapper position-relative">
+                                        <?php 
+                        if ($showSaleBadge): 
+                            $discount_amount = $value['price'] - $value['discount_price'];
+                            $discount_percent = round(($discount_amount / $value['price']) * 100);
+                        ?>
+                                        <span
+                                            class="badge bg-danger position-absolute top-0 end-0 m-1">-<?= $discount_percent ?>%</span>
                                         <?php endif; ?>
+
+                                        <img src="<?php echo htmlspecialchars($value['image_url']) ?>"
+                                            alt="<?php echo htmlspecialchars($value['name']) ?>">
                                     </div>
-                                </div>
-                                
-                                <div class="card-footer">
+
+                                    <div class="card-body text-center">
+                                        <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
+
+                                        <div class="product-price">
+                                            <?php if ($showSaleBadge): ?>
+                                            <span
+                                                class="text-danger fw-bold me-2"><?php echo Product::formatCurrency($value['discount_price']) ?></span>
+                                            <del
+                                                class="text-muted small"><?php echo Product::formatCurrency($value['price']) ?></del>
+                                            <?php else: ?>
+                                            <span
+                                                class="text-danger fw-bold"><?php echo Product::formatCurrency($value['price']) ?></span>
+                                            <?php endif; ?>
+                                        </div>
+                                    </div>
+                                </a>
+                                <div class="card-footer bg-white border-0 p-2 d-flex justify-content-center">
                                     <?php 
-                                    $showAddToCart = ($value['is_sale'] == 1 || ($value['discount_price'] !== null && $value['discount_price'] < $value['price']));
-                                    ?>
+                    $showAddToCart = ($value['state'] == 'còn hàng');
+                    ?>
 
                                     <?php if ($showAddToCart): ?>
-                                    <button class="btn btn-add-cart js-add-to-cart"
+                                    <button class="btn btn-add-cart js-add-to-cart btn-sm btn-success w-100"
                                         data-product-id="<?= htmlspecialchars($value['id']) ?>"
                                         data-name="<?= htmlspecialchars($value['name']) ?>"
                                         data-price="<?= htmlspecialchars($finalPrice) ?>"
@@ -700,15 +709,14 @@ if (!empty($keyword)) {
                                         Thêm vào giỏ hàng
                                     </button>
                                     <?php else: ?>
-                                    <button class="btn btn-add-cart">Đọc tiếp</button>
+                                    <a href="<?php echo $productUrl; ?>"
+                                        class="btn btn-add-cart btn-sm btn-outline-secondary w-100">Đọc tiếp</a>
                                     <?php endif; ?>
                                 </div>
                             </div>
                         </div>
                         <?php endforeach; ?>
                         <?php endif; ?>
-
-
                     </div>
 
                     <?php if ($totalPages > 1): ?>
@@ -755,18 +763,20 @@ if (!empty($keyword)) {
                 // 1. Nếu đang ở Danh mục CHA (Hiển thị các con trực tiếp)
                 if ($categorySlug && $currentCategory && $isParentCategory): ?>
 
-                    <?php 
+                <?php 
                     $backLink = '?'; 
                     ?>
-                    <li><a href="<?= $backLink ?>">< QUAY LẠI</a></li>
+                <li><a href="<?= $backLink ?>">
+                        < QUAY LẠI</a>
+                </li>
 
-                    <?php if (!empty($directChildren)): ?>
-                        <?php foreach ($directChildren as $child): 
+                <?php if (!empty($directChildren)): ?>
+                <?php foreach ($directChildren as $child): 
                             $childLink = "?category_slug=" . htmlspecialchars($child['slug']);
                         ?>
-                            <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                <li><a href="<?= $childLink ?>"><?= htmlspecialchars($child['name']) ?></a></li>
+                <?php endforeach; ?>
+                <?php endif; ?>
 
                 <?php 
                 // 2. Nếu đang ở Danh mục CON (Hiển thị 2 nút QUAY LẠI)
@@ -775,13 +785,17 @@ if (!empty($keyword)) {
                     $backToParentLink = '?category_slug=' . htmlspecialchars($parentCategory['slug']);
                     $backToGeneralLink = '?'; 
                 ?>
-                    <li><a href="<?= $backToParentLink ?>">< QUAY LẠI</a></li>
-                    <li><a href="<?= $backToGeneralLink ?>">< QUAY LẠI</a></li>
+                <li><a href="<?= $backToParentLink ?>">
+                        < QUAY LẠI</a>
+                </li>
+                <li><a href="<?= $backToGeneralLink ?>">
+                        < QUAY LẠI</a>
+                </li>
 
                 <?php 
                 // 3. Nếu không có lọc hoặc đang tìm kiếm (Hiển thị cây danh mục)
                 else: ?>
-                    <?php Categories::display_categories_html($allcategories); ?>
+                <?php Categories::display_categories_html($allcategories); ?>
 
                 <?php endif; ?>
             </ul>
@@ -790,7 +804,33 @@ if (!empty($keyword)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 <script>
-// Logic để thay đổi chế độ xem và reload trang để áp dụng
+// ========================================================
+// 1. HÀM CẬP NHẬT BADGE (Total Unique Products)
+// Cần phải có element <span id="cart-count-badge"> trong header của bạn
+// ========================================================
+function updateCartCountBadge() {
+    // Giả sử có element icon giỏ hàng trong header với id="cart-count-badge"
+    const cartCountBadge = document.getElementById('cart-count-badge');
+    if (!cartCountBadge) return; 
+
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Lấy tổng số LOẠI sản phẩm độc lập (cart.length)
+    let totalUniqueProducts = cart.length; 
+
+    cartCountBadge.textContent = totalUniqueProducts > 99 ? '99+' : totalUniqueProducts.toString();
+    
+    // Hiển thị/Ẩn badge (Ẩn nếu giỏ hàng trống)
+    if (totalUniqueProducts === 0) {
+        cartCountBadge.style.display = 'none';
+    } else {
+        cartCountBadge.style.display = 'block'; 
+    }
+}
+
+// ========================================================
+// 2. LOGIC CHẾ ĐỘ XEM (VIEW MODE)
+// ========================================================
 function updateViewModeAndReload(mode) {
     let currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('view', mode);
@@ -817,10 +857,40 @@ if (viewListRadio) {
 }
 
 // ========================================================
-// LOGIC SỬA LỖI: Ngăn click icon kích hoạt link, và dùng Bootstrap API để đảm bảo mở/đóng
+// 3. HÀM XỬ LÝ CHUNG LƯU GIỎ HÀNG VÀ CẬP NHẬT BADGE
+// ========================================================
+function processAddToCart(button, quantityToUse) {
+    const productData = {
+        id: button.dataset.productId,
+        name: button.dataset.name,
+        price: parseFloat(button.dataset.price),
+        imageUrl: button.dataset.imageUrl,
+        quantity: quantityToUse
+    };
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingItem = cart.find(item => item.id === productData.id);
+
+    if (existingItem) {
+        existingItem.quantity += productData.quantity; 
+    } else {
+        cart.push(productData);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // CẬP NHẬT BADGE NGAY LẬP TỨC
+    updateCartCountBadge(); 
+}
+
+// ========================================================
+// 4. GẮN SỰ KIỆN KHI DOM TẢI XONG
 // ========================================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Logic Collapse/Expand Sidebar
+    // A. CHẠY KHI TẢI TRANG LẦN ĐẦU
+    updateCartCountBadge(); 
+
+    // B. Logic Collapse/Expand Sidebar
     const collapseToggles = document.querySelectorAll('.collapse-toggle');
 
     collapseToggles.forEach(toggle => {
@@ -841,50 +911,25 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
-    // ========================================================
-    // LOGIC THÊM VÀO GIỎ HÀNG (SỬ DỤNG data-* attributes)
-    // ========================================================
-    function handleAddToCart(event) {
-        event.preventDefault();
-        const button = event.currentTarget;
-        
-        // 1. Lấy dữ liệu sản phẩm từ data attributes
-        const productData = {
-            id: button.dataset.productId,
-            name: button.dataset.name,
-            price: parseFloat(button.dataset.price),
-            imageUrl: button.dataset.imageUrl,
-            quantity: 1
-        };
 
-        // 2. Lưu trữ Giỏ hàng (Sử dụng LocalStorage)
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existingItem = cart.find(item => item.id === productData.id);
-
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push(productData);
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // 3. (Tùy chọn) Highlight nút để người dùng thấy có phản hồi
-        button.textContent = 'ĐÃ THÊM';
-        button.disabled = true;
-        setTimeout(() => {
-            button.textContent = 'Thêm vào giỏ hàng';
-            button.disabled = false;
-        }, 1500); 
-
-        // KHÔNG CÓ alert() hay confirm()
-    }
-
-    // Gắn sự kiện cho các nút "Thêm vào giỏ hàng"
+    // C. GẮN SỰ KIỆN CHO NÚT ADD TO CART (.js-add-to-cart)
     const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
+
     addToCartButtons.forEach(button => {
-        button.addEventListener('click', handleAddToCart);
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // Số lượng mặc định là 1 cho nút trên list
+            processAddToCart(event.currentTarget, 1);
+            
+            // Phản hồi người dùng
+            this.textContent = 'ĐÃ THÊM';
+            this.disabled = true;
+            setTimeout(() => {
+                this.textContent = 'Thêm vào giỏ hàng';
+                this.disabled = false;
+            }, 1500);
+        });
     });
 });
 </script>
