@@ -101,7 +101,7 @@
         color: #fff;
     }
 
-    /* Sidebar styles */
+    /* Sidebar styles (Desktop/Tablet) */
     .sidebar-area { padding-right: 0; }
     .sidebar-full-height { border: 1px solid #eee; }
     .sidebar-header {
@@ -149,6 +149,105 @@
         }
     }
 
+    /* Style riêng cho Tiêu đề và Nút Xem tất cả (Desktop) */
+    .category-header-row {
+        padding: 0 10px;
+    }
+    
+    .category-header-row h2 {
+        font-size: 1.6rem; /* Kích thước desktop */
+    }
+    
+    .btn-view-all {
+        font-size: 0.9rem;
+    }
+
+
+    /* ==========================================================
+       RESPONSIVE MOBILE (Màn hình nhỏ, max-width: 768px)
+       ========================================================== */
+    @media (max-width: 768px) {
+        .container {
+            padding: 0 5px; /* Giảm padding container */
+        }
+        
+        .col-lg-3 {
+            display: none; /* 1. Ẩn Sidebar */
+        }
+        
+        /* Đảm bảo khu vực sản phẩm chiếm toàn bộ chiều rộng */
+        .col-lg-9 {
+            width: 100%;
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0; /* Xóa padding Bootstrap mặc định */
+        }
+        
+        /* 2. CHUYỂN SANG LƯỚI 2 CỘT */
+        .row > .col-6, .row > .col-md-4, .row > .col-lg-custom-5 {
+            flex: 0 0 50%;
+            max-width: 50%;
+            padding-left: 5px; /* Giảm khoảng cách giữa các cột */
+            padding-right: 5px;
+        }
+
+        /* CARD SẢN PHẨM */
+        .product-box {
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            padding-top: 5px;
+        }
+        
+        /* KHUNG ẢNH */
+        .product-img-wrapper {
+             padding: 3px; 
+             border: 1px solid #166534; 
+        }
+
+        /* Tên sản phẩm */
+        .product-info {
+             padding: 8px 5px; 
+        }
+        .product-name {
+            font-size: 0.8rem; 
+            height: 32px; 
+            margin-bottom: 3px;
+        }
+
+        /* Giá sản phẩm */
+        .product-price {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        .price-old {
+            font-size: 0.7rem;
+        }
+
+        /* Nút Mua hàng */
+        .btn-add-cart {
+            width: 100%; 
+            font-size: 0.75rem; 
+            padding: 5px 0;
+            margin: 0 auto 5px auto;
+        }
+
+        /* Tiêu đề và nút "Xem tất cả" trên Mobile */
+        .category-header-row {
+            margin-bottom: 15px !important;
+            padding: 0 5px; 
+        }
+        
+        .category-header-row h2 {
+            font-size: 1.2rem !important; 
+            line-height: 1.4;
+        }
+        
+        .btn-view-all {
+            font-size: 0.8rem; 
+        }
+    }
+
 </style>
 </head>
 <?php 
@@ -160,35 +259,39 @@
 $productModel = new Product(); 
 $categoriesModel = new Categories();
 
-// --- LOGIC: LẤY SẢN PHẨM VÀ DANH MỤC CON CỦA "ĐẤT VÀ GIÁ THỂ" ---
+// --- LOGIC: LẤY SẢN PHẨM VÀ DANH MỤC CON CỦA "DỤNG CỤ LÀM VƯỜN" ---
 
+// ĐÃ SỬA LỖI TÊN DANH MỤC
 $targetCategoryName = 'DỤNG CỤ LÀM VƯỜN';
-$productsFromCategory = [];
 $categoryToFilter = null; 
-$directChildren = []; // Khối mới
+$directChildren = [];
+$allProducts = []; 
+$parentLink = '#'; // Khởi tạo biến $parentLink
 
 // 1.1. Lấy thông tin danh mục CHA
-// *LƯU Ý: Yêu cầu phương thức get_category_by_name() đã được thêm vào Class Categories*
-// 2. Lấy thông tin danh mục CHA
 $categoryToFilter = $categoriesModel->get_category_by_name($targetCategoryName); 
 
 if ($categoryToFilter) {
     $categoryId = (int)$categoryToFilter['id'];
 
+    // Định nghĩa parentLink cho nút "Xem tất cả"
+    $parentSlug = htmlspecialchars($categoryToFilter['slug']);
+    $parentLink = 'product.php?category_slug=' . $parentSlug; 
+
+    // 2. Lấy danh mục con trực tiếp (cho Sidebar)
     $directChildren = $categoriesModel->get_direct_children($categoryId);
 
+    // 3. Lấy TẤT CẢ ID con (cho truy vấn sản phẩm)
     $categoryIdsToFilter = $categoriesModel->get_child_ids($categoryId);
     
+    // Đảm bảo ID cha cũng được bao gồm
     if (!in_array($categoryId, $categoryIdsToFilter)) {
         $categoryIdsToFilter[] = $categoryId;
     }
     
-    // Gán kết quả trực tiếp vào $allProducts
+    // 4. Lấy danh sách sản phẩm (ĐÃ SỬA LỖI GÁN BIẾN)
     $allProducts = $productModel->get_products_by_category_ids($categoryIdsToFilter); 
-} else {
-    // Đảm bảo $allProducts là mảng rỗng nếu không tìm thấy danh mục cha
-    $allProducts = [];
-}
+} 
 // ----------------------------------------------------------------------------------
 ?>
 <body>
@@ -196,7 +299,7 @@ if ($categoryToFilter) {
     <div class="container my-5">
         <div class="row">
 
-            <div class="col-lg-3 sidebar-area">
+            <div class="col-lg-3 sidebar-area d-none d-lg-block">
 
                 <div class="sidebar-full-height">
 
@@ -207,14 +310,10 @@ if ($categoryToFilter) {
                             <?php 
                             // 1. Hiển thị link "Tất cả" của danh mục cha
                             if ($categoryToFilter) {
-                                $parentSlug = htmlspecialchars($categoryToFilter['slug']);
-                                // Giả định product.php là trang xử lý lọc
-                                $parentLink = 'product.php?category_slug=' . $parentSlug; 
                                 echo '<li><a href="' . $parentLink . '">Tất cả ' . htmlspecialchars($categoryToFilter['name']) . '</a></li>';
                             }
                             
                             // 2. HIỂN THỊ DANH MỤC CON TRỰC TIẾP
-                            // $directChildren đã được lấy qua get_direct_children($categoryId)
                             if (!empty($directChildren)) {
                                 foreach ($directChildren as $childCat) {
                                     $childSlug = htmlspecialchars($childCat['slug'] ?? '');
@@ -222,7 +321,7 @@ if ($categoryToFilter) {
                                     echo '<li><a href="' . $childLink . '">' . htmlspecialchars($childCat['name']) . '</a></li>';
                                 }
                             } else {
-                                // Fallback nếu chưa có danh mục con
+                                // Fallback nếu không có dữ liệu
                                 echo '<li><a href="#">Đất sạch trồng cây</a></li>';
                                 echo '<li><a href="#">Giá thể trồng cây </a></li>';
                             }
@@ -231,20 +330,35 @@ if ($categoryToFilter) {
                     </div>
                     
                     <?php if ($categoryToFilter): ?>
-                        <a href="<?= $parentLink ?>" class="sidebar-view-all">
+                        <a href="<?= $parentLink ?>" class="sidebar-view-all d-none d-lg-block">
                             Xem tất cả &raquo; </a>
                     <?php endif; ?>
 
                 </div>
             </div>
 
-            
+            <div class="col-lg-9 col-12">
+                
+                <div class="category-header-row d-flex align-items-center mb-4" style="
+    justify-content: space-between;
+">
+                    <h2 class="mb-0 text-success fw-bold me-2">
+                        <?= htmlspecialchars($targetCategoryName) ?>
+                    </h2>
+                    
+                    <?php if ($categoryToFilter): ?>
+                        <a href="<?= $parentLink ?>" class="btn-view-all text-decoration-none fw-bold text-success text-nowrap d-lg-none">
+                            Xem tất cả &raquo;
+                        </a>
+                    <?php endif; ?>
 
-            <div class="col-lg-9">
+                </div>
+                
                 <div class="row g-3"> <?php
                     if (!empty($allProducts)):
                         foreach ($allProducts as $p): 
                             
+                            // Định nghĩa các biến sản phẩm
                             $productUrl = 'detailproduct.php?id=' . htmlspecialchars($p['id']);
                             $finalPrice = ($p['discount_price'] !== null && $p['discount_price'] < $p['price']) ? $p['discount_price'] : $p['price'];
                             $showSaleBadge = ($p['is_sale'] == 1 && $p['discount_price'] !== null && $p['price'] > $p['discount_price']);
@@ -313,8 +427,6 @@ if ($categoryToFilter) {
             </div>
         </div>
     </div>
-        </div>
-    </div>
 
 </body>
 <script>
@@ -329,9 +441,6 @@ if ($categoryToFilter) {
         }).format(price);
     }
 
-    // ========================================================
-    // HÀM CẬP NHẬT BADGE GIỎ HÀNG (Total Unique Products)
-    // ========================================================
     function updateCartCountBadge() {
         const cartCountBadge = document.getElementById('cart-count-badge');
         if (!cartCountBadge) return; 
@@ -348,9 +457,6 @@ if ($categoryToFilter) {
         }
     }
 
-    // ========================================================
-    // HÀM XỬ LÝ CHUNG LƯU GIỎ HÀNG VÀ CẬP NHẬT BADGE
-    // ========================================================
     function processAddToCart(button, quantityToUse) {
         const productData = {
             id: button.dataset.productId,
@@ -371,28 +477,20 @@ if ($categoryToFilter) {
 
         localStorage.setItem('cart', JSON.stringify(cart));
         
-        // CẬP NHẬT BADGE NGAY LẬP TỨC
         updateCartCountBadge(); 
     }
 
-    // ========================================================
-    // GẮN SỰ KIỆN KHI DOM TẢI XONG
-    // ========================================================
     document.addEventListener('DOMContentLoaded', function() {
-        // 1. CHẠY KHI TẢI TRANG LẦN ĐẦU
         updateCartCountBadge(); 
 
-        // 2. GẮN SỰ KIỆN CHO NÚT ADD TO CART (.js-add-to-cart)
         const addToCartButtons = document.querySelectorAll('.js-add-to-cart');
 
         addToCartButtons.forEach(button => {
             button.addEventListener('click', function(event) {
                 event.preventDefault();
 
-                // Số lượng mặc định là 1 cho nút trên list
                 processAddToCart(event.currentTarget, 1);
                 
-                // Phản hồi người dùng
                 this.textContent = 'ĐÃ THÊM';
                 this.disabled = true;
                 setTimeout(() => {
