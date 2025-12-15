@@ -253,6 +253,48 @@
         font-size: 0.9rem !important;
         font-weight: bold !important;
     }
+    /* Thêm vào khối CSS chính của bạn */
+
+/* --- CSS BỔ SUNG CHO MŨI TÊN TAM GIÁC (Nối icon và Mini Cart) --- */
+
+/* 1. Container Mini Cart */
+.mini-cart {
+    position: absolute; /* Đã có, giữ nguyên */
+    top: 100%;
+    /* ... */
+}
+
+/* 2. Tạo mũi tên (Màu nền trắng) */
+.mini-cart::before {
+    content: "";
+    position: absolute;
+    /* Điều chỉnh top: -11px để đặt mũi tên ngay trên border của pop-up */
+    top: -10px;
+    /* Điều chỉnh right: 35px để căn giữa với icon giỏ hàng */
+    right: 12px;
+    
+    /* Kỹ thuật tạo hình tam giác */
+    border-width: 0 10px 11px 10px;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent; /* #fff là màu nền của pop-up */
+    z-index: 1001; 
+}
+
+/* 3. Tạo đường viền cho mũi tên (Màu xám nhạt) */
+/* Cần làm cho nó hơi lớn hơn ::before và nằm dưới một lớp */
+.mini-cart::after {
+    content: "";
+    position: absolute;
+    /* Điều chỉnh top: -12px để bao quanh mũi tên trắng */
+    top: -12px; 
+    right: 12px;
+    
+    /* Kỹ thuật tạo hình tam giác (Border Trick) */
+    border-width: 0 10px 12px 10px;
+    border-style: solid;
+    border-color: transparent transparent #ccc transparent; /* #ccc là màu border của pop-up */
+    z-index: 1000; 
+}
     </style>
 </head>
 <?php  
