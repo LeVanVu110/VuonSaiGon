@@ -1,3 +1,11 @@
+<?php
+$getbanner = new Banner();
+$banners = $getbanner->getintroductBanner();
+;
+
+
+
+?>
 <nav aria-label="breadcrumb" class="bg-light py-4">
     <div class="container">
         <ol class="breadcrumb mb-0">
@@ -17,5 +25,5 @@
 </nav>
 
 <div class="container-fluid p-0">
-    <img src="https://vuonsaigon.vn/wp-content/uploads/elementor/thumbs/IMG_20220426_183927-qlvdd4xtke8z7c5ur0ulxjcuwtq9ym83xa6bwmhrh4.jpg" alt="Banner Giới thiệu Vườn Sài Gòn" class="img-fluid w-100 d-block">
+    <img src="<?php echo $banners[0]['image']?>" alt="Banner Giới thiệu Vườn Sài Gòn" class="img-fluid w-100 d-block">
 </div>
