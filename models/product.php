@@ -424,6 +424,33 @@ public function get_products_by_category_ids(array $categoryIds) {
     $stmt->close();
     return $products;
 }
+public function getTotalProducts($keyword) {
+        $sql_parts = "SELECT COUNT(id) AS total FROM products WHERE name LIKE ? OR description LIKE ?";
+        $sql = self::$connection->prepare($sql_parts);
+        $search_keyword = "%" . $keyword . "%";
+        $sql->bind_param("ss", $search_keyword, $search_keyword);
+        
+        $sql->execute();
+        return $sql->get_result()->fetch_assoc()['total'];
+    }
+
+    // Lấy SẢN PHẨM theo từ khóa và phân trang
+    public function getProductsByPage($keyword, $page, $perPage = 9) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT id, name, price, discount_price, image_url, state, is_sale 
+                FROM products 
+                WHERE name LIKE ? OR description LIKE ?
+                ORDER BY id DESC LIMIT ? OFFSET ?";
+        
+        $stmt = self::$connection->prepare($sql);
+        $search_keyword = "%" . $keyword . "%";
+        
+        $stmt->bind_param("ssii", $search_keyword, $search_keyword, $perPage, $offset); 
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+    
 
     // (Lưu ý: Nếu bạn muốn dùng slug, bạn cần tạo thêm hàm get_product_by_slug)
 }

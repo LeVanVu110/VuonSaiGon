@@ -253,48 +253,52 @@
         font-size: 0.9rem !important;
         font-weight: bold !important;
     }
+
     /* Thêm vào khối CSS chính của bạn */
 
-/* --- CSS BỔ SUNG CHO MŨI TÊN TAM GIÁC (Nối icon và Mini Cart) --- */
+    /* --- CSS BỔ SUNG CHO MŨI TÊN TAM GIÁC (Nối icon và Mini Cart) --- */
 
-/* 1. Container Mini Cart */
-.mini-cart {
-    position: absolute; /* Đã có, giữ nguyên */
-    top: 100%;
-    /* ... */
-}
+    /* 1. Container Mini Cart */
+    .mini-cart {
+        position: absolute;
+        /* Đã có, giữ nguyên */
+        top: 100%;
+        /* ... */
+    }
 
-/* 2. Tạo mũi tên (Màu nền trắng) */
-.mini-cart::before {
-    content: "";
-    position: absolute;
-    /* Điều chỉnh top: -11px để đặt mũi tên ngay trên border của pop-up */
-    top: -10px;
-    /* Điều chỉnh right: 35px để căn giữa với icon giỏ hàng */
-    right: 12px;
-    
-    /* Kỹ thuật tạo hình tam giác */
-    border-width: 0 10px 11px 10px;
-    border-style: solid;
-    border-color: transparent transparent #fff transparent; /* #fff là màu nền của pop-up */
-    z-index: 1001; 
-}
+    /* 2. Tạo mũi tên (Màu nền trắng) */
+    .mini-cart::before {
+        content: "";
+        position: absolute;
+        /* Điều chỉnh top: -11px để đặt mũi tên ngay trên border của pop-up */
+        top: -10px;
+        /* Điều chỉnh right: 35px để căn giữa với icon giỏ hàng */
+        right: 12px;
 
-/* 3. Tạo đường viền cho mũi tên (Màu xám nhạt) */
-/* Cần làm cho nó hơi lớn hơn ::before và nằm dưới một lớp */
-.mini-cart::after {
-    content: "";
-    position: absolute;
-    /* Điều chỉnh top: -12px để bao quanh mũi tên trắng */
-    top: -12px; 
-    right: 12px;
-    
-    /* Kỹ thuật tạo hình tam giác (Border Trick) */
-    border-width: 0 10px 12px 10px;
-    border-style: solid;
-    border-color: transparent transparent #ccc transparent; /* #ccc là màu border của pop-up */
-    z-index: 1000; 
-}
+        /* Kỹ thuật tạo hình tam giác */
+        border-width: 0 10px 11px 10px;
+        border-style: solid;
+        border-color: transparent transparent #fff transparent;
+        /* #fff là màu nền của pop-up */
+        z-index: 1001;
+    }
+
+    /* 3. Tạo đường viền cho mũi tên (Màu xám nhạt) */
+    /* Cần làm cho nó hơi lớn hơn ::before và nằm dưới một lớp */
+    .mini-cart::after {
+        content: "";
+        position: absolute;
+        /* Điều chỉnh top: -12px để bao quanh mũi tên trắng */
+        top: -12px;
+        right: 12px;
+
+        /* Kỹ thuật tạo hình tam giác (Border Trick) */
+        border-width: 0 10px 12px 10px;
+        border-style: solid;
+        border-color: transparent transparent #ccc transparent;
+        /* #ccc là màu border của pop-up */
+        z-index: 1000;
+    }
     </style>
 </head>
 <?php  
@@ -331,15 +335,14 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
             </div>
 
             <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
-                <form action="product.php" method="GET" class="input-group">
-
+                <form **action=""** method="GET" class="input-group" id="searchForm" >
                     <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
-                        style="max-width:130px;">
-                        <option value="product" selected>Sản phẩm</option>
+                        style="max-width:130px;" id="searchTypeSelect">
+                        <option value="product">Sản phẩm</option>
                         <option value="blog">Bài viết</option>
                     </select>
 
-                    <input type="text" name="q" class="form-control" placeholder="Tìm kiếm...">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm...">
 
                     <button class="btn btn-success" type="submit">
                         <i class="bi bi-search d-md-none"></i>
@@ -655,7 +658,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ----------------------------------------------------------------------
     // 3. LOGIC XỬ LÝ NÚT ADD TO CART (Giữ nguyên logic cập nhật badge)
-    // *Đây là các hàm giả lập/dùng chung cho các file listproduct.php và detailproduct.php*
     // ----------------------------------------------------------------------
 
     // Hàm giả lập logic AddToCart cơ bản để đảm bảo updateCartCountBadge được gọi
@@ -679,6 +681,37 @@ document.addEventListener('DOMContentLoaded', function() {
             // Giả định logic processAddToCart đã được thực thi và gọi updateCartCountBadge()
         });
     }
+    
+    // START: LOGIC CHUYỂN ACTION FORM TÌM KIẾM (ĐÃ CẢI THIỆN)
+    const selectElement = document.getElementById('searchTypeSelect');
+    const formElement = document.getElementById('searchForm');
+    
+    // **ĐỊNH NGHĨA ĐƯỜNG DẪN GỐC CỦA ỨNG DỤNG**
+    // Sử dụng path tuyệt đối để tránh lỗi submit về trang gốc (/)
+    const APP_BASE_PATH = '/VuonSaiGons/'; 
+
+    if (selectElement && formElement) {
+        
+        // Hàm cập nhật thuộc tính action của form
+        function updateFormAction() {
+            const selectedValue = selectElement.value; // Lấy giá trị đang chọn
+            
+            if (selectedValue === 'blog') {
+                // Đặt URL tuyệt đối cho Bài viết: /VuonSaiGons/article.php
+                formElement.action = APP_BASE_PATH + 'article.php'; 
+            } else {
+                // Đặt URL tuyệt đối cho Sản phẩm: /VuonSaiGons/product.php
+                formElement.action = APP_BASE_PATH + 'product.php';
+            }
+        }
+        
+        // 1. Gắn sự kiện change để cập nhật action khi người dùng thay đổi
+        selectElement.addEventListener('change', updateFormAction);
+        
+        // 2. Cực kỳ quan trọng: Gọi hàm ngay khi DOM tải xong để thiết lập action ban đầu
+        updateFormAction(); 
+    }
+    // END: LOGIC CHUYỂN ACTION FORM TÌM KIẾM
 });
 </script>
 
