@@ -374,7 +374,6 @@
     </style>
 </head>
 <?php
-
 // 1. Khởi tạo Models (Giả sử Product và Categories đã được định nghĩa và có sẵn)
 $productModels = new Product();
 $categories = new Categories();
@@ -384,7 +383,7 @@ $categories = new Categories();
 // ===========================================
 
 // Lấy tham số tìm kiếm
-$keyword = isset($_GET['q']) ? trim($_GET['q']) : null;
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : null;
 $searchType = isset($_GET['search_type']) ? $_GET['search_type'] : 'product';
 
 // Biến trạng thái
@@ -434,6 +433,7 @@ $productsPerPage = 12;
 // 5. Lấy TỔNG SỐ sản phẩm (theo categoryIdsToFilter và keyword)
 $totalProducts = $productModels->get_total_products($categoryIdsToFilter, $keyword); 
 $totalPages = $totalProducts > 0 ? ceil($totalProducts / $productsPerPage) : 1; 
+
 
 // 6. Xác định Trang Hiện Tại
 $currentPage = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;

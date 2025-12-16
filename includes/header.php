@@ -309,7 +309,15 @@ include 'models/product.php'; // Nhúng file model vừa tạo
 include 'models/categories.php'; // Nhúng file model vừa tạo
 include 'models/video.php'; // Nhúng file model vừa tạo
 include 'models/blog.php'; // Nhúng file model vừa tạo
+// === BỔ SUNG: KHAI BÁO BIẾN CƠ SỞ CHO ĐƯỜNG DẪN ===
+$APP_BASE_PATH = '/VuonSaiGons/'; 
 
+// === KHỞI TẠO BIẾN TRƯỚC KHI DÙNG (CỰC KỲ QUAN TRỌNG) ===
+$mainBlogCategories = [];
+
+// Lấy dữ liệu danh mục HỆ THỐNG
+$categoriesModel = new Categories();
+$allCategoriesHierarchical = $categoriesModel->get_categories_hierarchical();
 
 // Lấy dữ liệu danh mục Blog
 $blogModels = new Blog();
@@ -318,7 +326,12 @@ $blogHeaderCategories = $blogModels->getAllCategories();
 // Giả sử các danh mục có sort_order nhỏ hơn (10, 20, 30) là các danh mục chính.
 // Trong trường hợp này, chúng ta sẽ lọc 3 danh mục đầu tiên: Kỹ thuật nông nghiệp (1), Hoạt động công ty (2), Phong thủy (3)
 $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
-
+if (!is_array($blogHeaderCategories)) {
+    $blogHeaderCategories = [];
+}
+if (!is_array($mainBlogCategories)) {
+    $mainBlogCategories = [];
+}
  
 
 ?>
@@ -335,7 +348,7 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
             </div>
 
             <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
-                <form **action=""** method="GET" class="input-group" id="searchForm" >
+                <form **action="" ** method="GET" class="input-group" id="searchForm">
                     <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
                         style="max-width:130px;" id="searchTypeSelect">
                         <option value="product">Sản phẩm</option>
@@ -434,6 +447,7 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
                     <div class="cat-item">VẬT TƯ TRỒNG LAN</div>
                     <div class="cat-item">THUỐC BẢO VỆ THỰC VẬT</div>
                     <div class="cat-item">PHÂN BÓN</div>
+                    <!-- <?php Categories::display_categories_html($allCategoriesHierarchical); ?> -->
                 </div>
             </div>
 
@@ -450,19 +464,19 @@ $mainBlogCategorie = array_slice($blogHeaderCategories, 0, 3);
 
                 <div class="blog-dropdown-desktop">
                     <?php 
-                    if (!empty($mainBlogCategories)) {
-                        foreach ($mainBlogCategories as $cat) {
-                            // Tạo link dựa trên slug và name từ CSDL
-                            $link = 'blog.php?cat=' . urlencode($cat['slug']);
-                            echo '<a href="' . $link . '" class="blog-item">' . htmlspecialchars($cat['name']) . '</a>';
-                        }
-                    } else {
-                        // Hiển thị các mục tĩnh nếu không có dữ liệu
-                        echo '<a href="blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>';
-                        echo '<a href="blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>';
-                        echo '<a href="blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>';
-                    }
-                    ?>
+        if (!empty($mainBlogCategories)) {
+            foreach ($mainBlogCategories as $cat) {
+                // Đường dẫn động
+                $link = 'blog.php?cat=' . urlencode($cat['slug']);
+                echo '<a href="' . $link . '" class="blog-item">' . htmlspecialchars($cat['name']) . '</a>';
+            }
+        } else {
+            // Đường dẫn tĩnh, sử dụng biến APP_BASE_PATH đã định nghĩa
+            echo '<a href="' . $APP_BASE_PATH . 'blog.php?cat=ky-thuat-nong-nghiep" class="blog-item">Kỹ thuật nông nghiệp</a>';
+            echo '<a href="' . $APP_BASE_PATH . 'blog.php?cat=hoat-dong-cong-ty" class="blog-item">Hoạt động công ty</a>';
+            echo '<a href="' . $APP_BASE_PATH . 'blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>';
+        }
+        ?>
                 </div>
             </div>
             <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
@@ -681,35 +695,35 @@ document.addEventListener('DOMContentLoaded', function() {
             // Giả định logic processAddToCart đã được thực thi và gọi updateCartCountBadge()
         });
     }
-    
+
     // START: LOGIC CHUYỂN ACTION FORM TÌM KIẾM (ĐÃ CẢI THIỆN)
     const selectElement = document.getElementById('searchTypeSelect');
     const formElement = document.getElementById('searchForm');
-    
+
     // **ĐỊNH NGHĨA ĐƯỜNG DẪN GỐC CỦA ỨNG DỤNG**
     // Sử dụng path tuyệt đối để tránh lỗi submit về trang gốc (/)
-    const APP_BASE_PATH = '/VuonSaiGons/'; 
+    const APP_BASE_PATH = '/VuonSaiGons/';
 
     if (selectElement && formElement) {
-        
+
         // Hàm cập nhật thuộc tính action của form
         function updateFormAction() {
             const selectedValue = selectElement.value; // Lấy giá trị đang chọn
-            
+
             if (selectedValue === 'blog') {
                 // Đặt URL tuyệt đối cho Bài viết: /VuonSaiGons/article.php
-                formElement.action = APP_BASE_PATH + 'article.php'; 
+                formElement.action = APP_BASE_PATH + 'article.php';
             } else {
                 // Đặt URL tuyệt đối cho Sản phẩm: /VuonSaiGons/product.php
                 formElement.action = APP_BASE_PATH + 'product.php';
             }
         }
-        
+
         // 1. Gắn sự kiện change để cập nhật action khi người dùng thay đổi
         selectElement.addEventListener('change', updateFormAction);
-        
+
         // 2. Cực kỳ quan trọng: Gọi hàm ngay khi DOM tải xong để thiết lập action ban đầu
-        updateFormAction(); 
+        updateFormAction();
     }
     // END: LOGIC CHUYỂN ACTION FORM TÌM KIẾM
 });
