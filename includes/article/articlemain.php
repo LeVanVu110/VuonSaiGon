@@ -231,7 +231,7 @@ $posts = $blogModel->getPostsByPages($page, $perPage, null, $keyword);
             <div class="blog-item-container">
                 
                 <div class="image-and-title-column">
-                    <a href="post-detail.php?slug=<?php echo $post['slug']; ?>">
+                    <a href="post-detail.php?id=<?php echo $post['post_id']; ?>">
                         <img src="<?php echo $post['image']; ?>" alt="<?php echo $post['title']; ?>" class="item-image">
                     </a>
                     

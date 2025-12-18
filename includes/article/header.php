@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
-    <link rel="stylesheet" href="/VuonSaiGons/assets/css/style.css">
+    <link rel="stylesheet" href="../VuonSaiGons/assets/css/style.css">
 
     <style>
     /* 2. Ảnh Banner */
@@ -36,6 +36,7 @@
 
     .cat-wrapper {
         position: relative;
+        overflow: visible !important;
     }
 
     .cat-btn-desktop {
@@ -59,7 +60,103 @@
         background: #fff;
         border: 1px solid #e5e5e5;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        z-index: 9999;
+        z-index: 1000001;
+    }
+
+    /* Từng dòng danh mục */
+    .cat-item {
+        padding: 10px 20px;
+        /* Khoảng cách chữ so với lề */
+        font-size: 15px;
+        /* Kích thước chữ theo hình */
+        color: #333;
+        /* Màu chữ chính */
+        font-weight: 500;
+        text-transform: uppercase;
+        /* Chữ in hoa giống mẫu */
+        display: flex;
+        justify-content: space-between;
+        /* Đẩy tên sang trái, mũi tên sang phải */
+        align-items: center;
+        border-bottom: 1px solid #f1f1f1;
+        /* Đường kẻ mờ giữa các mục */
+        transition: all 0.2s ease;
+    }
+
+    /* Bỏ đường kẻ cho mục cuối cùng */
+    .cat-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Hiệu ứng khi di chuột vào (Hover) */
+    .cat-item:hover {
+        background: #f8f9fa;
+        color: #1A5D2E;
+        /* Màu xanh thương hiệu khi hover */
+        padding-left: 25px;
+        /* Hiệu ứng dịch chuyển nhẹ sang phải */
+    }
+
+    /* Định dạng icon mũi tên bên phải */
+    .cat-item i.bi-chevron-right {
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* Định dạng thẻ liên kết bên trong */
+    .cat-item a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+    }
+
+    /* 2. Định dạng danh sách danh mục */
+    .cat-item-container {
+        list-style: none;
+        border-bottom: 1px solid #eee;
+        /* Đường kẻ giữa các mục */
+    }
+
+    .cat-item-container:last-child {
+        border-bottom: none;
+    }
+
+    .cat-item-content {
+        padding: 12px 20px;
+        transition: all 0.2s ease;
+    }
+
+    .cat-item-content:hover {
+        background-color: #f9f9f9;
+    }
+
+    /* 3. Kiểu chữ in hoa và icon */
+    .cat-link {
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+        /* Chữ đậm hơn */
+        display: block;
+        flex-grow: 1;
+    }
+
+    .cat-item-content:hover .cat-link {
+        color: #1f7a2f;
+        /* Màu xanh khi hover */
+    }
+
+    .collapse-toggle {
+        cursor: pointer;
+        color: #888;
+        font-size: 12px;
+    }
+
+    /* Xoay mũi tên khi mở menu con (Tùy chọn) */
+    .collapse-toggle[aria-expanded="true"] i {
+        transform: rotate(90deg);
+        display: inline-block;
     }
 
     /* Hiển thị dropdown khi hover vào wrapper */
@@ -299,50 +396,92 @@
         /* #ccc là màu border của pop-up */
         z-index: 1000;
     }
-    /* 2. Định dạng danh sách danh mục */
-.cat-item-container {
-    list-style: none;
-    border-bottom: 1px solid #eee; /* Đường kẻ giữa các mục */
-}
 
-.cat-item-container:last-child {
-    border-bottom: none;
-}
+    /* Trạng thái mặc định */
+    #main-header {
+        width: 100%;
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
 
-.cat-item-content {
-    padding: 12px 20px;
-    transition: all 0.2s ease;
-}
+    /* Trạng thái khi LĂN CHUỘT XUỐNG (Sticky) */
+    #main-header.is-sticky {
+        position: fixed;
+        top: 0;
+        left: 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        animation: slideDown 0.4s ease;
 
-.cat-item-content:hover {
-    background-color: #f9f9f9;
-}
+    }
 
-/* 3. Kiểu chữ in hoa và icon */
-.cat-link {
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    font-weight: 600; /* Chữ đậm hơn */
-    display: block;
-    flex-grow: 1;
-}
+    /* 2. SỬA LẠI: Navigation Bar mặc định phải hiển thị */
+    .navigation-bar {
+        background: #fff;
+        position: relative;
+        z-index: 99999;
+        /* Đảm bảo luôn hiện lúc đầu */
+        display: block;
+        max-height: 100px;
+        opacity: 1;
+        overflow: visible !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-.cat-item-content:hover .cat-link {
-    color: #1f7a2f; /* Màu xanh khi hover */
-}
+    /* Khi sticky: Ẩn bớt phần Menu bên dưới (như hình 3 bạn muốn) */
+    /* Nếu bạn muốn ẩn dòng Menu khi cuộn, hãy dùng dòng dưới */
+    #main-header.is-sticky .navigation-bar {
+        display: none !important;
+        max-height: 0;
+        /* Thu nhỏ chiều cao về 0 */
+        opacity: 0;
+        /* Làm mờ dần */
+        border-top: none;
+        pointer-events: none;
+        /* Ngăn người dùng click khi đang ẩn */
+    }
 
-.collapse-toggle {
-    cursor: pointer;
-    color: #888;
-    font-size: 12px;
-}
+    /* Đảm bảo nội dung trang không bị đẩy lên đột ngột */
+    body.has-sticky {
+        padding-top: 150px;
+        /* Điều chỉnh con số này bằng chiều cao header của bạn */
+    }
 
-/* Xoay mũi tên khi mở menu con (Tùy chọn) */
-.collapse-toggle[aria-expanded="true"] i {
-    transform: rotate(90deg);
-    display: inline-block;
-}
+    @keyframes slideDown {
+        from {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Mobile vẫn giữ 70px (Menu Danh mục đã bị ẩn d-none d-md-block) */
+    @media (max-width: 991.98px) {
+        body {
+            padding-top: 70px !important;
+        }
+    }
+
+
+    .header-wrapper-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999999 !important;
+        /* Cao nhất để không bị banner đè */
+        background: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    #main-header {
+        width: 100%;
+        background: #fff;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
     </style>
 </head>
 <?php  
@@ -381,112 +520,115 @@ if (!is_array($mainBlogCategories)) {
 ?>
 
 <body>
-    <header class="container-fluid border-bottom bg-white sticky-top">
-        <div class="row align-items-center py-2">
+    <div class="header-wrapper-fixed ">
+        <div id="main-header">
+            <header class="container-fluid border-bottom bg-white top-bar">
+                <div class="row align-items-center py-2">
 
-            <div class="col-2 col-lg-2 logo text-center text-md-start px-1 px-md-3 ps-lg-5">
-                <a href="index.php">
-                    <img src="https://vuonsaigon.vn/wp-content/uploads/2020/11/Logo-vsg-web.png" height="40"
-                        class="img-fluid">
-                </a>
-            </div>
-
-            <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
-                <form **action="" ** method="GET" class="input-group" id="searchForm">
-                    <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
-                        style="max-width:130px;" id="searchTypeSelect">
-                        <option value="product">Sản phẩm</option>
-                        <option value="blog">Bài viết</option>
-                    </select>
-
-                    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm...">
-
-                    <button class="btn btn-success" type="submit">
-                        <i class="bi bi-search d-md-none"></i>
-                        <span class="d-none d-md-inline">Tìm kiếm</span>
-                    </button>
-                </form>
-            </div>
-
-            <div class="col-4 col-lg-5  icon-group px-1 px-md-3">
-                <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3 pe-lg-5">
-
-                    <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block"
-                        style="font-size: 15px; font-size: 15px; padding-right: 10%;">
-                        <i class="bi bi-telephone me-1"></i> 0909 1234 09 - 082 799 7777
-                    </a>
-                    <a href="#" class="text-dark position-relative text-decoration-none">
-                        <i class="bi bi-heart fs-5"></i>
-                        <span
-                            class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill d-none d-md-block"
-                            style="font-size:0.6rem">0</span>
-                    </a>
-
-                    <div class="cart-wrapper-icon position-relative">
-                        <a href="shopping-cart.php" id="cart-icon"
-                            class="text-dark position-relative text-decoration-none me-1">
-                            <i class="bi bi-cart fs-5"></i>
-                            <span id="cart-count-badge"
-                                class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
-                                style="font-size:0.6rem">0</span>
+                    <div class="col-2 col-lg-2 logo text-center text-md-start px-1 px-md-3 ps-lg-5">
+                        <a href="index.php">
+                            <img src="https://vuonsaigon.vn/wp-content/uploads/2020/11/Logo-vsg-web.png" height="40"
+                                class="img-fluid">
                         </a>
+                    </div>
 
-                        <div id="mini-cart-dropdown" class="mini-cart hidden">
-                            <div id="mini-cart-items">
-                            </div>
-                            <div class="mini-cart-summary">
-                                <div class="sub-total-row">
-                                    <span>Tổng số phụ:</span>
-                                    <span id="mini-cart-subtotal" class="sub-total-amount text-danger fw-bold">0₫</span>
+                    <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
+                        <form **action="" ** method="GET" class="input-group" id="searchForm">
+                            <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
+                                style="max-width:130px;" id="searchTypeSelect">
+                                <option value="product">Sản phẩm</option>
+                                <option value="blog">Bài viết</option>
+                            </select>
+
+                            <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm...">
+
+                            <button class="btn btn-success" type="submit">
+                                <i class="bi bi-search d-md-none"></i>
+                                <span class="d-none d-md-inline">Tìm kiếm</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="col-4 col-lg-5  icon-group px-1 px-md-3">
+                        <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3 pe-lg-5">
+
+                            <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block"
+                                style="font-size: 15px; font-size: 15px; padding-right: 10%;">
+                                <i class="bi bi-telephone me-1"></i> 0909 1234 09 - 082 799 7777
+                            </a>
+                            <a href="#" class="text-dark position-relative text-decoration-none">
+                                <i class="bi bi-heart fs-5"></i>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill d-none d-md-block"
+                                    style="font-size:0.6rem">0</span>
+                            </a>
+
+                            <div class="cart-wrapper-icon position-relative">
+                                <a href="shopping-cart.php" id="cart-icon"
+                                    class="text-dark position-relative text-decoration-none me-1">
+                                    <i class="bi bi-cart fs-5"></i>
+                                    <span id="cart-count-badge"
+                                        class="position-absolute top-0 start-100 translate-middle badge bg-success rounded-pill"
+                                        style="font-size:0.6rem">0</span>
+                                </a>
+
+                                <div id="mini-cart-dropdown" class="mini-cart hidden">
+                                    <div id="mini-cart-items">
+                                    </div>
+                                    <div class="mini-cart-summary">
+                                        <div class="sub-total-row">
+                                            <span>Tổng số phụ:</span>
+                                            <span id="mini-cart-subtotal"
+                                                class="sub-total-amount text-danger fw-bold">0₫</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between gap-2 mt-3">
+                                            <a href="shopping-cart.php"
+                                                class="btn btn-success btn-sm flex-fill mini-cart-btn">Xem giỏ hàng</a>
+                                            <a href="checkout.php"
+                                                class="btn btn-dark btn-sm flex-fill mini-cart-btn">Thanh
+                                                toán</a>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-between gap-2 mt-3">
-                                    <a href="shopping-cart.php"
-                                        class="btn btn-success btn-sm flex-fill mini-cart-btn">Xem giỏ hàng</a>
-                                    <a href="checkout.php" class="btn btn-dark btn-sm flex-fill mini-cart-btn">Thanh
-                                        toán</a>
-                                </div>
                             </div>
+
+                            <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas"
+                                data-bs-target="#menuCanvas">
+                                <i class="bi bi-list fs-2 text-success"></i>
+                            </button>
                         </div>
                     </div>
 
-                    <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">
-                        <i class="bi bi-list fs-2 text-success"></i>
-                    </button>
                 </div>
-            </div>
+            </header>
+            <div class="container-fluid border-bottom d-none d-md-block navigation-bar" style="padding: 1%;">
 
-        </div>
-    </header>
+                <div class="container py-2 d-flex align-items-center gap-4">
+                    <div class="cat-wrapper">
+                        <button class="cat-btn-desktop">
+                            <i class=""></i> DANH MỤC SẢN PHẨM
+                            <i class="bi bi-chevron-down"></i>
+                        </button>
+                        <div class="cat-dropdown-desktop">
+                            <ul class="p-0 m-0">
+                                <?php Categories::displays_categories_html($allCategoriesHierarchical); ?>
+                            </ul>
+                        </div>
+                    </div>
 
-    <div class="container-fluid border-bottom d-none d-md-block" style="padding: 1%;">
-
-        <div class="container py-2 d-flex align-items-center gap-4">
-            <div class="cat-wrapper">
-                <button class="cat-btn-desktop">
-                    <i class=""></i> DANH MỤC SẢN PHẨM
-                    <i class="bi bi-chevron-down"></i>
-                </button>
-                <div class="cat-dropdown-desktop">
-
-                    <ul class="p-0 m-0">
-                        <?php Categories::displays_categories_html($allCategoriesHierarchical); ?>
-                    </ul>
-                </div>
-            </div>
-
-            <a href="introduce.php" class="fw-bold text-success text-decoration-none ms-5" style="
+                    <a href="introduce.php" class="fw-bold text-success text-decoration-none ms-5" style="
                 padding-left: 5%;">GIỚI THIỆU</a>
 
-            <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
-            <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
+                    <a href="product.php" class="fw-bold text-success text-decoration-none">SẢN PHẨM</a>
+                    <a href="video.php" class="fw-bold text-success text-decoration-none">VIDEO</a>
 
-            <div class="blog-wrapper">
-                <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
-                    BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
-                </a>
+                    <div class="blog-wrapper">
+                        <a href="blog.php" class="fw-bold text-success text-decoration-none blog-toggle">
+                            BLOG <i class="bi bi-chevron-down ms-1" style="font-size: 0.8em;"></i>
+                        </a>
 
-                <div class="blog-dropdown-desktop">
-                    <?php 
+                        <div class="blog-dropdown-desktop">
+                            <?php 
         if (!empty($mainBlogCategories)) {
             foreach ($mainBlogCategories as $cat) {
                 // Đường dẫn động
@@ -500,11 +642,15 @@ if (!is_array($mainBlogCategories)) {
             echo '<a href="' . $APP_BASE_PATH . 'blog.php?cat=phong-thuy" class="blog-item">Phong thủy</a>';
         }
         ?>
+                        </div>
+                    </div>
+                    <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
                 </div>
             </div>
-            <a href="contact.php" class="fw-bold text-success text-decoration-none">LIÊN HỆ</a>
         </div>
     </div>
+
+
 
     <div class="offcanvas offcanvas-start" id="menuCanvas">
         <div class="offcanvas-header">
@@ -541,6 +687,19 @@ if (!is_array($mainBlogCategories)) {
     </div>
 </body>
 <script>
+window.addEventListener('scroll', function() {
+    const header = document.getElementById('main-header');
+    const body = document.body;
+
+    // Khi cuộn xuống quá 150px
+    if (window.scrollY > 100) {
+        header.classList.add('is-sticky');
+        body.classList.add('has-sticky');
+    } else {
+        header.classList.remove('is-sticky');
+        body.classList.remove('has-sticky');
+    }
+});
 // ----------------------------------------------------------------------
 // HÀM TIỆN ÍCH
 // ----------------------------------------------------------------------
