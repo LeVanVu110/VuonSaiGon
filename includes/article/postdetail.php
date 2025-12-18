@@ -243,6 +243,101 @@
         font-size: 1.5rem;
         padding-bottom: 40px;
     }
+    /* ================================================= */
+/* RESPONSIVE - TỐI ƯU CHO DI ĐỘNG                   */
+/* ================================================= */
+
+/* Định nghĩa lại biến cho dễ quản lý trên các màn hình */
+@media (max-width: 1200px) {
+    .banner-content {
+        margin: 0 10%; /* Giảm lề 2 bên trên màn hình vừa */
+    }
+}
+
+@media (max-width: 992px) {
+    :root {
+        --banner-height: 450px; /* Giảm chiều cao banner trên Tablet */
+    }
+    .banner-title {
+        font-size: 2.5rem; /* Giảm cỡ chữ tiêu đề */
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        --banner-height: 350px; /* Giảm chiều cao banner trên Mobile */
+        --header-total-height: 70px; /* Giả định header mobile nhỏ hơn */
+    }
+
+    /* 1. Xử lý Banner trên Mobile */
+    .main-header-banner {
+        position: relative; /* Chuyển về relative để dễ cuộn trên mobile */
+        top: 0;
+        height: auto;
+        min-height: 300px;
+        background-attachment: scroll; /* Mobile thường không hỗ trợ tốt fixed background */
+        background-size: cover; /* Trên mobile nên dùng cover để thấy rõ nội dung chính */
+        padding: 40px 0;
+    }
+
+    .banner-content {
+        margin: 0 15px; /* Sát lề hơn trên điện thoại */
+    }
+
+    .banner-title {
+        font-size: 1.8rem;
+        padding-bottom: 20px;
+    }
+
+    .banner-subtitle {
+        font-size: 1.1rem;
+        padding-bottom: 10px;
+    }
+
+    /* 2. Xử lý Nội dung cuộn */
+    .main-content-wrapper {
+        margin-top: 0; /* Bỏ khoảng trống lớn trên mobile */
+    }
+
+    .article-content-wrapper {
+        padding: 20px 0;
+    }
+
+    /* 3. Xử lý Mục lục (TOC) */
+    .content-index {
+        margin: 0 10px 25px 10px;
+    }
+
+    /* 4. Xử lý Nội dung bài viết */
+    .article-body h2 {
+        font-size: 1.3rem; /* Tiêu đề nhỏ lại cho cân đối */
+    }
+
+    .article-body h3 {
+        margin-left: 0 !important; /* Bỏ thụt lề trên mobile để tiết kiệm diện tích */
+        font-size: 1.1rem !important;
+    }
+
+    .content-sub {
+        margin-left: 0 !important;
+    }
+
+    /* Đảm bảo hình ảnh luôn nằm trong khung */
+    .article-body img {
+        margin: 15px auto;
+        width: 100%;
+    }
+}
+
+/* 5. Tối ưu cho màn hình cực nhỏ (iPhone SE/5) */
+@media (max-width: 480px) {
+    .banner-title {
+        font-size: 1.5rem;
+    }
+    .index-header {
+        font-size: 16px;
+    }
+}
     </style>
 </head>
 <?php

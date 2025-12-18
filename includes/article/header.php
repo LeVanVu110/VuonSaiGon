@@ -652,39 +652,70 @@ if (!is_array($mainBlogCategories)) {
 
 
 
-    <div class="offcanvas offcanvas-start" id="menuCanvas">
-        <div class="offcanvas-header">
-            <h5 class="offcanvas-title">DANH MỤC</h5>
-            <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">KHUYẾN MÃI & VOUCHER 2024</li>
-                <li class="list-group-item">THÁP TRỒNG – TRỤ TRỒNG – VƯỜN TƯỜNG</li>
-                <li class="list-group-item">SỎI TRANG TRÍ</li>
-                <li class="list-group-item">HÀNG RÀO NHỰA</li>
-                <li class="list-group-item">ỐNG THÉP BỌC NHỰA – DAIM JAPAN</li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    THIẾT BỊ – HỆ THỐNG TƯỚI TỰ ĐỘNG <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    CHẬU TRỒNG CÂY <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    CÂY GIỐNG VÀ HOA CHẬU <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    DỤNG CỤ LÀM VƯỜN <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    ĐẤT SẠCH VÀ GIÁ THỂ <span>›</span>
-                </li>
-                <li class="list-group-item">HẠT GIỐNG RAU HOA</li>
-
-                <li class="list-group-item">VẬT TƯ TRỒNG LAN</li>
-            </ul>
-        </div>
+    <div class="offcanvas offcanvas-start" id="menuCanvas" style="width: 300px;">
+    <div class="offcanvas-header bg-success text-white">
+        <h5 class="offcanvas-title">DANH MỤC</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
+    <div class="offcanvas-body p-0">
+        <div class="p-3 border-bottom d-md-none">
+             <form action="<?php echo $APP_BASE_PATH; ?>product.php" method="GET" class="input-group">
+                <input type="text" name="keyword" class="form-control form-control-sm" placeholder="Tìm sản phẩm...">
+                <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
+             </form>
+        </div>
+
+        <ul class="list-group list-group-flush">
+            <a href="index.php" class="list-group-item list-group-item-action fw-bold text-success">TRANG CHỦ</a>
+            
+            <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">DANH MỤC SẢN PHẨM</div>
+            
+            <?php 
+            // Hàm đệ quy hiển thị danh mục cho Offcanvas
+            function renderMobileCategories($categories, $basePath) {
+                foreach ($categories as $index => $cat) {
+                    $hasChild = !empty($cat['children']);
+                    $targetId = "mob-cat-" . $cat['id'];
+                    
+                    echo '<li class="list-group-item p-0">';
+                    echo '<div class="d-flex align-items-center justify-content-between w-100">';
+                    
+                    // Link dẫn tới trang sản phẩm theo danh mục
+                    echo '<a href="' . $basePath . 'product.php?cat=' . $cat['id'] . '" class="flex-grow-1 py-3 ps-3 text-decoration-none text-dark" style="font-size: 14px;">' . htmlspecialchars($cat['name']) . '</a>';
+                    
+                    // Nếu có con thì hiện nút mũi tên để xổ xuống
+                    if ($hasChild) {
+                        echo '<span class="px-3 py-3 border-start collapse-toggle" data-bs-toggle="collapse" data-bs-target="#' . $targetId . '">
+                                <i class="bi bi-chevron-right"></i>
+                              </span>';
+                    }
+                    echo '</div>';
+
+                    // Khối menu con
+                    if ($hasChild) {
+                        echo '<div class="collapse bg-light" id="' . $targetId . '">';
+                        echo '<ul class="list-group list-group-flush ps-3">';
+                        renderMobileCategories($cat['children'], $basePath); // Đệ quy
+                        echo '</ul>';
+                        echo '</div>';
+                    }
+                    echo '</li>';
+                }
+            }
+
+            if (!empty($allCategoriesHierarchical)) {
+                renderMobileCategories($allCategoriesHierarchical, $APP_BASE_PATH);
+            }
+            ?>
+
+            <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">THÔNG TIN</div>
+            <a href="introduce.php" class="list-group-item list-group-item-action">GIỚI THIỆU</a>
+            <a href="blog.php" class="list-group-item list-group-item-action">BLOG</a>
+            <a href="video.php" class="list-group-item list-group-item-action">VIDEO</a>
+            <a href="contact.php" class="list-group-item list-group-item-action border-bottom-0">LIÊN HỆ</a>
+        </ul>
+    </div>
+</div>
 </body>
 <script>
 window.addEventListener('scroll', function() {

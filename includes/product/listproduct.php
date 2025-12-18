@@ -192,6 +192,7 @@
     }
 
     /* --- DESKTOP LIST VIEW STYLES (Màn hình lớn) --- */
+    /* --- DESKTOP LIST VIEW STYLES (Màn hình lớn) --- */
     @media (min-width: 769px) {
 
         /* Bung cột ra 100% */
@@ -205,62 +206,63 @@
         #view-list:checked~.main-content #product-container .product-card {
             display: flex;
             flex-direction: row;
-            align-items: flex-start;
+            align-items: stretch;
             border: 1px solid #eee;
-            padding: 15px;
+            padding: 20px;
+            position: relative;
+            /* Quan trọng để căn con theo absolute */
             min-height: 200px;
         }
 
-        /* Ảnh cố định size */
+        /* Ảnh sản phẩm */
         #view-list:checked~.main-content #product-container .product-img-wrapper {
             width: 180px !important;
             height: 180px !important;
             flex-shrink: 0;
             margin-right: 25px;
             margin-left: 0;
-            aspect-ratio: auto;
         }
 
-        /* Body */
+        /* Khối nội dung */
         #view-list:checked~.main-content #product-container .card-body {
             flex-grow: 1;
             padding: 0;
-            padding-right: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
+        /* Tiêu đề: Giới hạn chiều rộng để không đè lên giá */
         #view-list:checked~.main-content #product-container .product-title {
             font-size: 1.1rem;
             text-align: left;
-            margin-top: 10px;
-            max-width: 100%;
+            max-width: 70%;
             height: auto;
-            -webkit-line-clamp: unset;
+            margin-top: 5px;
         }
 
-        /* Giá tiền: Bay lên góc phải */
+        /* Giá tiền: Nằm ở góc TRÊN bên phải */
         #view-list:checked~.main-content #product-container .product-price {
             position: absolute;
-            top: 15px;
+            top: 20px;
             right: 20px;
             font-size: 1.4rem;
             text-align: right;
-            width: 160px;
+            margin: 0;
         }
 
-        /* Footer chứa nút */
-        #view-list:checked~.main-content #product-container .card-footer {
+        /* NÚT BẤM: Nằm ở góc DƯỚI bên phải */
+        #view-list:checked~.main-content #product-container .card-footer-mobile {
             position: absolute;
-            top: 55px;
+            bottom: 20px;
             right: 20px;
-            padding: 0;
-            background: transparent;
-            border: none;
             width: auto;
         }
 
-        /* NÚT BẤM DESKTOP LIST VIEW: Cố định 160px để đều nhau */
         #view-list:checked~.main-content #product-container .btn-add-cart {
-            width: 160px !important;
+            width: 180px !important;
+            padding: 10px 15px;
+            white-space: nowrap;
         }
     }
 
@@ -268,65 +270,86 @@
            RESPONSIVE MOBILE (Màn hình nhỏ < 769px)
            ========================================================== */
     @media (max-width: 768px) {
-        .product-toolbar {
-            font-size: 0.9rem;
-        }
-
-        /* Dù chọn List hay Grid, trên mobile đều hiển thị dạng dọc (Grid nhỏ) */
-        #view-list:checked~.main-content #product-container .product-card {
-            flex-direction: row;
+        #product-container {
+            display: flex;
             flex-wrap: wrap;
-            /* Bỏ dòng này nếu bạn muốn mọi thứ nằm trên 1 hàng duy nhất */
-            padding: 10px;
+            margin-right: -5px;
+            margin-left: -5px;
         }
 
-        /* ... */
+        #product-container .col {
+            width: 50% !important;
+            /* Hiển thị 2 sản phẩm 1 hàng */
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            padding: 5px;
+        }
+
+        /* --- KHI CHỌN CHẾ ĐỘ LIST TRÊN MOBILE --- */
+        #view-list:checked~.main-content #product-container .col {
+            width: 100% !important;
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
+
+        #view-list:checked~.main-content #product-container .product-card {
+            flex-direction: row !important;
+            /* Xếp ngang */
+            /* align-items: center; */
+            padding: 10px;
+            min-height: auto;
+        }
+
+        /* Đảm bảo nút trên mobile luôn rộng 100% của cột bên phải */
+        #view-list:checked~.main-content #product-container .card-footer-mobile {
+            width: 100%;
+            margin-top: 10px;
+        }
+
         #view-list:checked~.main-content #product-container .product-img-wrapper {
             width: 100px !important;
+            /* Ảnh nhỏ lại như mẫu */
             height: 100px !important;
             margin-right: 15px;
+            margin-left: 0;
+            flex-shrink: 0;
         }
 
         #view-list:checked~.main-content #product-container .card-body {
-            width: calc(100% - 115px);
-            padding-right: 0;
-            /* THÊM: Sử dụng flex để quản lý Tên, Giá và Nút */
+            text-align: left !important;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            /* Xếp Tên, Giá, Nút theo cột */
-            justify-content: space-between;
-            /* Đẩy Nút xuống đáy nếu có đủ chỗ */
+            justify-content: center;
         }
 
         #view-list:checked~.main-content #product-container .product-title {
-            font-size: 0.95rem;
+            height: auto;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            -webkit-line-clamp: 2;
         }
 
-        /* Giá & Nút về vị trí tự nhiên */
         #view-list:checked~.main-content #product-container .product-price {
-            position: static;
+            position: static !important;
+            /* Bỏ position absolute của desktop */
             font-size: 1rem;
-            margin-top: 5px;
-            text-align: left;
+            margin-bottom: 5px;
             width: auto;
+            text-align: left;
         }
 
         #view-list:checked~.main-content #product-container .card-footer {
-            /* Đã bị đẩy xuống cuối cột body do flex-direction: column */
-            position: static;
+            position: static !important;
             width: 100%;
+            padding: 0;
             margin-top: 5px;
-            /* Thay đổi quan trọng: Để nút nằm ngang với ảnh, footer phải được bao trong card-body */
         }
 
-        /* --- SỬA LỖI NÚT BẤM MOBILE --- */
-        /* Ép nút luôn rộng 100% trên mobile để bằng nhau tăm tắp */
-        #view-list:checked~.main-content #product-container .btn-add-cart,
+        /* Nút bấm trên mobile nhỏ gọn hơn */
         .btn-add-cart {
-            width: 100% !important;
-            display: block;
-            font-size: 0.85rem;
-            padding: 6px 0;
+            padding: 6px 10px;
+            font-size: 0.8rem;
         }
     }
 
@@ -370,6 +393,77 @@
     .category-list a .collapse-toggle {
         flex-shrink: 0;
         margin-left: 10px;
+    }
+
+    /* --- CATEGORY BANNER RESPONSIVE --- */
+    .category-banner {
+        background: #fff;
+        padding: 20px;
+        border: 1px solid #eee;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        text-align: center;
+        /* Căn giữa nội dung trên mobile */
+    }
+
+    .category-banner img {
+        width: 100%;
+        max-height: 300px;
+        /* Giới hạn chiều cao banner để không quá dài */
+        object-fit: cover;
+        /* Cắt ảnh vừa khung không bị móp */
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+
+    .category-banner h3 {
+        color: #166534;
+        font-weight: bold;
+        font-size: 1.5rem;
+        margin-bottom: 10px;
+    }
+
+    .category-banner p {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        text-align: justify;
+        /* Cho mô tả căn đều 2 bên */
+    }
+
+    /* Điều chỉnh cho Desktop (Màn hình lớn) */
+    @media (min-width: 992px) {
+        .category-banner {
+            text-align: left;
+            /* Trên máy tính thì căn trái cho chuyên nghiệp */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-banner h3 {
+            font-size: 1.8rem;
+        }
+    }
+
+    /* Điều chỉnh cho Mobile (Màn hình nhỏ) */
+    @media (max-width: 768px) {
+        .category-banner {
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .category-banner h3 {
+            font-size: 1.2rem;
+        }
+
+        .category-banner p {
+            font-size: 0.85rem;
+        }
+
+        .category-banner img {
+            max-height: 180px;
+            /* Mobile ảnh thấp xuống cho đỡ chiếm chỗ */
+        }
     }
     </style>
 </head>
@@ -588,55 +682,50 @@ if (!empty($keyword)) {
                     <div class="category-banner">
                         <?php if (!empty($currentCategory['image_url'])): ?>
                         <img src="<?= htmlspecialchars($currentCategory['image_url']) ?>"
-                            alt="<?= htmlspecialchars($currentCategory['name']) ?>">
-                        <?php endif; ?>
+                            alt="<?= htmlspecialchars($currentCategory['name']) ?>" class="img-fluid"> <?php endif; ?>
                         <h3><?= htmlspecialchars($currentCategory['name']) ?></h3>
                         <?php if (!empty($currentCategory['description'])): ?>
                         <p><?= $currentCategory['description'] ?></p>
                         <?php endif; ?>
                     </div>
                     <?php endif; ?>
-                    <div class="product-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div class="product-toolbar d-flex align-items-center justify-content-between gap-2">
 
-                        <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản
-                            phẩm</div>
+                        <div class="fw-bold text-secondary d-none d-md-block">
+                            <?= number_format($totalProducts) ?> sản phẩm
+                        </div>
 
                         <button class="btn btn-sm btn-outline-success d-md-none" type="button"
-                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas">
+                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas"
+                            style="white-space: nowrap;">
                             <i class="bi bi-funnel"></i> Lọc
                         </button>
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
-                            <form method="GET" action="" id="sort-form">
+                            <form method="GET" action="" id="sort-form" class="m-0">
                                 <?php echo $hiddenInputs; ?>
                                 <input type="hidden" name="view" id="current-view-mode"
                                     value="<?php echo htmlspecialchars($viewOption); ?>">
 
-                                <select name="sort" class="form-select form-select-sm" style="width: auto;"
+                                <select name="sort" class="form-select form-select-sm"
+                                    style="width: auto; min-width: 170px;"
                                     onchange="document.getElementById('sort-form').submit()">
-
                                     <option value="default"
-                                        <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>
-                                        Thứ Tự Mặc định
+                                        <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>Thứ Tự Mặc định
                                     </option>
                                     <option value="popularity"
-                                        <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>
-                                        Thứ Tự Theo Mức Độ Phổ Biến
+                                        <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>Phổ Biến
                                     </option>
-
                                     <option value="price_asc"
-                                        <?php echo ($sortOption === 'price_asc') ? 'selected' : ''; ?>>
-                                        Giá thấp đến cao
+                                        <?php echo ($sortOption === 'price_asc') ? 'selected' : ''; ?>>Giá thấp đến cao
                                     </option>
-
                                     <option value="price_desc"
-                                        <?php echo ($sortOption === 'price_desc') ? 'selected' : ''; ?>>
-                                        Giá cao đến thấp
+                                        <?php echo ($sortOption === 'price_desc') ? 'selected' : ''; ?>>Giá cao đến thấp
                                     </option>
                                 </select>
                             </form>
-                            <div class="user-select-none d-flex align-items-center">
-                                <span class="me-1 d-none d-md-inline small text-muted">Xem</span>
+
+                            <div class="user-select-none d-flex align-items-center border-start ps-2">
                                 <label for="view-grid" class="view-btn-grid cursor-pointer p-1"
                                     style="cursor: pointer;">
                                     <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
@@ -657,61 +746,41 @@ if (!empty($keyword)) {
                         <?php foreach($productsOnPage as $value): ?>
                         <div class="col">
                             <div class="product-card h-100 border-0 shadow-sm position-relative">
-
                                 <?php 
-                $productUrl = 'detailproduct.php?id=' . htmlspecialchars($value['id']);
-                $finalPrice = ($value['discount_price'] !== null && $value['discount_price'] < $value['price']) ? $value['discount_price'] : $value['price'];
-                $showSaleBadge = ($value['is_sale'] == 1 && $value['discount_price'] !== null && $value['price'] > $value['discount_price']);
-                ?>
+        $productUrl = 'detailproduct.php?id=' . htmlspecialchars($value['id']);
+        $finalPrice = ($value['discount_price'] !== null && $value['discount_price'] < $value['price']) ? $value['discount_price'] : $value['price'];
+        $showSaleBadge = ($value['is_sale'] == 1 && $value['discount_price'] !== null && $value['price'] > $value['discount_price']);
+        ?>
 
-                                <a href="<?php echo $productUrl; ?>" class="text-decoration-none text-dark d-block">
-                                    <div class="product-img-wrapper position-relative">
-                                        <?php 
-                        if ($showSaleBadge): 
-                            $discount_amount = $value['price'] - $value['discount_price'];
-                            $discount_percent = round(($discount_amount / $value['price']) * 100);
-                        ?>
-                                        <span
-                                            class="badge bg-danger position-absolute top-0 end-0 m-1">-<?= $discount_percent ?>%</span>
-                                        <?php endif; ?>
-
-                                        <img src="<?php echo htmlspecialchars($value['image_url']) ?>"
-                                            alt="<?php echo htmlspecialchars($value['name']) ?>">
-                                    </div>
-
-                                    <div class="card-body text-center">
-                                        <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
-
-                                        <div class="product-price">
-                                            <?php if ($showSaleBadge): ?>
-                                            <span
-                                                class="text-danger fw-bold me-2"><?php echo Product::formatCurrency($value['discount_price']) ?></span>
-                                            <del
-                                                class="text-muted small"><?php echo Product::formatCurrency($value['price']) ?></del>
-                                            <?php else: ?>
-                                            <span
-                                                class="text-danger fw-bold"><?php echo Product::formatCurrency($value['price']) ?></span>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                </a>
-                                <div class="card-footer bg-white border-0 p-2 d-flex justify-content-center">
-                                    <?php 
-                    $showAddToCart = ($value['state'] == 'còn hàng');
-                    ?>
-
-                                    <?php if ($showAddToCart): ?>
-                                    <button class="btn btn-add-cart js-add-to-cart btn-sm btn-success w-100"
-                                        data-product-id="<?= htmlspecialchars($value['id']) ?>"
-                                        data-name="<?= htmlspecialchars($value['name']) ?>"
-                                        data-price="<?= htmlspecialchars($finalPrice) ?>"
-                                        data-image-url="<?= htmlspecialchars($value['image_url']) ?>">
-                                        Thêm vào giỏ hàng
-                                    </button>
-                                    <?php else: ?>
-                                    <a href="<?php echo $productUrl; ?>"
-                                        class="btn btn-add-cart btn-sm btn-outline-secondary w-100">Đọc tiếp</a>
+                                <a href="<?php echo $productUrl; ?>" class="product-img-wrapper">
+                                    <?php if ($showSaleBadge): ?>
+                                    <span class="badge bg-danger position-absolute top-0 end-0 m-1">Sale</span>
                                     <?php endif; ?>
+                                    <img src="<?php echo htmlspecialchars($value['image_url']) ?>" alt="...">
+                                </a>
+
+                                <div class="card-body">
+                                    <a href="<?php echo $productUrl; ?>" class="text-decoration-none">
+                                        <h6 class="product-title"><?php echo htmlspecialchars($value['name']) ?></h6>
+                                    </a>
+
+                                    <div class="product-price">
+                                        <span
+                                            class="text-danger fw-bold"><?php echo Product::formatCurrency($finalPrice) ?></span>
+                                    </div>
+
+                                    <div class="card-footer-mobile">
+                                        <?php if ($value['state'] == 'còn hàng'): ?>
+                                        <button class="btn btn-add-cart js-add-to-cart btn-success"
+                                            data-product-id="<?= $value['id'] ?>" data-name="<?= $value['name'] ?>"
+                                            data-price="<?= $finalPrice ?>" data-image-url="<?= $value['image_url'] ?>">
+                                            THÊM VÀO GIỎ HÀNG
+                                        </button>
+                                        <?php else: ?>
+                                        <a href="<?= $productUrl ?>" class="btn btn-add-cart btn-outline-secondary">ĐỌC
+                                            TIẾP</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -811,20 +880,20 @@ if (!empty($keyword)) {
 function updateCartCountBadge() {
     // Giả sử có element icon giỏ hàng trong header với id="cart-count-badge"
     const cartCountBadge = document.getElementById('cart-count-badge');
-    if (!cartCountBadge) return; 
+    if (!cartCountBadge) return;
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     // Lấy tổng số LOẠI sản phẩm độc lập (cart.length)
-    let totalUniqueProducts = cart.length; 
+    let totalUniqueProducts = cart.length;
 
     cartCountBadge.textContent = totalUniqueProducts > 99 ? '99+' : totalUniqueProducts.toString();
-    
+
     // Hiển thị/Ẩn badge (Ẩn nếu giỏ hàng trống)
     if (totalUniqueProducts === 0) {
         cartCountBadge.style.display = 'none';
     } else {
-        cartCountBadge.style.display = 'block'; 
+        cartCountBadge.style.display = 'block';
     }
 }
 
@@ -872,15 +941,15 @@ function processAddToCart(button, quantityToUse) {
     const existingItem = cart.find(item => item.id === productData.id);
 
     if (existingItem) {
-        existingItem.quantity += productData.quantity; 
+        existingItem.quantity += productData.quantity;
     } else {
         cart.push(productData);
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    
+
     // CẬP NHẬT BADGE NGAY LẬP TỨC
-    updateCartCountBadge(); 
+    updateCartCountBadge();
 }
 
 // ========================================================
@@ -888,7 +957,7 @@ function processAddToCart(button, quantityToUse) {
 // ========================================================
 document.addEventListener('DOMContentLoaded', function() {
     // A. CHẠY KHI TẢI TRANG LẦN ĐẦU
-    updateCartCountBadge(); 
+    updateCartCountBadge();
 
     // B. Logic Collapse/Expand Sidebar
     const collapseToggles = document.querySelectorAll('.collapse-toggle');
@@ -921,7 +990,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Số lượng mặc định là 1 cho nút trên list
             processAddToCart(event.currentTarget, 1);
-            
+
             // Phản hồi người dùng
             this.textContent = 'ĐÃ THÊM';
             this.disabled = true;
