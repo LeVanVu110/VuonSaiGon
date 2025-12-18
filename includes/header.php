@@ -299,6 +299,50 @@
         /* #ccc là màu border của pop-up */
         z-index: 1000;
     }
+    /* 2. Định dạng danh sách danh mục */
+.cat-item-container {
+    list-style: none;
+    border-bottom: 1px solid #eee; /* Đường kẻ giữa các mục */
+}
+
+.cat-item-container:last-child {
+    border-bottom: none;
+}
+
+.cat-item-content {
+    padding: 12px 20px;
+    transition: all 0.2s ease;
+}
+
+.cat-item-content:hover {
+    background-color: #f9f9f9;
+}
+
+/* 3. Kiểu chữ in hoa và icon */
+.cat-link {
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600; /* Chữ đậm hơn */
+    display: block;
+    flex-grow: 1;
+}
+
+.cat-item-content:hover .cat-link {
+    color: #1f7a2f; /* Màu xanh khi hover */
+}
+
+.collapse-toggle {
+    cursor: pointer;
+    color: #888;
+    font-size: 12px;
+}
+
+/* Xoay mũi tên khi mở menu con (Tùy chọn) */
+.collapse-toggle[aria-expanded="true"] i {
+    transform: rotate(90deg);
+    display: inline-block;
+}
     </style>
 </head>
 <?php  
@@ -423,31 +467,10 @@ if (!is_array($mainBlogCategories)) {
                     <i class="bi bi-chevron-down"></i>
                 </button>
                 <div class="cat-dropdown-desktop">
-                    <div class="cat-item">KHUYẾN MÃI & VOUCHER 2024</div>
-                    <div class="cat-item">THÁP TRỒNG – TRỤ TRỒNG – VƯỜN TƯỜNG</div>
-                    <div class="cat-item">SỎI TRANG TRÍ</div>
-                    <div class="cat-item">HÀNG RÀO NHỰA</div>
-                    <div class="cat-item">ỐNG THÉP BỌC NHỰA – DAIM JAPAN</div>
-                    <div class="cat-item">
-                        THIẾT BỊ – HỆ THỐNG TƯỚI TỰ ĐỘNG <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="cat-item">
-                        CHẬU TRỒNG CÂY <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="cat-item">
-                        CÂY GIỐNG VÀ HOA CHẬU <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="cat-item">
-                        DỤNG CỤ LÀM VƯỜN <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="cat-item">
-                        ĐẤT SẠCH VÀ GIÁ THỂ <i class="bi bi-chevron-right"></i>
-                    </div>
-                    <div class="cat-item">HẠT GIỐNG RAU HOA</div>
-                    <div class="cat-item">VẬT TƯ TRỒNG LAN</div>
-                    <div class="cat-item">THUỐC BẢO VỆ THỰC VẬT</div>
-                    <div class="cat-item">PHÂN BÓN</div>
-                    <!-- <?php Categories::display_categories_html($allCategoriesHierarchical); ?> -->
+
+                    <ul class="p-0 m-0">
+                        <?php Categories::displays_categories_html($allCategoriesHierarchical); ?>
+                    </ul>
                 </div>
             </div>
 

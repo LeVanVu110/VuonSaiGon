@@ -103,6 +103,45 @@ class Categories extends Db
             echo "</li>"; 
         }
     }
+    public static function displays_categories_html($categories) {
+    if (empty($categories)) return;
+    
+    // Xử lý tham số URL để giữ lại các bộ lọc khác nếu có
+    $currentQuery = $_GET;
+    unset($currentQuery['category_slug'], $currentQuery['page'], $currentQuery['sort'], $currentQuery['view'], $currentQuery['id']);
+    $extraParams = http_build_query($currentQuery);
+    $extraParams = !empty($extraParams) ? '&' . $extraParams : '';
+
+    foreach ($categories as $cat) {
+        $slug = !empty($cat['slug']) ? htmlspecialchars($cat['slug']) : '#';
+        $link = "product.php?category_slug=" . $slug . $extraParams; 
+        $has_children = !empty($cat['children']);
+        // Sử dụng cat_id làm ID cho collapse
+        $cat_id = isset($cat['cat_id']) ? $cat['cat_id'] : rand();
+        $target_id = 'cat-collapse-' . $cat_id; 
+
+        echo "<li class='cat-item-container'>"; 
+            echo "<div class='cat-item-content d-flex justify-content-between align-items-center'>";
+                // Tên danh mục
+                echo "<a href='{$link}' class='cat-link'>" . mb_strtoupper(htmlspecialchars($cat['name']), 'UTF-8') . "</a>";
+
+                // Icon mũi tên bên phải nếu có con
+                if ($has_children) {
+                    echo "<span class='collapse-toggle' data-bs-toggle='collapse' data-bs-target='#{$target_id}' aria-expanded='false'>";
+                    echo "<i class='bi bi-chevron-right'></i>"; 
+                    echo "</span>";
+                }
+            echo "</div>";
+
+            // Hiển thị danh mục con
+            if ($has_children) {
+                echo "<ul class='collapse list-unstyled ps-3' id='{$target_id}'>"; 
+                self::displays_categories_html($cat['children']); 
+                echo "</ul>";
+            }
+        echo "</li>"; 
+    }
+}
     /**
  * Lấy ID của tất cả danh mục con của một danh mục cha.
  *

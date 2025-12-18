@@ -36,6 +36,7 @@
 
     .cat-wrapper {
         position: relative;
+        overflow: visible !important;
     }
 
     .cat-btn-desktop {
@@ -59,7 +60,103 @@
         background: #fff;
         border: 1px solid #e5e5e5;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        z-index: 9999;
+        z-index: 1000001;
+    }
+
+    /* Từng dòng danh mục */
+    .cat-item {
+        padding: 10px 20px;
+        /* Khoảng cách chữ so với lề */
+        font-size: 15px;
+        /* Kích thước chữ theo hình */
+        color: #333;
+        /* Màu chữ chính */
+        font-weight: 500;
+        text-transform: uppercase;
+        /* Chữ in hoa giống mẫu */
+        display: flex;
+        justify-content: space-between;
+        /* Đẩy tên sang trái, mũi tên sang phải */
+        align-items: center;
+        border-bottom: 1px solid #f1f1f1;
+        /* Đường kẻ mờ giữa các mục */
+        transition: all 0.2s ease;
+    }
+
+    /* Bỏ đường kẻ cho mục cuối cùng */
+    .cat-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Hiệu ứng khi di chuột vào (Hover) */
+    .cat-item:hover {
+        background: #f8f9fa;
+        color: #1A5D2E;
+        /* Màu xanh thương hiệu khi hover */
+        padding-left: 25px;
+        /* Hiệu ứng dịch chuyển nhẹ sang phải */
+    }
+
+    /* Định dạng icon mũi tên bên phải */
+    .cat-item i.bi-chevron-right {
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* Định dạng thẻ liên kết bên trong */
+    .cat-item a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        width: 100%;
+    }
+
+    /* 2. Định dạng danh sách danh mục */
+    .cat-item-container {
+        list-style: none;
+        border-bottom: 1px solid #eee;
+        /* Đường kẻ giữa các mục */
+    }
+
+    .cat-item-container:last-child {
+        border-bottom: none;
+    }
+
+    .cat-item-content {
+        padding: 12px 20px;
+        transition: all 0.2s ease;
+    }
+
+    .cat-item-content:hover {
+        background-color: #f9f9f9;
+    }
+
+    /* 3. Kiểu chữ in hoa và icon */
+    .cat-link {
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+        /* Chữ đậm hơn */
+        display: block;
+        flex-grow: 1;
+    }
+
+    .cat-item-content:hover .cat-link {
+        color: #1f7a2f;
+        /* Màu xanh khi hover */
+    }
+
+    .collapse-toggle {
+        cursor: pointer;
+        color: #888;
+        font-size: 12px;
+    }
+
+    /* Xoay mũi tên khi mở menu con (Tùy chọn) */
+    .collapse-toggle[aria-expanded="true"] i {
+        transform: rotate(90deg);
+        display: inline-block;
     }
 
     /* Hiển thị dropdown khi hover vào wrapper */
@@ -314,19 +411,19 @@
         left: 0;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         animation: slideDown 0.4s ease;
-        
+
     }
 
     /* 2. SỬA LẠI: Navigation Bar mặc định phải hiển thị */
     .navigation-bar {
         background: #fff;
         position: relative;
-        z-index: 9999;
+        z-index: 99999;
         /* Đảm bảo luôn hiện lúc đầu */
         display: block;
         max-height: 100px;
         opacity: 1;
-        overflow: hidden;
+        overflow: visible !important;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
@@ -368,13 +465,13 @@
         }
     }
 
-    /* Lớp bao ngoài cùng để cố định vị trí Header */
+
     .header-wrapper-fixed {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        z-index: 1000000;
+        z-index: 9999999 !important;
         /* Cao nhất để không bị banner đè */
         background: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -513,31 +610,9 @@ if (!is_array($mainBlogCategories)) {
                             <i class="bi bi-chevron-down"></i>
                         </button>
                         <div class="cat-dropdown-desktop">
-                            <div class="cat-item">KHUYẾN MÃI & VOUCHER 2024</div>
-                            <div class="cat-item">THÁP TRỒNG – TRỤ TRỒNG – VƯỜN TƯỜNG</div>
-                            <div class="cat-item">SỎI TRANG TRÍ</div>
-                            <div class="cat-item">HÀNG RÀO NHỰA</div>
-                            <div class="cat-item">ỐNG THÉP BỌC NHỰA – DAIM JAPAN</div>
-                            <div class="cat-item">
-                                THIẾT BỊ – HỆ THỐNG TƯỚI TỰ ĐỘNG <i class="bi bi-chevron-right"></i>
-                            </div>
-                            <div class="cat-item">
-                                CHẬU TRỒNG CÂY <i class="bi bi-chevron-right"></i>
-                            </div>
-                            <div class="cat-item">
-                                CÂY GIỐNG VÀ HOA CHẬU <i class="bi bi-chevron-right"></i>
-                            </div>
-                            <div class="cat-item">
-                                DỤNG CỤ LÀM VƯỜN <i class="bi bi-chevron-right"></i>
-                            </div>
-                            <div class="cat-item">
-                                ĐẤT SẠCH VÀ GIÁ THỂ <i class="bi bi-chevron-right"></i>
-                            </div>
-                            <div class="cat-item">HẠT GIỐNG RAU HOA</div>
-                            <div class="cat-item">VẬT TƯ TRỒNG LAN</div>
-                            <div class="cat-item">THUỐC BẢO VỆ THỰC VẬT</div>
-                            <div class="cat-item">PHÂN BÓN</div>
-                            <!-- <?php Categories::display_categories_html($allCategoriesHierarchical); ?> -->
+                            <ul class="p-0 m-0">
+                                <?php Categories::displays_categories_html($allCategoriesHierarchical); ?>
+                            </ul>
                         </div>
                     </div>
 

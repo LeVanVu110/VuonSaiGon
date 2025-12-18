@@ -40,7 +40,7 @@
         left: 0;
         width: 100%;
         height: var(--header-height);
-        z-index: 9000;
+        z-index: 9999 !important;
         background-color: #fff;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
     }
@@ -140,6 +140,7 @@
         color: white;
         text-align: center;
         text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
+        margin: 3px 355px 3px 355px;
     }
 
     .banner-category {
@@ -226,18 +227,45 @@
         margin: 25px auto;
         border-radius: 4px;
     }
+
+    .banner-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 900;
+        color: #4E8A0E;
+        text-transform: uppercase;
+        line-height: 1.2;
+        letter-spacing: -1px;
+        padding-bottom: 40px;
+        /* Tạo cảm giác khít như hình */
+    }
+
+    .banner-subtitle {
+        font-size: 1.5rem;
+        padding-bottom: 40px;
+    }
     </style>
 </head>
+<?php
+$blogModel = new Blog();
+    // 2. Lấy ID từ URL
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+
+// 3. Truy vấn lấy 1 bài viết duy nhất (Giả sử bạn có hàm getPostById)
+$result = $blogModel->getPostById($id);
+$baiviet = $result['post'];    // Mảng 1 chiều chứa thông tin bài
+$mucLuc   = $result['titles'];
+?>
 
 <body>
 
-    <div class="main-header-banner"
-        style="background-image: url('https://vuonsaigon.vn/wp-content/uploads/2025/11/Ky-thuat-trong-hoa-trieu-chuong-khoe-sac-dung-dip-Tet-nguyen-dan-4.png');">
+    <div class="main-header-banner" style="background-image: url('<?php echo $baiviet['image']; ?>');">
         <div class="banner-content">
-            <p class="banner-category">KỸ THUẬT NÔNG NGHIỆP</p>
-            <h1 class="banner-title">Kỹ thuật trồng hoa triều chuông</h1>
-            <h2 class="banner-subtitle">khoẻ sắc dùng dịp Tết Nguyên Đán</h2>
-            <p class="banner-meta">08/12/2025 | Bởi Thủy Hoa</p>
+            <h2 class="banner-subtitle"><?php echo $baiviet['category_name']; ?></h2>
+
+            <h1 class="banner-title"><?php echo $baiviet['title']; ?></h1>
+            <p class="banner-meta">
+                <?php echo date('d/m/Y', strtotime($baiviet['created_at'])); ?> | Bởi <?php echo $baiviet['author']; ?>
+            </p>
         </div>
     </div>
 
@@ -257,144 +285,73 @@
                     </div>
 
                     <ul class="index-list" id="indexList">
-                        <li>1. <a href="#muc1">Trồng hoa triều chuông vào thời điểm nào để cho hoa dùng vào dịp Tết?</a>
-                        </li>
-                        <li>2. <a href="#muc2">Cách chọn giống và phương pháp nhân giống hoa triều chuông</a></li>
-                        <li>3. <a href="#muc3">Cách trồng hoa triều chuông ra nhiều hoa</a></li>
-                        <li>4. <a href="#muc4">Cách chăm sóc cho cây hoa triều chuông cho nhiều hoa đẹp rực rỡ</a>
+                        <?php 
+                            $i = 1; 
+                            foreach($mucLuc as $parent) { 
+                                // Kiểm tra nếu là mục chính (parent_id = 0)
+                                if($parent['parent_id'] == 0) { 
+                            ?>
+                        <li>
+                            <?php echo $i; ?>. <a href="#muc<?php echo $i; ?>"><?php echo $parent['title']; ?></a>
+
                             <ul class="index-list ps-3 mt-1">
-                                <li class="sub-item"><a href="#muc4-1">4.1 Nước tưới nước: cho cây hoa triều chuông</a>
+                                <?php 
+                                    $sub = 1;
+                                    foreach($mucLuc as $child) {
+                                        if($child['parent_id'] == $parent['article_title_id']) { 
+                                    ?>
+                                <li class="sub-item">
+                                    <a href="#muc<?php echo $i . '-' . $sub; ?>">
+                                        <?php echo $child['title']; ?>
+                                    </a>
                                 </li>
-                                <li class="sub-item"><a href="#muc4-2">4.2 Cách bón phân cho cây hoa triều chuông</a>
-                                </li>
-                                <li class="sub-item"><a href="#muc4-3">4.3 Cách phòng trừ sâu bệnh hại cây hoa triều
-                                        chuông</a></li>
+                                <?php $sub++; } } ?>
                             </ul>
                         </li>
+                        <?php $i++; } } ?>
                     </ul>
                 </div>
 
                 <div class="article-body">
+                    <?php 
+    $u = 1; 
+    foreach($mucLuc as $parent) {
+        if($parent['parent_id'] == 0) { 
+    ?>
+                    <h2 id="muc<?php echo $u; ?>"><?php echo $u; ?>. <?php echo $parent['title']; ?></h2>
+                    <div class="content-main"><?php echo $parent['content']; ?></div>
 
-                    <p>Không chỉ mang vẻ đẹp cuốn hút, hoa triều chuông còn là biểu tượng của sự bền bỉ và sức sống mãnh
-                        liệt. Đặc biệt, khi nở rộ vào dịp Tết Nguyên Đán, những chậu hoa rực rỡ sẽ làm không gian nhà
-                        bạn thêm phần thơ mộng và đầy sắc xuân. Các bạn hãy cùng **Vườn Sài Gòn** tìm hiểu cách trồng
-                        loài hoa này qua bài viết này nhé.</p>
+                    <?php 
+        $sub = 1;
+        foreach($mucLuc as $child) {
+            if($child['parent_id'] == $parent['article_title_id']) { 
+        ?>
+                    <h3 id="muc<?php echo $u . '-' . $sub; ?>"
+                        style="margin-left: 20px; font-size: 20px; color: var(--toc-green);">
+                        <?php echo $u . "." . $sub; ?>. <?php echo $child['title']; ?>
+                    </h3>
+                    <div class="content-sub" style="margin-left: 20px;"><?php echo $child['content']; ?></div>
+                    <?php $sub++; } } ?>
 
-                    <h2 id="muc1">1. Trồng hoa triều chuông vào thời điểm nào để cho hoa dùng vào dịp Tết?</h2>
-
-                    <p>– Cây hoa triệu chuông không quá yêu cầu khắt khe về điều kiện khí hậu. Tuy nhiên, cây ưa điều
-                        kiện thời tiết mát mẻ. Cây sinh trưởng phát triển tốt ở những nơi có nhiệt độ từ
-                        $15^\circ\text{C}$ – $30^\circ\text{C}$ và thích ánh sáng tán xạ (sợ ánh sáng trực tiếp).
-                    <p>– Thời điểm thích hợp để trồng hoa triệu chuông tùy vào đặc điểm khí hậu của mỗi vùng trồng. Đối
-                        với các vùng có khí hậu mát mẻ như Đà Lạt, Sa pa, Mộc châu, … có thể trồng hoa quanh năm. Đối
-                        với các vùng có những thời điểm nắng nóng hơn $30^\circ\text{C}$ thì nên tránh trồng hoặc nếu
-                        trồng cần có biện pháp che bóng và điều khiển nhiệt độ cho cây. Các vùng miền Bắc nên trồng vào
-                        mùa thu từ tháng 8 đến tháng 4 năm sau dương lịch.
-                    <p>– Hoa Triệu chuông sau khi trồng khoảng $75$ – $90$ ngày thì cây bắt đầu cho hoa. Cây nở hoa liên
-                        tục từ $4$ – $6$ tháng tiếp theo, nên tùy vào mục đích của người trồng để có thể điều chỉnh thời
-                        điểm trồng để cây có thể ra hoa đúng dịp như ý muốn. Để cây nở hoa vào dúng dịp Tết Nguyên Đán
-                        thì nên trồng vào tháng $8$ – $9$ dương lịch.
-                        <img
-                            src="https://vuonsaigon.vn/wp-content/uploads/2025/11/Ky-thuat-trong-hoa-trieu-chuong-khoe-sac-dung-dip-Tet-nguyen-dan-768x768.png">
-
-
-                    <h2 id="muc2">2. Cách chọn giống và phương pháp nhân giống hoa triều chuông</h2>
-
-                    Hiện nay trên thị trường có rất nhiều loại hoa triều chuông với các màu sắc khác nhau như đỏ,
-                        hồng, tím, trắng và các màu phối trộn bắt mắt. Nhưng phổ biến nhất là các màu mix đang được ưa
-                        chuộng. Tùy vào sở thích, ý tưởng trang trí mà chọn các giống hoa triều chuông có màu sắc thích
-                        hợp.
-
-                    <p><strong>Nhân giống:</strong> Hoa triều chuông có thể trồng bằng cả hai phương pháp phổ biến đó là
-                        **gieo hạt** và **cây con** (cây nuôi cấy mô, cây giâm cành). Nếu trồng nhiều có thể trồng bằng
-                        phương pháp gieo hạt, trường hợp trồng ít thì nên trồng cây con.</p>
-
-                    <img src="https://vuonsaigon.vn/wp-content/uploads/2023/07/cua-hang-vat-tu-nong-nghiep.png"
-                        alt="Cây triều chuông con">
-
-                    <p>– Nếu trồng từ hạt giống, vì hạt nhỏ nên không cần xử lý hạt giống trước khi gieo, tránh làm mất
-                        sức nảy mầm của hạt giống.</p>
-
-                    <p><strong>Chậu trồng:</strong> nên trồng trong chậu có kích cỡ đường kính miệng chậu $20$ – $25$cm.
-                    </p>
-                    <p>Là loài hoa có vẻ đẹp bởi các cành hoa rủ xuống. Vì vậy nên chọn các dạng chậu hình chảo, chậu để
-                        treo có các hình dạng khác nhau.</p>
-
-                    <p><strong>Đất trồng:</strong> Cây hoa triều chuông là cây ưa ẩm nhưng sợ úng, nên giá thể cần đảm
-                        bảo độ tơi xốp, thoát nước tốt. Bạn hãy dùng **đất sạch Orgamix 3 in 1** để trồng.</p>
-
-                    <p><strong>Ánh sáng:</strong> Cây hoa triều chuông là cây ưa ánh sáng tán xạ. Nên đặt cây ở các vị
-                        trí thoáng mát, tránh ánh sáng trực tiếp. Hoặc nếu trồng ở điều kiện nắng gắt thì nên có các
-                        biện pháp che chắn hợp lý để cây sinh trưởng trong môi trường tốt nhất.</p>
-
-                    <h2 id="muc4">4. Cách chăm sóc cho cây hoa triều chuông cho nhiều hoa đẹp rực rỡ</h2>
-
-                    <h3 id="muc4-1">4.1 Nước tưới nước cho cây hoa triều chuông</h3>
-
-                    <p>– Thường xuyên kiểm tra độ ẩm đất. Độ ẩm đất cần luôn duy trì từ $60$ – $70\%$, nếu thấy thiếu
-                        hụt cần bổ sung nước ngay vì cây dễ bị héo. Nếu như dư nước cần thoát nước tạo độ thông thoáng
-                        cho đất.</p>
-
-                    <p>– Khi mới trồng cây con không yêu cầu quá nhiều nước nhưng luôn phải duy trì độ ẩm để rễ nhanh
-                        phát triển, nên tưới $2$–$3$ lần/ngày mỗi lần chỉ tưới nhẹ.</p>
-
-                    <p>– Sau trồng $20$ – $35$ ngày cây sinh trưởng phát triển mạnh, ra nhiều nhánh và cây ổn định tưới
-                        $2$ lần/ngày với lượng nước mỗi lần tưới nhiều hơn. Tùy vào thời tiết và độ ẩm đất để định lượng
-                        số lần tưới nước cho hoa, nhưng mỗi lần chỉ nên tưới vừa đủ, cây con tuổi nhẹ. Không tưới đẫm và
-                        tưới ngập, tránh tình trạng bị thối gốc, thối lá và gây chết cây.</p>
-
-                    <h3 id="muc4-2">4.2 Cách bón phân cho cây hoa triều chuông</h3>
-
-                    <p>– Cây hoa triều chuông có khả năng sinh trưởng phát triển mạnh, cho các đợt hoa liên tục và kéo
-                        dài nên cây cần bổ sung nhiều dinh dưỡng. Tuy nhiên, cây không ưa bón phân nặng dễ gây chết cây,
-                        chỉ tiến hành pha phân loãng, bón nhẹ cho cây và bón đều đặn để cây sinh trưởng phát triển tối
-                        ưu.</p>
-
-                    <p>– Sau trồng $15$ – $20$ ngày, cây ổn định, để phát triển thân lá, nhánh mới thì bón **phân hữu cơ
-                        trùn quế** hoặc **phân gà japadi**. Liều lượng bón cho cây hoa triều chuông giảm nồng độ một nửa
-                        so với khuyến cáo nhà sản xuất. Trong giai đoạn này bón phân định kỳ $14$ ngày/lần.</p>
-
-                    <h3 id="muc4-3">4.3 Cách phòng trừ sâu bệnh hại cây hoa triều chuông</h3>
-
-                    <p>Nội dung chi tiết...</p>
-
-                    <div class="team-section mt-5 border p-4 rounded">
-                        <h2 class="text-center text-uppercase fw-bold mb-3" style="color: var(--primary-green);">
-                            ĐỘI NGŨ
-                        </h2>
-
-                        <p class="text-justify mb-4" style="line-height: 1.8; font-size: 16px; color: #333;">
-                            Với nòng cốt là đội ngũ kỹ sư nông nghiệp giàu kinh nghiệm, có trình độ chuyên môn cao, đến
-                            với Vườn Sài Gòn quý khách không chỉ được tư vấn lựa chọn sản phẩm phù hợp, mà còn được tư
-                            vấn về kỹ thuật cây trồng, đưa ra những giải pháp hiệu quả cho quý khách.
-                        </p>
-
-                        <div class=" team-image text-center">
-                            <img src="https://vuonsaigon.vn/wp-content/uploads/2022/01/Main-3.00_00_12_15.Still006-1024x576.jpg"
-                                alt="Đội ngũ kỹ sư Vườn Sài Gòn" class="img-fluid shadow-sm rounded">
-                        </div>
-                    </div>
-
+                    <?php $u++; } } ?>
                 </div>
             </div>
-        </div>
 
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
-        // Script để ẩn hiện mục lục (TOC)
-        document.addEventListener('DOMContentLoaded', function() {
-            const indexHeader = document.querySelector('.index-header');
-            const indexList = document.getElementById('indexList');
-            const chevronIcon = indexHeader.querySelector('.fa-chevron-down');
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script>
+            // Script để ẩn hiện mục lục (TOC)
+            document.addEventListener('DOMContentLoaded', function() {
+                const indexHeader = document.querySelector('.index-header');
+                const indexList = document.getElementById('indexList');
+                const chevronIcon = indexHeader.querySelector('.fa-chevron-down');
 
-            indexHeader.addEventListener('click', function() {
-                indexList.classList.toggle('d-none');
-                chevronIcon.classList.toggle('fa-rotate-180'); // Xoay mũi tên khi ẩn/hiện
+                indexHeader.addEventListener('click', function() {
+                    indexList.classList.toggle('d-none');
+                    chevronIcon.classList.toggle('fa-rotate-180'); // Xoay mũi tên khi ẩn/hiện
+                });
             });
-        });
-        </script>
+            </script>
 </body>
 
 </html>
