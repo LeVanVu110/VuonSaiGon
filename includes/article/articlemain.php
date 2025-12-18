@@ -208,6 +208,88 @@ $posts = $blogModel->getPostsByPages($page, $perPage, null, $keyword);
         font-size: 13px;
         color: #888;
     }
+    /* --- CSS RESPONSIVE BỔ SUNG --- */
+
+/* 1. Đối với màn hình máy tính bảng (Dưới 1024px) */
+@media (max-width: 1024px) {
+    .container {
+        width: 95%; /* Mở rộng container để tận dụng không gian */
+    }
+    .item-image {
+        height: 350px; /* Giảm chiều cao ảnh một chút */
+    }
+}
+
+/* 2. Đối với màn hình điện thoại di động (Dưới 768px) */
+@media (max-width: 768px) {
+    .search-result-title {
+        font-size: 28px; /* Giảm cỡ chữ tiêu đề chính */
+        margin: 20px 0;
+    }
+
+    .blog-item-container {
+        flex-direction: column; /* Chuyển từ hàng ngang thành hàng dọc */
+        height: auto;
+    }
+
+    /* Cột ảnh */
+    .image-and-title-column {
+        width: 100%;
+    }
+
+    .item-image {
+        width: 100%; /* Ảnh chiếm hết chiều rộng màn hình */
+        height: 250px; /* Chiều cao ảnh nhỏ lại trên mobile */
+    }
+
+    /* Cột nội dung */
+    .content-info-column {
+        width: 100%;
+        padding: 20px; /* Giảm padding cho đỡ chiếm diện tích */
+        padding-top: 25px; /* Giảm khoảng cách phía trên */
+        padding-left: 20px;
+        background-color: #ffffff; /* Có thể đổi sang nền trắng trên mobile cho thoáng */
+    }
+
+    .item-title {
+        font-size: 18px; /* Giảm cỡ chữ tiêu đề bài viết */
+        margin-bottom: 15px;
+    }
+
+    .item-summary {
+        font-size: 14px; /* Giảm cỡ chữ tóm tắt */
+        margin-bottom: 15px;
+    }
+
+    /* Điều chỉnh tiêu đề đè trên ảnh (nếu bạn sử dụng lại) */
+    .image-overlay-title {
+        position: static; /* Không cho đè lên ảnh nữa */
+        transform: none;
+        width: 90%;
+        margin: 10px auto;
+        font-size: 16px;
+        white-space: normal; /* Cho phép xuống dòng nếu tiêu đề dài */
+        left: 0;
+    }
+
+    /* Phân trang mobile */
+    .pagination a, .pagination span {
+        padding: 5px 10px;
+        margin: 0 2px;
+        font-size: 13px;
+    }
+}
+
+/* 3. Đối với màn hình cực nhỏ (iPhone 5/SE - Dưới 480px) */
+@media (max-width: 480px) {
+    .item-image {
+        height: 180px; /* Ảnh cực nhỏ */
+    }
+    .live-chat-button {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+}
     </style>
 </head>
 

@@ -299,50 +299,93 @@
         /* #ccc là màu border của pop-up */
         z-index: 1000;
     }
+
     /* 2. Định dạng danh sách danh mục */
-.cat-item-container {
-    list-style: none;
-    border-bottom: 1px solid #eee; /* Đường kẻ giữa các mục */
+    .cat-item-container {
+        list-style: none;
+        border-bottom: 1px solid #eee;
+        /* Đường kẻ giữa các mục */
+    }
+
+    .cat-item-container:last-child {
+        border-bottom: none;
+    }
+
+    .cat-item-content {
+        padding: 12px 20px;
+        transition: all 0.2s ease;
+    }
+
+    .cat-item-content:hover {
+        background-color: #f9f9f9;
+    }
+
+    /* 3. Kiểu chữ in hoa và icon */
+    .cat-link {
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+        /* Chữ đậm hơn */
+        display: block;
+        flex-grow: 1;
+    }
+
+    .cat-item-content:hover .cat-link {
+        color: #1f7a2f;
+        /* Màu xanh khi hover */
+    }
+
+    .collapse-toggle {
+        cursor: pointer;
+        color: #888;
+        font-size: 12px;
+    }
+
+    /* Xoay mũi tên khi mở menu con (Tùy chọn) */
+    .collapse-toggle[aria-expanded="true"] i {
+        transform: rotate(90deg);
+        display: inline-block;
+    }
+    @media (max-width: 768px) {
+    /* Thu nhỏ ô chọn loại tìm kiếm trên mobile */
+    #searchTypeSelect {
+        -webkit-appearance: none;  /* Cho Safari/Chrome iOS */
+        -moz-appearance: none;     /* Cho Firefox */
+        appearance: none;          /* Cho các trình duyệt hiện đại */
+        
+        /* Tùy chỉnh thêm để chữ nằm giữa và đẹp hơn khi mất mũi tên */
+        padding-right: 7px !important; 
+        text-align: center;
+        background-image: none !important; /* Xóa icon mũi tên nếu Bootstrap tự thêm vào */
+    }
+    .search-mobile .form-select {
+        background-image: none !important;
+        padding: 0 !important;
+        font-size: 10px !important;
+        width:10% !important;
+    }
+    
+    /* Đảm bảo ô input vẫn đủ chỗ để gõ */
+    #searchForm input[name="keyword"] {
+        font-size: 13px;
+    }
+
+    /* Thu hẹp khoảng cách padding của logo và search trên mobile */
+    .search-mobile {
+        padding-left: 0% !important; /* Giảm từ 10% xuống 2% để lấy thêm không gian */
+    }
+    @media (min-width: 268px) and (max-width: 1199px) {
+    .search-mobile {
+        /* padding-left: 10% !important; */
+    }
+    .form-select {
+        /* background-image: none !important; */
+        padding: 0 !important;
+    }
+}
 }
 
-.cat-item-container:last-child {
-    border-bottom: none;
-}
-
-.cat-item-content {
-    padding: 12px 20px;
-    transition: all 0.2s ease;
-}
-
-.cat-item-content:hover {
-    background-color: #f9f9f9;
-}
-
-/* 3. Kiểu chữ in hoa và icon */
-.cat-link {
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-    font-weight: 600; /* Chữ đậm hơn */
-    display: block;
-    flex-grow: 1;
-}
-
-.cat-item-content:hover .cat-link {
-    color: #1f7a2f; /* Màu xanh khi hover */
-}
-
-.collapse-toggle {
-    cursor: pointer;
-    color: #888;
-    font-size: 12px;
-}
-
-/* Xoay mũi tên khi mở menu con (Tùy chọn) */
-.collapse-toggle[aria-expanded="true"] i {
-    transform: rotate(90deg);
-    display: inline-block;
-}
     </style>
 </head>
 <?php  
@@ -391,10 +434,10 @@ if (!is_array($mainBlogCategories)) {
                 </a>
             </div>
 
-            <div class="col-6 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important">
+            <div class="col-7 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important;">
                 <form **action="" ** method="GET" class="input-group" id="searchForm">
-                    <select name="search_type" class="form-select d-none d-md-block bg-light border-end-0"
-                        style="max-width:130px;" id="searchTypeSelect">
+                    <select name="search_type" class="form-select bg-light border-end-0"
+                        style="max-width: 100px; font-size: 13px; padding: 0 7px!important;" id="searchTypeSelect">
                         <option value="product">Sản phẩm</option>
                         <option value="blog">Bài viết</option>
                     </select>
@@ -408,7 +451,7 @@ if (!is_array($mainBlogCategories)) {
                 </form>
             </div>
 
-            <div class="col-4 col-lg-5  icon-group px-1 px-md-3">
+            <div class="col-3 col-lg-5  icon-group px-1 px-md-3">
                 <div class="d-flex justify-content-end align-items-center gap-2 gap-md-3 pe-lg-5">
 
                     <a href="tel:0909123409" class="text-danger fw-bold text-decoration-none d-none d-lg-block"
@@ -506,36 +549,68 @@ if (!is_array($mainBlogCategories)) {
         </div>
     </div>
 
-    <div class="offcanvas offcanvas-start" id="menuCanvas">
-        <div class="offcanvas-header">
+    <div class="offcanvas offcanvas-start" id="menuCanvas" style="width: 300px;">
+        <div class="offcanvas-header bg-success text-white">
             <h5 class="offcanvas-title">DANH MỤC</h5>
-            <button class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body p-0">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">KHUYẾN MÃI & VOUCHER 2024</li>
-                <li class="list-group-item">THÁP TRỒNG – TRỤ TRỒNG – VƯỜN TƯỜNG</li>
-                <li class="list-group-item">SỎI TRANG TRÍ</li>
-                <li class="list-group-item">HÀNG RÀO NHỰA</li>
-                <li class="list-group-item">ỐNG THÉP BỌC NHỰA – DAIM JAPAN</li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    THIẾT BỊ – HỆ THỐNG TƯỚI TỰ ĐỘNG <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    CHẬU TRỒNG CÂY <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    CÂY GIỐNG VÀ HOA CHẬU <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    DỤNG CỤ LÀM VƯỜN <span>›</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    ĐẤT SẠCH VÀ GIÁ THỂ <span>›</span>
-                </li>
-                <li class="list-group-item">HẠT GIỐNG RAU HOA</li>
+            <div class="p-3 border-bottom d-md-none">
+                <form action="<?php echo $APP_BASE_PATH; ?>product.php" method="GET" class="input-group">
+                    <input type="text" name="keyword" class="form-control form-control-sm"
+                        placeholder="Tìm sản phẩm...">
+                    <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
 
-                <li class="list-group-item">VẬT TƯ TRỒNG LAN</li>
+            <ul class="list-group list-group-flush">
+                <a href="index.php" class="list-group-item list-group-item-action fw-bold text-success">TRANG CHỦ</a>
+
+                <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">DANH MỤC SẢN PHẨM</div>
+
+                <?php 
+            // Hàm đệ quy hiển thị danh mục cho Offcanvas
+            function renderMobileCategories($categories, $basePath) {
+                foreach ($categories as $index => $cat) {
+                    $hasChild = !empty($cat['children']);
+                    $targetId = "mob-cat-" . $cat['id'];
+                    
+                    echo '<li class="list-group-item p-0">';
+                    echo '<div class="d-flex align-items-center justify-content-between w-100">';
+                    
+                    // Link dẫn tới trang sản phẩm theo danh mục
+                    echo '<a href="' . $basePath . 'product.php?cat=' . $cat['id'] . '" class="flex-grow-1 py-3 ps-3 text-decoration-none text-dark" style="font-size: 14px;">' . htmlspecialchars($cat['name']) . '</a>';
+                    
+                    // Nếu có con thì hiện nút mũi tên để xổ xuống
+                    if ($hasChild) {
+                        echo '<span class="px-3 py-3 border-start collapse-toggle" data-bs-toggle="collapse" data-bs-target="#' . $targetId . '">
+                                <i class="bi bi-chevron-right"></i>
+                              </span>';
+                    }
+                    echo '</div>';
+
+                    // Khối menu con
+                    if ($hasChild) {
+                        echo '<div class="collapse bg-light" id="' . $targetId . '">';
+                        echo '<ul class="list-group list-group-flush ps-3">';
+                        renderMobileCategories($cat['children'], $basePath); // Đệ quy
+                        echo '</ul>';
+                        echo '</div>';
+                    }
+                    echo '</li>';
+                }
+            }
+
+            if (!empty($allCategoriesHierarchical)) {
+                renderMobileCategories($allCategoriesHierarchical, $APP_BASE_PATH);
+            }
+            ?>
+
+                <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">THÔNG TIN</div>
+                <a href="introduce.php" class="list-group-item list-group-item-action">GIỚI THIỆU</a>
+                <a href="blog.php" class="list-group-item list-group-item-action">BLOG</a>
+                <a href="video.php" class="list-group-item list-group-item-action">VIDEO</a>
+                <a href="contact.php" class="list-group-item list-group-item-action border-bottom-0">LIÊN HỆ</a>
             </ul>
         </div>
     </div>
