@@ -277,13 +277,13 @@
             flex-direction: row;
             flex-wrap: wrap;
             /* Bỏ dòng này nếu bạn muốn mọi thứ nằm trên 1 hàng duy nhất */
-            padding: 10px;
+            padding: 40px;
         }
 
         /* ... */
         #view-list:checked~.main-content #product-container .product-img-wrapper {
-            width: 100px !important;
-            height: 100px !important;
+            width: 100% !important;
+            height: 100% !important;
             margin-right: 15px;
         }
 
@@ -596,47 +596,43 @@ if (!empty($keyword)) {
                         <?php endif; ?>
                     </div>
                     <?php endif; ?>
-                    <div class="product-toolbar d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div class="product-toolbar d-flex align-items-center justify-content-between gap-2">
 
-                        <div class="fw-bold text-secondary d-none d-md-block"><?= number_format($totalProducts) ?> sản
-                            phẩm</div>
+                        <div class="fw-bold text-secondary d-none d-md-block">
+                            <?= number_format($totalProducts) ?> sản phẩm
+                        </div>
 
                         <button class="btn btn-sm btn-outline-success d-md-none" type="button"
-                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas">
+                            data-bs-toggle="offcanvas" data-bs-target="#mobileFilterOffcanvas"
+                            style="white-space: nowrap;">
                             <i class="bi bi-funnel"></i> Lọc
                         </button>
 
                         <div class="d-flex align-items-center gap-2 ms-auto">
-                            <form method="GET" action="" id="sort-form">
+                            <form method="GET" action="" id="sort-form" class="m-0">
                                 <?php echo $hiddenInputs; ?>
                                 <input type="hidden" name="view" id="current-view-mode"
                                     value="<?php echo htmlspecialchars($viewOption); ?>">
 
-                                <select name="sort" class="form-select form-select-sm" style="width: auto;"
+                                <select name="sort" class="form-select form-select-sm"
+                                    style="width: auto; min-width: 130px;"
                                     onchange="document.getElementById('sort-form').submit()">
-
                                     <option value="default"
-                                        <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>
-                                        Thứ Tự Mặc định
+                                        <?php echo ($sortOption === 'default') ? 'selected' : ''; ?>>Thứ Tự Mặc định
                                     </option>
                                     <option value="popularity"
-                                        <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>
-                                        Thứ Tự Theo Mức Độ Phổ Biến
+                                        <?php echo ($sortOption === 'popularity') ? 'selected' : ''; ?>>Phổ Biến
                                     </option>
-
                                     <option value="price_asc"
-                                        <?php echo ($sortOption === 'price_asc') ? 'selected' : ''; ?>>
-                                        Giá thấp đến cao
+                                        <?php echo ($sortOption === 'price_asc') ? 'selected' : ''; ?>>Giá thấp đến cao
                                     </option>
-
                                     <option value="price_desc"
-                                        <?php echo ($sortOption === 'price_desc') ? 'selected' : ''; ?>>
-                                        Giá cao đến thấp
+                                        <?php echo ($sortOption === 'price_desc') ? 'selected' : ''; ?>>Giá cao đến thấp
                                     </option>
                                 </select>
                             </form>
-                            <div class="user-select-none d-flex align-items-center">
-                                <span class="me-1 d-none d-md-inline small text-muted">Xem</span>
+
+                            <div class="user-select-none d-flex align-items-center border-start ps-2">
                                 <label for="view-grid" class="view-btn-grid cursor-pointer p-1"
                                     style="cursor: pointer;">
                                     <i class="bi bi-grid-3x3-gap-fill fs-5"></i>
@@ -811,20 +807,20 @@ if (!empty($keyword)) {
 function updateCartCountBadge() {
     // Giả sử có element icon giỏ hàng trong header với id="cart-count-badge"
     const cartCountBadge = document.getElementById('cart-count-badge');
-    if (!cartCountBadge) return; 
+    if (!cartCountBadge) return;
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     // Lấy tổng số LOẠI sản phẩm độc lập (cart.length)
-    let totalUniqueProducts = cart.length; 
+    let totalUniqueProducts = cart.length;
 
     cartCountBadge.textContent = totalUniqueProducts > 99 ? '99+' : totalUniqueProducts.toString();
-    
+
     // Hiển thị/Ẩn badge (Ẩn nếu giỏ hàng trống)
     if (totalUniqueProducts === 0) {
         cartCountBadge.style.display = 'none';
     } else {
-        cartCountBadge.style.display = 'block'; 
+        cartCountBadge.style.display = 'block';
     }
 }
 
@@ -872,15 +868,15 @@ function processAddToCart(button, quantityToUse) {
     const existingItem = cart.find(item => item.id === productData.id);
 
     if (existingItem) {
-        existingItem.quantity += productData.quantity; 
+        existingItem.quantity += productData.quantity;
     } else {
         cart.push(productData);
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    
+
     // CẬP NHẬT BADGE NGAY LẬP TỨC
-    updateCartCountBadge(); 
+    updateCartCountBadge();
 }
 
 // ========================================================
@@ -888,7 +884,7 @@ function processAddToCart(button, quantityToUse) {
 // ========================================================
 document.addEventListener('DOMContentLoaded', function() {
     // A. CHẠY KHI TẢI TRANG LẦN ĐẦU
-    updateCartCountBadge(); 
+    updateCartCountBadge();
 
     // B. Logic Collapse/Expand Sidebar
     const collapseToggles = document.querySelectorAll('.collapse-toggle');
@@ -921,7 +917,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Số lượng mặc định là 1 cho nút trên list
             processAddToCart(event.currentTarget, 1);
-            
+
             // Phản hồi người dùng
             this.textContent = 'ĐÃ THÊM';
             this.disabled = true;
