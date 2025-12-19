@@ -591,6 +591,10 @@ if (!is_array($mainBlogCategories)) {
                                     </div>
                                 </div>
                             </div>
+                            <div>
+                                <button class="btn btn-danger"><a style="color: white; text-decoration: none;"
+                                        href="admin/pages/logout.php">Sign In</a></button>
+                            </div>
 
                             <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas"
                                 data-bs-target="#menuCanvas">
@@ -653,24 +657,25 @@ if (!is_array($mainBlogCategories)) {
 
 
     <div class="offcanvas offcanvas-start" id="menuCanvas" style="width: 300px;">
-    <div class="offcanvas-header bg-success text-white">
-        <h5 class="offcanvas-title">DANH MỤC</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body p-0">
-        <div class="p-3 border-bottom d-md-none">
-             <form action="<?php echo $APP_BASE_PATH; ?>product.php" method="GET" class="input-group">
-                <input type="text" name="keyword" class="form-control form-control-sm" placeholder="Tìm sản phẩm...">
-                <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
-             </form>
+        <div class="offcanvas-header bg-success text-white">
+            <h5 class="offcanvas-title">DANH MỤC</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 border-bottom d-md-none">
+                <form action="<?php echo $APP_BASE_PATH; ?>product.php" method="GET" class="input-group">
+                    <input type="text" name="keyword" class="form-control form-control-sm"
+                        placeholder="Tìm sản phẩm...">
+                    <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+            </div>
 
-        <ul class="list-group list-group-flush">
-            <a href="index.php" class="list-group-item list-group-item-action fw-bold text-success">TRANG CHỦ</a>
-            
-            <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">DANH MỤC SẢN PHẨM</div>
-            
-            <?php 
+            <ul class="list-group list-group-flush">
+                <a href="index.php" class="list-group-item list-group-item-action fw-bold text-success">TRANG CHỦ</a>
+
+                <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">DANH MỤC SẢN PHẨM</div>
+
+                <?php 
             // Hàm đệ quy hiển thị danh mục cho Offcanvas
             function renderMobileCategories($categories, $basePath) {
                 foreach ($categories as $index => $cat) {
@@ -708,14 +713,14 @@ if (!is_array($mainBlogCategories)) {
             }
             ?>
 
-            <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">THÔNG TIN</div>
-            <a href="introduce.php" class="list-group-item list-group-item-action">GIỚI THIỆU</a>
-            <a href="blog.php" class="list-group-item list-group-item-action">BLOG</a>
-            <a href="video.php" class="list-group-item list-group-item-action">VIDEO</a>
-            <a href="contact.php" class="list-group-item list-group-item-action border-bottom-0">LIÊN HỆ</a>
-        </ul>
+                <div class="fw-bold p-3 bg-light text-secondary" style="font-size: 0.8rem;">THÔNG TIN</div>
+                <a href="introduce.php" class="list-group-item list-group-item-action">GIỚI THIỆU</a>
+                <a href="blog.php" class="list-group-item list-group-item-action">BLOG</a>
+                <a href="video.php" class="list-group-item list-group-item-action">VIDEO</a>
+                <a href="contact.php" class="list-group-item list-group-item-action border-bottom-0">LIÊN HỆ</a>
+            </ul>
+        </div>
     </div>
-</div>
 </body>
 <script>
 window.addEventListener('scroll', function() {

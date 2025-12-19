@@ -437,7 +437,7 @@ if (!is_array($mainBlogCategories)) {
             <div class="col-7 col-lg-5 px-1 search-mobile" style="padding-left: 10% !important;">
                 <form **action="" ** method="GET" class="input-group" id="searchForm">
                     <select name="search_type" class="form-select bg-light border-end-0"
-                        style="max-width: 100px; font-size: 13px; padding: 0 7px!important;" id="searchTypeSelect">
+                        style="max-width: 100px; font-size: 13px; padding: 0 7px!important;border-radius: 0px;" id="searchTypeSelect">
                         <option value="product">Sản phẩm</option>
                         <option value="blog">Bài viết</option>
                     </select>
@@ -490,6 +490,10 @@ if (!is_array($mainBlogCategories)) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <button  class="btn btn-danger"><a style="color: white; text-decoration: none;" 
+                        href="admin/pages/logout.php">Sign In</a></button>
                     </div>
 
                     <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">
