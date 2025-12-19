@@ -492,7 +492,8 @@ if (!is_array($mainBlogCategories)) {
                         </div>
                     </div>
                     <div>
-                        <button  class="btn btn-danger"><a href="admin/pages/logout.php">logout</a></button>
+                        <button  class="btn btn-danger"><a style="color: white; text-decoration: none;" 
+                        href="admin/pages/logout.php">Sign In</a></button>
                     </div>
 
                     <button class="btn p-0 border-0 d-md-none" data-bs-toggle="offcanvas" data-bs-target="#menuCanvas">

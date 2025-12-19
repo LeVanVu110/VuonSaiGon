@@ -12,6 +12,12 @@
 
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 -->
+<?php
+if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
+    header("Location: sign-in.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
