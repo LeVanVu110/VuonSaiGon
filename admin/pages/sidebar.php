@@ -1,3 +1,11 @@
+<style>
+    .navbar-brand-img{
+        max-height: 3rem !important;
+    }
+    .sidenav .navbar-brand{
+        padding: 1.5rem 1rem !important;
+    }
+</style>
 <?php
 session_start();
 if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
@@ -11,8 +19,8 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
         <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
             aria-hidden="true" id="iconSidenav"></i>
         <a class="navbar-brand m-0" href="#" target="_blank">
-            <img src="../assets/img/logo-ct-dark.png" class="navbar-brand-img h-100" alt="main_logo">
-            <span class="ms-1 font-weight-bold">Soft UI Dashboard 3</span>
+            <img src="../assets/img/logovule-removebg-preview.png" class="navbar-brand-img h-100" alt="main_logo">
+            <span class="ms-1 font-weight-bold">Vu Le UI Dashboard 3</span>
         </a>
     </div>
     <hr class="horizontal dark mt-0">
@@ -474,7 +482,7 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
                 link.classList.add('active');
             }
             // Nhóm Tiêu đề bài báo (Profile)
-            var profileTitleGroup = ['profile.php'];
+            var profileTitleGroup = ['profile.php', 'user_edit.php', 'user_delete.php'];
             if (profileTitleGroup.includes(currentPage) && linkPage === 'profile.php') {
                 link.classList.add('active');
             }
