@@ -1,9 +1,4 @@
 <?php
-session_start();
-if (!isset($_SESSION['user']) || $_SESSION['user']['role_name'] !== 'admin') {
-    header("Location: sign-in.php");
-    exit();
-}
 
 require_once '../../config.php';
 require_once '../models/db.php';
