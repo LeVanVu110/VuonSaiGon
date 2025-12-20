@@ -1,2 +1,2 @@
-<?php header("locahost, pages/dashboard.php");
+<?php header("Location: pages/sign-in.php"); exit(); ?>
 

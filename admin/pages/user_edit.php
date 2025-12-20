@@ -1,37 +1,40 @@
+<!--
+=========================================================
+* Soft UI Dashboard 3 - v1.1.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/soft-ui-dashboard
+* Copyright 2024 Creative Tim (https://www.creative-tim.com)
+* Licensed under MIT (https://www.creative-tim.com/license)
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
 <?php
-
-
 require_once '../../config.php';
 require_once '../models/db.php';
-require_once '../models/video.php';
+require_once '../models/user.php';
 
-$videoModel = new Videos();
+$userModel = new Users();
+$id = $_GET['id'] ?? null;
+$userData = $userModel->getUserById($id);
 
-// 1. Lấy dữ liệu video cũ
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $video = $videoModel->getById($id);
-
-    if (!$video) {
-        header("Location: video.php");
-        exit();
-    }
+if (!$userData) {
+    header("Location: profile.php");
+    exit();
 }
 
-// 2. Xử lý khi nhấn nút Lưu thay đổi
-if (isset($_POST['btn-edit'])) {
-    $yt_id = $_POST['youtube_id'];
-    $title = $_POST['title'];
-    
-    // Tự động cập nhật lại link ảnh và link video theo YouTube ID mới
-    $image = "https://img.youtube.com/vi/{$yt_id}/hqdefault.jpg";
-    $url = "https://youtu.be/{$yt_id}";
+// Xử lý khi bấm nút Lưu
+if (isset($_POST['btn-update'])) {
+    $gmail = $_POST['gmail'];
+    $password = $_POST['password'];
+    $role_id = $_POST['role_id'];
 
-    if ($videoModel->update($id, $yt_id, $title, $image, $url)) {
-        header("Location: video.php?success=updated");
+    if ($userModel->updateUser($id, $gmail, $password, $role_id)) {
+        header("Location: profile.php?success=update");
         exit();
-    } else {
-        $error = "Cập nhật thất bại, vui lòng kiểm tra lại.";
     }
 }
 ?>
@@ -52,7 +55,7 @@ if (isset($_POST['btn-edit'])) {
     <link href="https://demos.creative-tim.com/soft-ui-dashboard/assets/css/nucleo-icons.css" rel="stylesheet" />
     <link href="https://demos.creative-tim.com/soft-ui-dashboard/assets/css/nucleo-svg.css" rel="stylesheet" />
     <!-- Font Awesome Icons -->
-    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script> -->
     <!-- CSS Files -->
     <link id="pagestyle" href="../assets/css/soft-ui-dashboard.css?v=1.1.0" rel="stylesheet" />
     <!-- Nepcha Analytics (nepcha.com) -->
@@ -60,7 +63,7 @@ if (isset($_POST['btn-edit'])) {
     <script defer data-site="YOUR_DOMAIN_HERE" src="https://api.nepcha.com/js/nepcha-analytics.js"></script>
 </head>
 
-<body class="g-sidenav-show bg-gray-100">
+<body class="g-sidenav-show  bg-gray-100">
     <?php include "sidebar.php"; ?>
     <main class="main-content position-relative min-vh-100 border-radius-lg" style="margin-left: 250px;">
         <!-- Navbar -->
@@ -71,28 +74,24 @@ if (isset($_POST['btn-edit'])) {
                     <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
                         <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a>
                         </li>
-                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Tables</li>
+                        <li class="breadcrumb-item text-sm text-dark active" aria-current="page">Dashboard</li>
                     </ol>
-                    <h6 class="font-weight-bolder mb-0">Tables</h6>
+                    <h6 class="font-weight-bolder mb-0">Dashboard</h6>
                 </nav>
                 <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
                     <div class="ms-md-auto pe-md-3 d-flex align-items-center">
-                        <div class="input-group">
-                            <span class="input-group-text text-body"><i class="fas fa-search"
-                                    aria-hidden="true"></i></span>
-                            <input type="text" class="form-control" placeholder="Type here...">
-                        </div>
+
                     </div>
                     <ul class="navbar-nav  justify-content-end">
                         <li class="nav-item d-flex align-items-center">
                             <a class="btn btn-outline-primary btn-sm mb-0 me-3" href="logout.php">Logout</a>
                         </li>
                         <!-- <li class="nav-item d-flex align-items-center">
-              <a href="javascript:;" class="nav-link text-body font-weight-bold px-0">
-                <i class="fa fa-user me-sm-1"></i>
-                <span class="d-sm-inline d-none">Sign In</span>
-              </a>
-            </li> -->
+                            <a href="logout.php" class="nav-link text-body font-weight-bold px-0 ">
+                                <i class="fa fa-user me-sm-1"></i>
+                                <span class="d-sm-inline d-none">Logout</span>
+                            </a>
+                        </li> -->
                         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                             <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                                 <div class="sidenav-toggler-inner">
@@ -195,49 +194,33 @@ if (isset($_POST['btn-edit'])) {
             </div>
         </nav>
         <!-- End Navbar -->
-        <div class="container-fluid py-4">
+       <div class="container-fluid py-4">
             <div class="row">
-                <div class="col-12">
-                    <div class="card shadow-lg">
-                        <div class="card-header pb-0 text-left">
-                            <h3 class="font-weight-bolder text-info text-gradient">Chỉnh sửa Video #<?php echo $id; ?>
-                            </h3>
+                <div class="col-12 col-xl-6 mx-auto">
+                    <div class="card h-100">
+                        <div class="card-header pb-0 p-3">
+                            <h6 class="mb-0">Chỉnh sửa tài khoản: <?php echo $userData['gmail']; ?></h6>
                         </div>
-                        <div class="card-body">
-                            <?php if(isset($error)) echo "<div class='alert alert-danger text-white'>$error</div>"; ?>
-
-                            <form role="form" method="POST">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>YouTube ID</label>
-                                            <input type="text" name="youtube_id" class="form-control"
-                                                value="<?php echo $video['youtube_id']; ?>" required>
-                                            <small class="text-secondary">Mã sau dấu "v=" (Ví dụ: VUIPoh_cJhM)</small>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label>Tiêu đề Video</label>
-                                            <input type="text" name="title" class="form-control"
-                                                value="<?php echo $video['title']; ?>">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-12 mt-3">
-                                        <label>Ảnh bìa hiện tại:</label>
-                                        <div class="mb-3">
-                                            <img src="<?php echo $video['image']; ?>" class="border-radius-lg shadow"
-                                                style="max-height: 200px;">
-                                        </div>
-                                    </div>
+                        <div class="card-body p-3">
+                            <form action="" method="POST">
+                                <label>Email (Tài khoản)</label>
+                                <div class="mb-3">
+                                    <input type="email" name="gmail" class="form-control" value="<?php echo $userData['gmail']; ?>" required>
                                 </div>
-
-                                <div class="d-flex justify-content-end mt-4">
-                                    <a href="video.php" class="btn btn-light m-0">Quay lại</a>
-                                    <button type="submit" name="btn-edit" class="btn bg-gradient-info m-0 ms-2">Cập nhật
-                                        thay đổi</button>
+                                <label>Mật khẩu mới</label>
+                                <div class="mb-3">
+                                    <input type="text" name="password" class="form-control" value="<?php echo $userData['password']; ?>" required>
+                                </div>
+                                <label>Vai trò</label>
+                                <div class="mb-3">
+                                    <select name="role_id" class="form-control">
+                                        <option value="1" <?php echo $userData['role_id'] == 1 ? 'selected' : ''; ?>>Admin</option>
+                                        <option value="2" <?php echo $userData['role_id'] == 2 ? 'selected' : ''; ?>>Customer</option>
+                                    </select>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" name="btn-update" class="btn bg-gradient-info w-100 mt-4 mb-0">Cập nhật</button>
+                                    <a href="profile.php" class="btn btn-link w-100 mt-2 text-dark">Hủy bỏ</a>
                                 </div>
                             </form>
                         </div>
@@ -245,6 +228,7 @@ if (isset($_POST['btn-edit'])) {
                 </div>
             </div>
         </div>
+
     </main>
     <?php include "options.php"; ?>
     <!--   Core JS Files   -->
@@ -252,6 +236,177 @@ if (isset($_POST['btn-edit'])) {
     <script src="../assets/js/core/bootstrap.min.js"></script>
     <script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
     <script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
+    <script src="../assets/js/plugins/chartjs.min.js"></script>
+    <script>
+    var ctx = document.getElementById("chart-bars").getContext("2d");
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            datasets: [{
+                label: "Sales",
+                tension: 0.4,
+                borderWidth: 0,
+                borderRadius: 4,
+                borderSkipped: false,
+                backgroundColor: "#fff",
+                data: [450, 200, 100, 220, 500, 100, 400, 230, 500],
+                maxBarThickness: 6
+            }, ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                    },
+                    ticks: {
+                        suggestedMin: 0,
+                        suggestedMax: 500,
+                        beginAtZero: true,
+                        padding: 15,
+                        font: {
+                            size: 14,
+                            family: "Inter",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                        color: "#fff"
+                    },
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false
+                    },
+                    ticks: {
+                        display: false
+                    },
+                },
+            },
+        },
+    });
+
+
+    var ctx2 = document.getElementById("chart-line").getContext("2d");
+
+    var gradientStroke1 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke1.addColorStop(1, 'rgba(203,12,159,0.2)');
+    gradientStroke1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)'); //purple colors
+
+    var gradientStroke2 = ctx2.createLinearGradient(0, 230, 0, 50);
+
+    gradientStroke2.addColorStop(1, 'rgba(20,23,39,0.2)');
+    gradientStroke2.addColorStop(0.2, 'rgba(72,72,176,0.0)');
+    gradientStroke2.addColorStop(0, 'rgba(20,23,39,0)'); //purple colors
+
+    new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            datasets: [{
+                    label: "Mobile apps",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#cb0c9f",
+                    borderWidth: 3,
+                    backgroundColor: gradientStroke1,
+                    fill: true,
+                    data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+                    maxBarThickness: 6
+
+                },
+                {
+                    label: "Websites",
+                    tension: 0.4,
+                    borderWidth: 0,
+                    pointRadius: 0,
+                    borderColor: "#3A416F",
+                    borderWidth: 3,
+                    backgroundColor: gradientStroke2,
+                    fill: true,
+                    data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+                    maxBarThickness: 6
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+            scales: {
+                y: {
+                    grid: {
+                        drawBorder: false,
+                        display: true,
+                        drawOnChartArea: true,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        padding: 10,
+                        color: '#b2b9bf',
+                        font: {
+                            size: 11,
+                            family: "Inter",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+                x: {
+                    grid: {
+                        drawBorder: false,
+                        display: false,
+                        drawOnChartArea: false,
+                        drawTicks: false,
+                        borderDash: [5, 5]
+                    },
+                    ticks: {
+                        display: true,
+                        color: '#b2b9bf',
+                        padding: 20,
+                        font: {
+                            size: 11,
+                            family: "Inter",
+                            style: 'normal',
+                            lineHeight: 2
+                        },
+                    }
+                },
+            },
+        },
+    });
+    </script>
     <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
